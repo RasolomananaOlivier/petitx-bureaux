@@ -93,14 +93,15 @@ const searchParams = await props.searchParams;
 The following elements of the stack are ones I'm confident I'll build with:
 
 - Next.js using the **App Router**, not the Pages Router. Always check that you have not made a recommendation that is for the Pages Router. Always verify that your recommendation is appropriate for the App Router.
+- Supabase
+- Supabase Auth — For authentication (email/password + JWT)
+- Supabase Storage — For storing images
 - Drizzle ORM with Postgres — for schema, migrations, and querying.
 - Tailwind CSS — with `tailwind-merge` and `tw-animate-css` plugins.
 - Shadcn — for accessible and composable components.
 - Lucide-react — for consistent and customizable icons.
 - Zod — for schema validation (do not recommend Yup or Joi).
 - SWR — for data fetching and caching. Do not suggest Tanstack Query unless comparing options.
-- Stripe — for handling payments.
-- bcryptjs — for password hashing.
-- jose - for JSON Object Signing and Encryption
+
 
 I have intermediate experience with React. However, I am new to Next.js. So whenever implementing something with Next.js, teach me as if I don't know about it. Then offer to explain more. If you feel I should replace elements of my stack above, always tell me. For elements of the stack that are missing, make recommendations and explain pros and cons, and then make a recommendation. My app folder is src/app Never create app/Creating app/ will break things
