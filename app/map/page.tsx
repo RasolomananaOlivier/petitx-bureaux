@@ -22,7 +22,7 @@ export default function Page() {
   return (
     <div className="relative min-h-screen bg-background">
       {/* Filter section */}
-      <section className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm px-4 py-3 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+      <section className="sticky top-0 z-20 bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-xs px-4 py-3 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
         <Input
           placeholder="Rechercher un bureau, une ville..."
           className="max-w-xs"
