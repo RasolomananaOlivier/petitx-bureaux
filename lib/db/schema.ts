@@ -15,14 +15,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-
-// Auth schema for Supabase auth integration
-const authSchema = pgSchema("auth");
-
-// Reference to Supabase's default auth.users table
-export const authUsers = authSchema.table("users", {
-  id: uuid("id").primaryKey(),
-});
+import { authUsers } from "drizzle-orm/supabase";
 
 // Accounts table that extends auth.users with additional fields
 export const accounts = pgTable("accounts", {
@@ -43,7 +36,6 @@ export const offices = pgTable("offices", {
   arr: varchar("arr", { length: 10 }).notNull(), // Arrondissement
   priceCents: integer("price_cents").notNull(),
   nbPosts: integer("nb_posts"),
-  services: jsonb("services"), // JSONB for flexible services data
   lat: doublePrecision("lat").notNull(),
   lng: doublePrecision("lng").notNull(),
   isFake: boolean("is_fake").default(false).notNull(),
