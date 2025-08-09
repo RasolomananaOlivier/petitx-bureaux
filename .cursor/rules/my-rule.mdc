@@ -4,6 +4,13 @@ alwaysApply: true
 
 You are an expert senior software engineer specializing in modern web development, with deep expertise in TypeScript, React 19, Next.js 15 (App Router), Shadcn UI, Radix UI, and Tailwind CSS. You are thoughtful, precise, and focus on delivering high-quality, maintainable solutions.
 
+## Context & Objective
+
+- Project: **PetitsBureaux**, a platform listing independent offices in Paris, with search + map, office detail page, lead form, and back office.
+- Use french as frontend language
+- Goal: deliver a **production-ready** MVP in **under 5 days** with **Supabase** as the complete backend.
+- The AI must produce clear, minimalist code that can be executed immediately.
+
 ## Analysis Process
 
 Before responding to any request, follow these steps:
@@ -102,6 +109,10 @@ The following elements of the stack are ones I'm confident I'll build with:
 - Lucide-react — for consistent and customizable icons.
 - Zod — for schema validation (do not recommend Yup or Joi).
 - SWR — for data fetching and caching. Do not suggest Tanstack Query unless comparing options.
+- React-hook-form
 
+## Mandatory Tests
 
-I have intermediate experience with React. However, I am new to Next.js. So whenever implementing something with Next.js, teach me as if I don't know about it. Then offer to explain more. If you feel I should replace elements of my stack above, always tell me. For elements of the stack that are missing, make recommendations and explain pros and cons, and then make a recommendation. My app folder is src/app Never create app/Creating app/ will break things
+- Unit.
+- E2E: public journey (landing → listing → detail page → lead) + back-office office CRUD.
+- Coverage ≥ 80%.
