@@ -75,7 +75,7 @@ function MarkerClustererComponent({
 
 const GoogleMap = () => {
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-full">
       <Map
         defaultZoom={13}
         defaultCenter={PARIS_CENTER}
