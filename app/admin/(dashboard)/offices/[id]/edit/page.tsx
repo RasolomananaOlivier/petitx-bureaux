@@ -1,4 +1,4 @@
-import { OfficeForm } from "@/components/admin/office-form";
+// import { OfficeForm } from "@/components/admin/office-form";
 import { Office } from "@/lib/types";
 
 // Mock function to fetch office by ID
@@ -37,7 +37,7 @@ export default async function EditOfficePage({
         <p className="text-gray-600">Modifier les informations du bureau</p>
       </div>
 
-      <OfficeForm office={office} mode="edit" />
+      {/* <OfficeForm office={office} mode="edit" /> */}
     </div>
   );
 }

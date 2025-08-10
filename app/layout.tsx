@@ -27,9 +27,6 @@ export default function RootLayout({
         className={`${robertSans.className} ${roslindaleBlack.variable} antialiased `}
       >
         <GoogleMapProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY!}>
-          {/* Navigation */}
-          <Navbar />
-          {/* Main content */}
           {children}
         </GoogleMapProvider>
       </body>

@@ -47,6 +47,15 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
+  // API protection
+  if (request.nextUrl.pathname.startsWith("/api/") && !user) {
+    // return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+    //   status: 401,
+    //   headers: { "Content-Type": "application/json" },
+    // });
+    return supabaseResponse;
+  }
+
   if (
     request.nextUrl.pathname !== "/" &&
     !user &&

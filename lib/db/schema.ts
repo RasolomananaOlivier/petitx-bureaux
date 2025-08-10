@@ -32,8 +32,9 @@ export const accounts = pgTable("accounts", {
 export const offices = pgTable("offices", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
-  arr: varchar("arr", { length: 10 }).notNull(), // Arrondissement
+  arr: integer("arr").notNull(), // Arrondissement
   priceCents: integer("price_cents").notNull(),
   nbPosts: integer("nb_posts"),
   lat: doublePrecision("lat").notNull(),

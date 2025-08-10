@@ -19,6 +19,10 @@ export default function MediaUploadPage() {
     setUploadedFiles((prev) => [...prev, fileUrl]);
   };
 
+  console.log("====================================");
+  console.log(uploadedFiles);
+  console.log("====================================");
+
   return (
     <div className="space-y-6">
       <div>

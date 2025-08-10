@@ -45,7 +45,7 @@ export function AdminSidebar() {
 
   return (
     <div className="flex flex-col w-64 bg-white shadow-lg">
-      <div className="flex items-center justify-center h-16 px-4">
+      <div className="flex items-center  h-16 px-4">
         <div className="flex items-center space-x-3">
           {/* Logo Icon */}
           <div className="relative">

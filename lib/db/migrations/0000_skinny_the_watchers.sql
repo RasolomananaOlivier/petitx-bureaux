@@ -38,8 +38,9 @@ CREATE TABLE "office_services" (
 CREATE TABLE "offices" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(255) NOT NULL,
+	"description" text,
 	"slug" varchar(255) NOT NULL,
-	"arr" varchar(10) NOT NULL,
+	"arr" integer NOT NULL,
 	"price_cents" integer NOT NULL,
 	"nb_posts" integer,
 	"lat" double precision NOT NULL,

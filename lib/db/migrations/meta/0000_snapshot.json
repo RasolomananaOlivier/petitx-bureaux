@@ -1,5 +1,5 @@
 {
-  "id": "d5bf4170-414a-4b4a-a2a6-d2b1858d6653",
+  "id": "eb2e9d5c-95f5-40f8-9bed-665dde2cd90c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -300,6 +300,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "slug": {
           "name": "slug",
           "type": "varchar(255)",
@@ -308,7 +314,7 @@
         },
         "arr": {
           "name": "arr",
-          "type": "varchar(10)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },

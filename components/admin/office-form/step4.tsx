@@ -9,34 +9,38 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Upload, X, Check, AlertCircle } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { useOfficeFormStore } from "@/lib/store/office-store";
 
-interface MediaUploadProps {
-  onUploadSuccess: (fileUrl: string) => void;
+interface Step4Props {
+  form: any;
 }
 
-interface UploadFile {
-  file: File;
-  id: string;
-}
-
-export function MediaUpload({ onUploadSuccess }: MediaUploadProps) {
-  const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
+export default function Step4({ form }: Step4Props) {
+  const {
+    updateFormData,
+    formData: { photos },
+  } = useOfficeFormStore();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles: UploadFile[] = acceptedFiles.map((file) => ({
+    const newFiles = acceptedFiles.map((file) => ({
       file,
       id: Math.random().toString(36).substr(2, 9),
     }));
 
-    setUploadFiles((prev) => [...prev, ...newFiles]);
+    const newPhotos = [...photos, ...newFiles];
+    form.setValue("photos", newPhotos);
+    updateFormData({
+      photos: newPhotos,
+    });
   }, []);
 
   const removeFile = (fileId: string) => {
-    setUploadFiles((prev) => prev.filter((file) => file.id !== fileId));
+    const updated = photos.filter((file) => file.id !== fileId);
+    form.setValue("photos", updated);
+    updateFormData({
+      photos: updated,
+    });
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -87,7 +91,7 @@ export function MediaUpload({ onUploadSuccess }: MediaUploadProps) {
       </Card>
 
       <div className="mt-4 grid grid-cols-3 gap-4">
-        {uploadFiles.map(({ file, id }) => {
+        {photos.map(({ file, id }) => {
           const previewUrl = URL.createObjectURL(file);
           return (
             <div key={id} className="relative border rounded overflow-hidden">
