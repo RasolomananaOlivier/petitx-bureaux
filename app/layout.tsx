@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import "./globals.css";
 import { GoogleMapProvider } from "@/providers/google-map-provider";
+import Navbar from "@/components/navbar";
+import { roslindaleBlack, robertSans } from "./font";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -13,21 +14,22 @@ export const metadata: Metadata = {
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
-  subsets: ["latin"],
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log(roslindaleBlack.variable);
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body
+        className={`${robertSans.className} ${roslindaleBlack.variable} antialiased `}
+      >
         <GoogleMapProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY!}>
+          {/* Navigation */}
+          <Navbar />
+          {/* Main content */}
           {children}
         </GoogleMapProvider>
       </body>
