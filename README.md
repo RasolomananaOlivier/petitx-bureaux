@@ -103,3 +103,160 @@ Please file feedback and issues over on the [Supabase GitHub org](https://github
 - [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
 - [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
 - [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+
+# PetitsBureaux
+
+Plateforme de listing de bureaux indépendants à Paris avec recherche, carte, page de détail, formulaire de contact et back-office.
+
+## API de Filtrage des Bureaux
+
+### Endpoint
+
+`GET /api/offices`
+
+### Paramètres de Filtrage
+
+| Paramètre   | Type   | Description                                       | Exemple           |
+| ----------- | ------ | ------------------------------------------------- | ----------------- |
+| `arr`       | number | Arrondissement (1-20)                             | `?arr=1`          |
+| `minPosts`  | number | Nombre minimum de posts                           | `?minPosts=5`     |
+| `maxPosts`  | number | Nombre maximum de posts                           | `?maxPosts=10`    |
+| `minPrice`  | number | Prix minimum en euros                             | `?minPrice=500`   |
+| `maxPrice`  | number | Prix maximum en euros                             | `?maxPrice=1000`  |
+| `services`  | string | IDs des services séparés par des virgules         | `?services=1,2,3` |
+| `page`      | number | Numéro de page (défaut: 1)                        | `?page=2`         |
+| `limit`     | number | Nombre d'éléments par page (défaut: 10, max: 100) | `?limit=20`       |
+| `sortBy`    | string | Critère de tri: `price`, `posts`, `created_at`    | `?sortBy=price`   |
+| `sortOrder` | string | Ordre de tri: `asc`, `desc`                       | `?sortOrder=asc`  |
+
+### Exemples d'Utilisation
+
+#### Récupérer tous les bureaux
+
+```bash
+GET /api/offices
+```
+
+#### Filtrer par arrondissement
+
+```bash
+GET /api/offices?arr=1
+```
+
+#### Filtrer par prix
+
+```bash
+GET /api/offices?minPrice=500&maxPrice=1000
+```
+
+#### Filtrer par nombre de posts
+
+```bash
+GET /api/offices?minPosts=5&maxPosts=15
+```
+
+#### Filtrer par services
+
+```bash
+GET /api/offices?services=1,2
+```
+
+#### Combiner plusieurs filtres
+
+```bash
+GET /api/offices?arr=1&minPrice=600&maxPosts=10&services=1&page=2&limit=5&sortBy=price&sortOrder=asc
+```
+
+### Réponse
+
+```json
+{
+  "offices": [
+    {
+      "id": 1,
+      "title": "Bureau moderne",
+      "description": "Bureau spacieux avec vue",
+      "slug": "bureau-moderne",
+      "arr": 1,
+      "priceCents": 75000,
+      "nbPosts": 8,
+      "lat": 48.8566,
+      "lng": 2.3522,
+      "isFake": false,
+      "publishedAt": "2024-01-15T10:00:00Z",
+      "createdAt": "2024-01-15T10:00:00Z",
+      "updatedAt": "2024-01-15T10:00:00Z",
+      "photos": [
+        {
+          "id": 1,
+          "officeId": 1,
+          "url": "photo1.jpg",
+          "alt": "Vue du bureau",
+          "createdAt": "2024-01-15T10:00:00Z"
+        }
+      ],
+      "services": [
+        {
+          "officeId": 1,
+          "serviceId": 1,
+          "serviceName": "WiFi",
+          "serviceIcon": "wifi"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "totalPages": 3,
+    "hasNext": true,
+    "hasPrev": false
+  }
+}
+```
+
+### Utilisation côté Client
+
+```typescript
+import { getOffices } from "@/lib/api/offices";
+
+// Récupérer tous les bureaux
+const allOffices = await getOffices();
+
+// Filtrer par arrondissement et prix
+const filteredOffices = await getOffices({
+  arr: 1,
+  minPrice: 500,
+  maxPrice: 1000,
+  services: [1, 2],
+  page: 1,
+  limit: 20,
+  sortBy: "price",
+  sortOrder: "asc",
+});
+```
+
+## Fonctionnalités
+
+- **Recherche avancée** : Filtrage par arrondissement, prix, nombre de posts, services
+- **Pagination** : Gestion efficace des grandes listes
+- **Tri** : Par prix, nombre de posts ou date de création
+- **Relations** : Inclut automatiquement les photos et services
+- **Validation** : Paramètres validés avec Zod
+- **Performance** : Requêtes optimisées avec Drizzle ORM
+
+## Tests
+
+Les tests couvrent :
+
+- Validation des paramètres
+- Gestion des valeurs invalides
+- Filtrage par différents critères
+- Pagination
+- Tri
+- Relations (photos et services)
+
+```bash
+npm test app/api/offices/__tests__/route.test.ts
+```
