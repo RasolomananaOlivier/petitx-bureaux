@@ -1,23 +1,6 @@
-export interface Office {
-  id: string;
-  name: string;
-  description: string;
-  address: string;
-  arrondissement: number;
-  pricePerDay: number;
-  pricePerHour: number;
-  capacity: number;
-  amenities: string[];
-  photos: string[];
-  isActive: boolean;
-  isFake: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-}
+import { type Office as DbOffice, type Photo } from "@/lib/db/schema";
+
+export type Office = DbOffice;
 
 export interface Lead {
   id: string;
@@ -47,4 +30,43 @@ export interface Analytics {
     office?: Office;
     timestamp: Date;
   }>;
+}
+
+export interface OfficeFilters {
+  arr?: number;
+  minPosts?: number;
+  maxPosts?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  services?: number[];
+  page?: number;
+  limit?: number;
+}
+
+export interface OfficeWithRelations extends Office {
+  photos: Photo[];
+  officeServices: {
+    id: number;
+    officeId: number;
+    serviceId: number;
+    createdAt: string;
+    service: {
+      id: number;
+      name: string;
+      icon: string | null;
+      createdAt: string;
+    };
+  }[];
+}
+
+export interface PaginatedOfficesResponse {
+  offices: OfficeWithRelations[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
 }
