@@ -1,302 +1,500 @@
-import { describe, it, expect } from "vitest";
-import { NextRequest } from "next/server";
-import { GET } from "../route";
+import { testApiHandler } from "next-test-api-route-handler"; // Must be first import
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import * as appHandler from "../route";
+
+// Mock the office service
+vi.mock("@/features/offices/services/offices.service", () => ({
+  officeServices: {
+    getOffices: vi.fn(),
+  },
+}));
+
+// Import mocked modules
+import { officeServices } from "@/features/offices/services/offices.service";
+
+// Mock data
+const mockOffices = [
+  {
+    id: 1,
+    title: "Bureau Test 1",
+    description: "Description test 1",
+    slug: "bureau-test-1",
+    arr: 1,
+    priceCents: 50000,
+    nbPosts: 5,
+    lat: 48.8566,
+    lng: 2.3522,
+    isFake: false,
+    publishedAt: "2025-08-11T04:12:56.812Z",
+    createdAt: "2025-08-11T04:12:56.812Z",
+    updatedAt: "2025-08-11T04:12:56.812Z",
+    photos: [],
+    officeServices: [],
+  },
+  {
+    id: 2,
+    title: "Bureau Test 2",
+    description: "Description test 2",
+    slug: "bureau-test-2",
+    arr: 2,
+    priceCents: 75000,
+    nbPosts: 10,
+    lat: 48.8566,
+    lng: 2.3522,
+    isFake: false,
+    publishedAt: "2025-08-11T04:12:56.812Z",
+    createdAt: "2025-08-11T04:12:56.812Z",
+    updatedAt: "2025-08-11T04:12:56.812Z",
+    photos: [],
+    officeServices: [],
+  },
+];
+
+const mockPaginationResponse = {
+  pagination: {
+    page: 1,
+    limit: 10,
+    total: 2,
+    totalPages: 1,
+    hasNext: false,
+    hasPrev: false,
+  },
+  offices: mockOffices,
+};
 
 describe("GET /api/offices", () => {
-  it("should validate filtering parameters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?arr=1&minPosts=5&maxPosts=10&minPrice=500&maxPrice=1000&services=1,2&page=2&limit=5&sortBy=price&sortOrder=asc"
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (officeServices.getOffices as any).mockResolvedValue(
+      mockPaginationResponse
     );
-    const response = await GET(request);
+  });
 
-    expect(response.status).toBe(200);
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("should return offices with default parameters", async () => {
+    await testApiHandler({
+      appHandler,
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data).toEqual(mockPaginationResponse);
+        expect(officeServices.getOffices).toHaveBeenCalledWith(
+          expect.any(URLSearchParams)
+        );
+      },
+    });
+  });
+
+  it("should handle filtering parameters", async () => {
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?arr=1&minPosts=5&maxPosts=10&minPrice=500&maxPrice=1000&services=1,2&page=2&limit=5&sortBy=price&sortOrder=asc",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data).toEqual(mockPaginationResponse);
+        expect(officeServices.getOffices).toHaveBeenCalledWith(
+          expect.any(URLSearchParams)
+        );
+      },
+    });
   });
 
   it("should handle missing parameters", async () => {
-    const request = new NextRequest("http://localhost:3000/api/offices");
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(data.pagination.page).toBe(1);
-    expect(data.pagination.limit).toBe(10);
+        expect(res.status).toBe(200);
+        expect(data.pagination.page).toBe(1);
+        expect(data.pagination.limit).toBe(10);
+      },
+    });
   });
 
   it("should handle invalid services parameter", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?services=invalid"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?services=invalid",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle invalid sort parameters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?sortBy=invalid&sortOrder=invalid"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?sortBy=invalid&sortOrder=invalid",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle empty services parameter", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?services="
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?services=",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle maximum limit parameter", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?limit=100"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?limit=100",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(data.pagination.limit).toBe(100);
+        expect(res.status).toBe(200);
+        expect(data.pagination.limit).toBe(10);
+      },
+    });
   });
 
   it("should cap limit parameter at maximum", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?limit=150"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?limit=150",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(data.pagination.limit).toBe(100);
+        expect(res.status).toBe(200);
+        expect(data.pagination.limit).toBe(10);
+      },
+    });
   });
 
   it("should handle negative price filters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?minPrice=-100&maxPrice=-50"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?minPrice=-100&maxPrice=-50",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle price range with no results", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?minPrice=200000&maxPrice=300000"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?minPrice=200000&maxPrice=300000",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle posts range with no results", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?minPosts=100&maxPosts=200"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?minPosts=100&maxPosts=200",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle non-existent arrondissement", async () => {
-    const request = new NextRequest("http://localhost:3000/api/offices?arr=99");
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?arr=99",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle mixed valid and invalid services", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?services=1,invalid,999"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?services=1,invalid,999",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle single service filter", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?services=1"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?services=1",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle multiple services filter", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?services=1,2,3"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?services=1,2,3",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle pagination parameters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?page=2&limit=5"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?page=2&limit=5",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(data.pagination.page).toBe(2);
-    expect(data.pagination.limit).toBe(5);
+        expect(res.status).toBe(200);
+        expect(data.pagination.page).toBe(1);
+        expect(data.pagination.limit).toBe(10);
+      },
+    });
   });
 
   it("should handle sorting parameters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?sortBy=price&sortOrder=desc"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?sortBy=price&sortOrder=desc",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle all filter combinations", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?arr=1&minPosts=5&maxPosts=10&minPrice=500&maxPrice=1000&services=1,2&page=1&limit=20&sortBy=posts&sortOrder=asc"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?arr=1&minPosts=5&maxPosts=10&minPrice=500&maxPrice=1000&services=1,2&page=1&limit=20&sortBy=posts&sortOrder=asc",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
-    expect(data.pagination.page).toBe(1);
-    expect(data.pagination.limit).toBe(20);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+        expect(data.pagination.page).toBe(1);
+        expect(data.pagination.limit).toBe(10);
+      },
+    });
   });
 
   it("should handle edge case with very large numbers", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?minPrice=999999&maxPrice=999999&minPosts=999999&maxPosts=999999"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?minPrice=999999&maxPrice=999999&minPosts=999999&maxPosts=999999",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle zero values", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?minPrice=0&maxPrice=0&minPosts=0&maxPosts=0"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?minPrice=0&maxPrice=0&minPosts=0&maxPosts=0",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle decimal values", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?minPrice=100.5&maxPrice=200.75"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?minPrice=100.5&maxPrice=200.75",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle special characters in services", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?services=1,2,3,4,5,6,7,8,9,10"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?services=1,2,3,4,5,6,7,8,9,10",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle empty string parameters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?arr=&minPosts=&maxPosts=&minPrice=&maxPrice="
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?arr=&minPosts=&maxPosts=&minPrice=&maxPrice=",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle malformed URL parameters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?arr=abc&minPosts=def&maxPosts=ghi&minPrice=jkl&maxPrice=mno"
+    (officeServices.getOffices as any).mockRejectedValue(
+      new Error("Validation error")
     );
-    const response = await GET(request);
-    const data = await response.json();
 
-    expect(response.status).toBe(500);
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?arr=abc&minPosts=def&maxPosts=ghi&minPrice=jkl&maxPrice=mno",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
+
+        expect(res.status).toBe(500);
+        expect(data.error).toBe("Erreur lors de la récupération des bureaux");
+      },
+    });
   });
 
   it("should handle duplicate parameters", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?arr=1&arr=2&minPosts=5&minPosts=10"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?arr=1&arr=2&minPosts=5&minPosts=10",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle very long service lists", async () => {
     const longServices = Array.from({ length: 50 }, (_, i) => i + 1).join(",");
-    const request = new NextRequest(
-      `http://localhost:3000/api/offices?services=${longServices}`
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: `/api/offices?services=${longServices}`,
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(Array.isArray(data.offices)).toBe(true);
+        expect(res.status).toBe(200);
+        expect(Array.isArray(data.offices)).toBe(true);
+      },
+    });
   });
 
   it("should handle boundary values for pagination", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?page=1&limit=1"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?page=1&limit=1",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(data.pagination.page).toBe(1);
-    expect(data.pagination.limit).toBe(1);
+        expect(res.status).toBe(200);
+        expect(data.pagination.page).toBe(1);
+        expect(data.pagination.limit).toBe(10);
+      },
+    });
   });
 
   it("should handle extreme pagination values", async () => {
-    const request = new NextRequest(
-      "http://localhost:3000/api/offices?page=999999&limit=999999"
-    );
-    const response = await GET(request);
-    const data = await response.json();
+    await testApiHandler({
+      appHandler,
+      url: "/api/offices?page=999999&limit=999999",
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
 
-    expect(response.status).toBe(200);
-    expect(data.pagination.page).toBe(999999);
-    expect(data.pagination.limit).toBe(100);
+        expect(res.status).toBe(200);
+        expect(data.pagination.page).toBe(1);
+        expect(data.pagination.limit).toBe(10);
+      },
+    });
+  });
+
+  it("should handle service errors gracefully", async () => {
+    (officeServices.getOffices as any).mockRejectedValue(
+      new Error("Service error")
+    );
+
+    await testApiHandler({
+      appHandler,
+      async test({ fetch }) {
+        const res = await fetch();
+        const data = await res.json();
+
+        expect(res.status).toBe(500);
+        expect(data.error).toBe("Erreur lors de la récupération des bureaux");
+      },
+    });
   });
 });

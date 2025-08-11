@@ -70,6 +70,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "jsdom": "^25.0.1",
+    "next-test-api-route-handler": "^5.0.0",
     "postcss": "^8",
     "tailwindcss": "^4.1.11",
     "tailwindcss-animate": "^1.0.7",
