@@ -137,7 +137,7 @@ export default function LatestOfficesSection() {
               Nos derniers bureaux
             </h1>
           </div>
-          <div className="flex overflow-x-auto md:grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-4 scrollbar-hide p-0 md:p-8 ">
+          <div className="flex overflow-x-auto md:grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 scrollbar-hide px-4 md:px-8">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
@@ -166,7 +166,7 @@ export default function LatestOfficesSection() {
           </h1>
         </div>
 
-        <div className="flex overflow-x-auto md:grid sm:grid-cols-2 lg:grid-cols-4 lg:gap-4 scrollbar-hide px-4 md:px-8">
+        <div className="flex overflow-x-auto md:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 scrollbar-hide px-4 md:px-8">
           {offices.map((office) => (
             <OfficeCard key={office.id} office={office} />
           ))}
