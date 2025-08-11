@@ -93,7 +93,7 @@ export function OfficeList({
             value={getCurrentSortValue()}
             onValueChange={handleSortChange}
           >
-            <SelectTrigger className="h-9 md:w-full sm:w-auto text-sm md:text-base">
+            <SelectTrigger className="h-9 w-auto text-sm md:text-base">
               <SelectValue placeholder="Tri : Recommandations" />
             </SelectTrigger>
             <SelectContent>

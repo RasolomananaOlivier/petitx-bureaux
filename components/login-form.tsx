@@ -60,7 +60,7 @@ export function LoginForm({
         password: values.password,
       });
       if (error) throw error;
-      router.push("/protected");
+      router.push("/admin");
     } catch (err: unknown) {
       form.setError("root", {
         type: "server",
