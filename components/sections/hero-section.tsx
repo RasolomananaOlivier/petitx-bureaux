@@ -87,9 +87,11 @@ export default function HeroSection() {
 
               {/* Call-to-Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button className="py-6 text-base px-4">
-                  <Search className="!size-6 mr-2" />
-                  Voir 8 286 annonces
+                <Button asChild className="py-6 text-base px-4">
+                  <Link href="/search">
+                    <Search className="!size-6 mr-2" />
+                    Voir 8 286 annonces
+                  </Link>
                 </Button>
                 <Button
                   variant="outline"

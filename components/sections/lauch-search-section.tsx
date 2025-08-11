@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 type Props = {};
 
@@ -29,9 +30,11 @@ export default function LaunchSearchSection({}: Props) {
               alt="Search Illustration"
               className="bg-white shadow-lg rounded-xl"
             />
-            <Button className="py-7 text-base px-5 mt-2">
-              <Search className="!size-6 mr-2" />
-              Voir 8 286 annonces
+            <Button asChild className="py-7 text-base px-5 mt-2">
+              <Link href="/search">
+                <Search className="!size-6 mr-2" />
+                Voir 8 286 annonces
+              </Link>
             </Button>
           </div>
 
