@@ -11,7 +11,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { OfficeWithRelations } from "@/lib/types";
+import { OfficeWithRelations } from "@/features/offices/types";
 
 export function OfficeCard({ office }: { office: OfficeWithRelations }) {
   const [api, setApi] = useState<CarouselApi | undefined>();
@@ -36,12 +36,12 @@ export function OfficeCard({ office }: { office: OfficeWithRelations }) {
       : ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=800"];
 
   return (
-    <div className="relative bg-white rounded-xl border overflow-hidden">
+    <div className="relative bg-white rounded-xl border overflow-hidden hover:shadow-lg transition-all duration-300">
       <div className="relative group">
         <Carousel setApi={setApi} opts={{ loop: true, align: "center" }}>
-          <CarouselContent>
+          <CarouselContent className="-ml-2">
             {images.map((src, idx) => (
-              <CarouselItem key={idx}>
+              <CarouselItem key={idx} className="pl-0">
                 <img
                   src={src}
                   alt={`Image ${idx + 1} — ${office.title}`}
@@ -99,9 +99,9 @@ export function OfficeCard({ office }: { office: OfficeWithRelations }) {
             </>
           )}
         </div>
-        <p className="text-lg font-bold text-gray-700">
+        <p className="text-lg font-bold text-black mt-2">
           {(office.priceCents / 100).toLocaleString("fr-FR")} €{" "}
-          <span className="font-normal text-gray-700">HT /mois</span>
+          <span className="font-normal text-base text-gray-700">par mois</span>
         </p>
       </div>
     </div>
