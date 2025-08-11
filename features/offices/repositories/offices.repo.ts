@@ -1,8 +1,10 @@
 import { db } from "@/lib/db/drizzle";
 import { officeServices } from "@/lib/db/schema";
+import { DrizzleDB } from "@/lib/db/types";
 import { inArray, sql } from "drizzle-orm";
 
 async function getOffices(
+  db: DrizzleDB, // Inject db dependency
   whereClause: any,
   sortColumn: any,
   sortOrder: any,
@@ -27,7 +29,7 @@ async function getOffices(
   });
 }
 
-async function getOfficesWithServices(serviceIds: number[]) {
+async function getOfficesWithServices(db: DrizzleDB, serviceIds: number[]) {
   const officesWithServices = await db
     .select({ officeId: officeServices.officeId })
     .from(officeServices)

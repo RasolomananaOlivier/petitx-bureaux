@@ -12,16 +12,16 @@ import {
 import { officeFiltersSchema } from "../validator";
 import { and, inArray } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
+import { OfficesService } from "../repositories/offices.service";
 
 async function getOffices(searchParams: URLSearchParams) {
+  const service = new OfficesService();
   const filters = officeFiltersSchema.parse(Object.fromEntries(searchParams));
 
   const conditions = buildFilterConditions(filters);
 
   if (filters.services && filters.services.length > 0) {
-    const officeIds = await officesRepository.getOfficesWithServices(
-      filters.services
-    );
+    const officeIds = await service.getOfficesWithServices(filters.services);
     if (officeIds.length === 0) {
       return createPaginationResponse([], filters.page, filters.limit, 0);
     }
@@ -35,7 +35,7 @@ async function getOffices(searchParams: URLSearchParams) {
   const sortColumn = getSortColumn(filters.sortBy);
   const sortOrder = getSortOrder(filters.sortOrder);
 
-  const officesData = await officesRepository.getOffices(
+  const officesData = await service.getOffices(
     whereClause,
     sortColumn,
     sortOrder,

@@ -6,9 +6,10 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
+    setupFiles: ["./vitest.setup.ts", "./tests/setup.ts"],
     css: false,
     globals: true,
+    testTimeout: 30 * 1000,
   },
   resolve: {
     alias: {

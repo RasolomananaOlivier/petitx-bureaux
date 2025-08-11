@@ -1,208 +1,189 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
+import { offices, photos } from "@/lib/db/schema";
+import { eq, asc, desc } from "drizzle-orm";
 import { officesRepository } from "../repositories/offices.repo";
-
-// Mock the database module
-vi.mock("@/lib/db/drizzle", () => ({
-  db: {
-    query: {
-      offices: {
-        findMany: vi.fn(),
-      },
-    },
-    select: vi.fn(() => ({
-      from: vi.fn(() => ({
-        where: vi.fn(() => ({
-          groupBy: vi.fn(() => ({
-            having: vi.fn(),
-          })),
-        })),
-      })),
-    })),
-  },
-}));
-
-// Import mocked modules
-import { db } from "@/lib/db/drizzle";
-
-// Mock data
-const mockOffices = [
-  {
-    id: 1,
-    title: "Bureau Test 1",
-    description: "Description test 1",
-    slug: "bureau-test-1",
-    arr: 1,
-    priceCents: 50000,
-    nbPosts: 5,
-    lat: 48.8566,
-    lng: 2.3522,
-    isFake: false,
-    publishedAt: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    photos: [],
-    officeServices: [],
-  },
-  {
-    id: 2,
-    title: "Bureau Test 2",
-    description: "Description test 2",
-    slug: "bureau-test-2",
-    arr: 2,
-    priceCents: 75000,
-    nbPosts: 10,
-    lat: 48.8566,
-    lng: 2.3522,
-    isFake: false,
-    publishedAt: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    photos: [],
-    officeServices: [],
-  },
-];
-
-const mockOfficeIds = [1, 2, 3];
+import { testDb } from "@/tests/setup";
+import {
+  seedMultipleOffices,
+  seedOffice,
+  seedOfficeService,
+  seedService,
+} from "@/tests/helpers/db.helper";
+import { OfficesService } from "../repositories/offices.service";
 
 describe("officesRepository", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    (db.query.offices.findMany as any).mockResolvedValue(mockOffices);
-    (db.select as any).mockReturnValue({
-      from: vi.fn().mockReturnValue({
-        where: vi.fn().mockReturnValue({
-          groupBy: vi.fn().mockReturnValue({
-            having: vi
-              .fn()
-              .mockResolvedValue([
-                { officeId: 1 },
-                { officeId: 2 },
-                { officeId: 3 },
-              ]),
-          }),
-        }),
-      }),
-    });
-  });
+  let officesService: OfficesService;
 
-  afterEach(() => {
-    vi.restoreAllMocks();
+  beforeEach(() => {
+    // Create service instance with test database
+    officesService = new OfficesService(testDb);
   });
 
   describe("getOffices", () => {
-    it("should fetch offices with correct parameters", async () => {
-      const whereClause = { isFake: false };
-      const sortColumn = "created_at";
-      const sortOrder = vi.fn();
-      const page = 1;
-      const limit = 10;
+    beforeEach(async () => {
+      // Seed test data
+      await seedMultipleOffices(5);
+    });
 
-      const result = await officesRepository.getOffices(
-        whereClause,
-        sortColumn,
-        sortOrder,
-        page,
-        limit
+    it("should return paginated offices", async () => {
+      const result = await officesService.getOffices(
+        undefined, // no where clause
+        offices.id, // sort by id
+        asc, // ascending
+        1, // page 1
+        3 // limit 3
       );
 
-      expect(result).toEqual(mockOffices);
-      expect(db.query.offices.findMany).toHaveBeenCalledWith({
-        where: whereClause,
-        orderBy: sortOrder(sortColumn),
-        limit: limit,
-        offset: 0,
-        with: {
-          photos: true,
-          officeServices: {
-            with: {
-              service: true,
-            },
-          },
-        },
-      });
+      expect(result).toHaveLength(3);
+      expect(result[0]).toHaveProperty("id");
+      expect(result[0]).toHaveProperty("title");
+      expect(result[0]).toHaveProperty("photos");
+      expect(result[0]).toHaveProperty("officeServices");
+    });
+
+    it("should apply where clause correctly", async () => {
+      await seedOffice({ title: "Unique Office" });
+
+      const result = await officesService.getOffices(
+        eq(offices.title, "Unique Office"),
+        offices.id,
+        asc,
+        1,
+        10
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("Unique Office");
     });
 
     it("should handle pagination correctly", async () => {
-      const page = 3;
-      const limit = 5;
-      const offset = (page - 1) * limit;
-      const sortOrder = vi.fn();
-
-      await officesRepository.getOffices(
-        {},
-        "created_at",
-        sortOrder,
-        page,
-        limit
+      // Should return offices 4 and 5 (skip first 3)
+      const result = await officesService.getOffices(
+        undefined,
+        offices.id,
+        asc,
+        2, // page 2
+        3 // limit 3
       );
 
-      expect(db.query.offices.findMany).toHaveBeenCalledWith({
-        where: {},
-        orderBy: sortOrder("created_at"),
-        limit: limit,
-        offset: offset,
-        with: {
-          photos: true,
-          officeServices: {
-            with: {
-              service: true,
-            },
-          },
-        },
-      });
+      expect(result).toHaveLength(2); // Only 2 remaining offices
     });
 
-    it("should handle database errors", async () => {
-      (db.query.offices.findMany as any).mockRejectedValue(
-        new Error("Database error")
+    it("should sort correctly", async () => {
+      const result = await officesService.getOffices(
+        undefined,
+        offices.title,
+        desc,
+        1,
+        10
       );
 
-      await expect(
-        officesRepository.getOffices({}, "created_at", vi.fn(), 1, 10)
-      ).rejects.toThrow("Database error");
+      for (let i = 1; i < result.length; i++) {
+        expect(result[i - 1].title >= result[i].title).toBe(true);
+      }
+    });
+
+    it("should include related photos and services", async () => {
+      const office = await seedOffice();
+      const service = await seedService();
+      await seedOfficeService(office.id, service.id);
+
+      // Add a photo (you'd need to add this to your helper)
+      await testDb.insert(photos).values({
+        officeId: office.id,
+        url: "https://example.com/photo.jpg",
+        alt: "Test photo",
+      });
+
+      const result = await officesService.getOffices(
+        eq(offices.id, office.id),
+        offices.id,
+        asc,
+        1,
+        1
+      );
+
+      expect(result[0].photos).toHaveLength(1);
+      expect(result[0].officeServices).toHaveLength(1);
+      expect(result[0].officeServices[0].service).toEqual(
+        expect.objectContaining({ name: service.name })
+      );
     });
   });
 
   describe("getOfficesWithServices", () => {
-    it("should fetch office IDs with services", async () => {
-      const serviceIds = [1, 2, 3];
+    it("should return offices that have all specified services", async () => {
+      const office1 = await seedOffice({ title: "Office 1" });
+      const office2 = await seedOffice({ title: "Office 2" });
+      const office3 = await seedOffice({ title: "Office 3" });
 
-      const result = await officesRepository.getOfficesWithServices(serviceIds);
+      const service1 = await seedService({ name: "Service 1" });
+      const service2 = await seedService({ name: "Service 2" });
+      const service3 = await seedService({ name: "Service 3" });
 
-      expect(result).toEqual(mockOfficeIds);
-      expect(db.select).toHaveBeenCalled();
+      // Office 1 has services 1 and 2
+      await seedOfficeService(office1.id, service1.id);
+      await seedOfficeService(office1.id, service2.id);
+
+      // Office 2 has services 1, 2, and 3
+      await seedOfficeService(office2.id, service1.id);
+      await seedOfficeService(office2.id, service2.id);
+      await seedOfficeService(office2.id, service3.id);
+
+      // Office 3 has only service 1
+      await seedOfficeService(office3.id, service1.id);
+
+      // Search for offices with both service 1 and 2
+      const result = await officesService.getOfficesWithServices([
+        service1.id,
+        service2.id,
+      ]);
+
+      expect(result).toHaveLength(2);
+      expect(result).toContain(office1.id);
+      expect(result).toContain(office2.id);
+      expect(result).not.toContain(office3.id);
     });
 
-    it("should handle empty service IDs", async () => {
-      const serviceIds: number[] = [];
+    it("should return empty array when no offices match all services", async () => {
+      const office = await seedOffice();
+      const service1 = await seedService({ name: "Service 1" });
+      const service2 = await seedService({ name: "Service 2" });
 
-      const result = await officesRepository.getOfficesWithServices(serviceIds);
+      // Office only has service 1
+      await seedOfficeService(office.id, service1.id);
 
-      expect(result).toEqual(mockOfficeIds);
+      // Search for offices with both services
+      const result = await officesService.getOfficesWithServices([
+        service1.id,
+        service2.id,
+      ]);
+
+      expect(result).toHaveLength(0);
     });
 
-    it("should handle single service ID", async () => {
-      const serviceIds = [1];
+    it("should handle single service filter", async () => {
+      const office1 = await seedOffice();
+      const office2 = await seedOffice();
+      const service1 = await seedService({ name: "Service 1" });
+      const service2 = await seedService({ name: "Service 2" });
 
-      const result = await officesRepository.getOfficesWithServices(serviceIds);
+      await seedOfficeService(office1.id, service1.id);
+      await seedOfficeService(office2.id, service2.id);
 
-      expect(result).toEqual(mockOfficeIds);
+      const result = await officesService.getOfficesWithServices([service1.id]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toBe(office1.id);
     });
 
-    it("should handle database errors", async () => {
-      (db.select as any).mockReturnValue({
-        from: vi.fn().mockReturnValue({
-          where: vi.fn().mockReturnValue({
-            groupBy: vi.fn().mockReturnValue({
-              having: vi.fn().mockRejectedValue(new Error("Database error")),
-            }),
-          }),
-        }),
-      });
+    it("should handle empty service array", async () => {
+      await seedOffice();
 
-      await expect(
-        officesRepository.getOfficesWithServices([1, 2, 3])
-      ).rejects.toThrow("Database error");
+      const result = await officesService.getOfficesWithServices([]);
+
+      expect(result).toHaveLength(0);
     });
   });
 });
