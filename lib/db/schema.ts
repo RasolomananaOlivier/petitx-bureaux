@@ -7,12 +7,8 @@ import {
   integer,
   doublePrecision,
   uuid,
-  pgSchema,
   boolean,
   jsonb,
-  decimal,
-  index,
-  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { authUsers } from "drizzle-orm/supabase";

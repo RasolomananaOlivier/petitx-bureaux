@@ -1,37 +1,6 @@
-import { AuthButton } from "@/components/auth-button";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { hasEnvVars } from "@/lib/utils";
-import Link from "next/link";
-import {
-  Search,
-  Building2,
-  Users,
-  MapPin,
-  Star,
-  Phone,
-  Mail,
-  ArrowRight,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import Navbar from "@/components/navbar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import PostsBadge from "../posts-badge";
 
@@ -41,7 +10,6 @@ type Props = {
   image: string;
   posts: string;
   buttonText: string;
-  buttonLink: string;
 };
 const OfficeCategoryCard = ({
   title,
@@ -49,7 +17,6 @@ const OfficeCategoryCard = ({
   image,
   posts,
   buttonText,
-  buttonLink,
 }: Props) => {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 flex flex-col h-full w-[280px] md:w-full flex-shrink-0 self-stretch">
@@ -108,7 +75,6 @@ export default function OfficeCategoriesSection() {
               image="/building.webp"
               posts="70 + postes"
               buttonText="Nous contacter"
-              buttonLink="/offices/operated"
             />
             <OfficeCategoryCard
               title="Étage / plateau indépendant"
@@ -116,7 +82,6 @@ export default function OfficeCategoriesSection() {
               image="/independent.webp"
               posts="20 - 100 postes"
               buttonText="Voir les bureaux"
-              buttonLink="/offices/operated"
             />
             <OfficeCategoryCard
               title="Bureau privé clé en main"
@@ -124,7 +89,6 @@ export default function OfficeCategoriesSection() {
               image="/private.webp"
               posts="1 - 40 postes"
               buttonText="Voir les bureaux"
-              buttonLink="/offices/operated"
             />
             <OfficeCategoryCard
               title="Poste en open Space"
@@ -132,7 +96,6 @@ export default function OfficeCategoriesSection() {
               image="/open_space.webp"
               posts="1 - 10 postes"
               buttonText="Voir les bureaux"
-              buttonLink="/offices/operated"
             />
           </div>
         </div>
@@ -147,7 +110,6 @@ export default function OfficeCategoriesSection() {
               image="/building.webp"
               posts="70 + postes"
               buttonText="Nous contacter"
-              buttonLink="/offices/operated"
             />
 
             {/* Card 2: Étage / plateau indépendant */}
@@ -157,7 +119,6 @@ export default function OfficeCategoriesSection() {
               image="/independent.webp"
               posts="20 - 100 postes"
               buttonText="Voir les bureaux"
-              buttonLink="/offices/operated"
             />
 
             {/* Card 3: Bureau privé clé en main */}
@@ -167,7 +128,6 @@ export default function OfficeCategoriesSection() {
               image="/private.webp"
               posts="1 - 40 postes"
               buttonText="Voir les bureaux"
-              buttonLink="/offices/operated"
             />
 
             {/* Card 4: Poste en open Space */}
@@ -177,7 +137,6 @@ export default function OfficeCategoriesSection() {
               image="/open_space.webp"
               posts="1 - 10 postes"
               buttonText="Voir les bureaux"
-              buttonLink="/offices/operated"
             />
           </div>
         </div>

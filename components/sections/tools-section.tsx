@@ -1,13 +1,4 @@
-import {
-  Check,
-  MapPin,
-  Clock,
-  Star,
-  HandshakeIcon,
-  MapPinned,
-  Timer,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,15 +8,8 @@ type ToolCardProps = {
   description: string;
   imageSrc: string;
   textButton: string;
-  onClick?: () => void;
 };
-function ToolCard({
-  title,
-  description,
-  imageSrc,
-  textButton,
-  onClick,
-}: ToolCardProps) {
+function ToolCard({ title, description, imageSrc, textButton }: ToolCardProps) {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 flex flex-col h-full min-w-[300px]">
       <Image src={imageSrc} alt={title} width={400} height={144} />
@@ -47,7 +31,7 @@ function ToolCard({
   );
 }
 
-type Props = {};
+type Props = Record<string, never>;
 
 const tools = [
   {

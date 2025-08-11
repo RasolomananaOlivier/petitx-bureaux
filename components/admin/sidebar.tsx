@@ -3,14 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  Building,
-  Users,
-  BarChart3,
-  Upload,
-  Home,
-  Settings,
-} from "lucide-react";
+import { Building, Users, BarChart3, Home, Settings } from "lucide-react";
 
 const navigation = [
   {
@@ -32,11 +25,6 @@ const navigation = [
     name: "Analytics",
     href: "/admin/analytics",
     icon: BarChart3,
-  },
-  {
-    name: "Médias",
-    href: "/admin/upload",
-    icon: Upload,
   },
 ];
 

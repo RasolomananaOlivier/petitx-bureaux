@@ -1,38 +1,6 @@
-import { AuthButton } from "@/components/auth-button";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
-import {
-  Search,
-  Building2,
-  Users,
-  MapPin,
-  Star,
-  Phone,
-  Mail,
-  ArrowRight,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  Check,
-} from "lucide-react";
+import { Search, Star, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import Navbar from "@/components/navbar";
 
 export default function HeroSection() {
   return (

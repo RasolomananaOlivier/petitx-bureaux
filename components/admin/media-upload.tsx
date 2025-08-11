@@ -9,13 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Upload, X, Check, AlertCircle } from "lucide-react";
+import { Upload, X } from "lucide-react";
 
 interface MediaUploadProps {
-  onUploadSuccess: (fileUrl: string) => void;
+  onUploadSuccess?: (fileUrl: string) => void;
 }
 
 interface UploadFile {
@@ -23,7 +20,7 @@ interface UploadFile {
   id: string;
 }
 
-export function MediaUpload({ onUploadSuccess }: MediaUploadProps) {
+export function MediaUpload({}: MediaUploadProps) {
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {

@@ -1,6 +1,6 @@
 import React from "react";
 
-type Props = {};
+type Props = Record<string, never>;
 
 export default function LocationsSection({}: Props) {
   const links1 = [

@@ -1,6 +1,6 @@
 // src/app/api/accounts/route.ts
 import { db } from "@/lib/db/drizzle";
-import { accounts, NewAccount } from "@/lib/db/schema";
+import { accounts } from "@/lib/db/schema";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 

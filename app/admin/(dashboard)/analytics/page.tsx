@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnalyticsCards } from "@/components/admin/analytics-cards";
 import { TrendingUp, Users, Building, Target } from "lucide-react";
 

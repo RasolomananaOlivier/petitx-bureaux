@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { GoogleMapProvider } from "@/providers/google-map-provider";
-import Navbar from "@/components/navbar";
 import { roslindaleBlack, robertSans } from "./font";
 
 const defaultUrl = process.env.VERCEL_URL

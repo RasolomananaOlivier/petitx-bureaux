@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { ArrowDown, ChevronDown, Search, User, Menu, X } from "lucide-react";
+import { ChevronDown, Search, User, Menu } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   Sheet,
@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 
-type Props = {};
+type Props = Record<string, never>;
 
 export default function Navbar({}: Props) {
   const [isOpen, setIsOpen] = useState(false);

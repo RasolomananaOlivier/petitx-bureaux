@@ -8,7 +8,7 @@ import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 
-type Props = {};
+type Props = Record<string, never>;
 
 export default function FaqSection({}: Props) {
   return (

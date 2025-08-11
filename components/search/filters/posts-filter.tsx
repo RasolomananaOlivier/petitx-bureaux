@@ -12,7 +12,6 @@ interface PostsFilterProps {
   onMaxPostsChange: (value: number | null) => void;
   onClear: () => void;
   onApply: () => void;
-  resultCount: number;
 }
 
 export function PostsFilter({
@@ -22,7 +21,6 @@ export function PostsFilter({
   onMaxPostsChange,
   onClear,
   onApply,
-  resultCount,
 }: PostsFilterProps) {
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

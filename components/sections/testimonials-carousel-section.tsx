@@ -1,7 +1,6 @@
 "use client";
-import { Users, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Carousel,
   CarouselApi,
@@ -25,7 +24,6 @@ type Testimonial = {
 function TestimonialCard({
   title,
   postes,
-  postesType = "badge",
   quote,
   author,
   authorRole,

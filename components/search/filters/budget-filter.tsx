@@ -13,7 +13,6 @@ interface BudgetFilterProps {
   onMaxPriceChange: (value: number | null) => void;
   onClear: () => void;
   onApply: () => void;
-  resultCount: number;
 }
 
 export function BudgetFilter({
@@ -23,7 +22,6 @@ export function BudgetFilter({
   onMaxPriceChange,
   onClear,
   onApply,
-  resultCount,
 }: BudgetFilterProps) {
   const handleSliderChange = (value: number[]) => {
     onMinPriceChange(value[0] || null);

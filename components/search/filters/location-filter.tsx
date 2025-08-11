@@ -10,7 +10,6 @@ interface LocationFilterProps {
   onChange: (value: string[] | null) => void;
   onClear: () => void;
   onApply: () => void;
-  resultCount: number;
 }
 
 export function LocationFilter({
@@ -18,7 +17,6 @@ export function LocationFilter({
   onChange,
   onClear,
   onApply,
-  resultCount,
 }: LocationFilterProps) {
   const locations = [
     { id: "paris", label: "Paris" },

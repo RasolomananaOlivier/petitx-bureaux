@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import GoogleMap from "./google-map";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { useOffices } from "@/hooks/use-offices";
@@ -131,7 +131,9 @@ function SearchPageContent() {
 export default function SearchPage() {
   return (
     <SearchProvider>
-      <SearchPageContent />
+      <Suspense fallback={<div>Loading...</div>}>
+        <SearchPageContent />
+      </Suspense>
     </SearchProvider>
   );
 }

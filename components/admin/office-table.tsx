@@ -28,14 +28,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { MoreHorizontal, Edit, Copy, Trash2, Eye } from "lucide-react";
-import { Office } from "@/lib/types";
 
 interface OfficeTableProps {
   searchQuery: string;
 }
 
 // Mock data - replace with actual API call
-const mockOffices: Office[] = [
+const mockOffices = [
   {
     id: "1",
     name: "Bureau Marais Cosy",
@@ -73,7 +72,7 @@ const mockOffices: Office[] = [
 ];
 
 export function OfficeTable({ searchQuery }: OfficeTableProps) {
-  const [offices, setOffices] = useState<Office[]>(mockOffices);
+  const [offices, setOffices] = useState(mockOffices);
 
   const filteredOffices = offices.filter(
     (office) =>
@@ -81,7 +80,7 @@ export function OfficeTable({ searchQuery }: OfficeTableProps) {
       office.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDuplicate = (office: Office) => {
+  const handleDuplicate = (office: (typeof mockOffices)[0]) => {
     const duplicated = {
       ...office,
       id: Date.now().toString(),

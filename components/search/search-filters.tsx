@@ -222,7 +222,6 @@ export function SearchFilters({
             onChange={(value) => onPendingFiltersChange({ location: value })}
             onClear={handleClearFilters}
             onApply={handleApplyFilters}
-            resultCount={resultCount}
           />
         );
 
@@ -239,7 +238,6 @@ export function SearchFilters({
             }
             onClear={handleClearFilters}
             onApply={handleApplyFilters}
-            resultCount={resultCount}
           />
         );
 
@@ -256,7 +254,6 @@ export function SearchFilters({
             }
             onClear={handleClearFilters}
             onApply={handleApplyFilters}
-            resultCount={resultCount}
           />
         );
 
@@ -273,7 +270,6 @@ export function SearchFilters({
             }
             onClear={handleClearFilters}
             onApply={handleApplyFilters}
-            resultCount={resultCount}
           />
         );
 
@@ -286,7 +282,6 @@ export function SearchFilters({
             }
             onClear={handleClearFilters}
             onApply={handleApplyFilters}
-            resultCount={resultCount}
           />
         );
 
@@ -321,10 +316,6 @@ export function SearchFilters({
 
   const renderMobileFilterContent = () => {
     if (!selectedMobileFilter) return renderMobileFilterList();
-
-    const selectedButton = filterButtons.find(
-      (b) => b.id === selectedMobileFilter
-    );
 
     return (
       <div className="h-full flex flex-col">

@@ -1,4 +1,4 @@
-import { type Office as DbOffice, type Photo } from "@/lib/db/schema";
+import { type Office as DbOffice } from "@/lib/db/schema";
 
 export type Office = DbOffice;
 

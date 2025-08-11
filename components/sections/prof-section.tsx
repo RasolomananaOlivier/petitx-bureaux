@@ -1,16 +1,8 @@
-import {
-  Check,
-  MapPin,
-  Clock,
-  Star,
-  HandshakeIcon,
-  MapPinned,
-  Timer,
-} from "lucide-react";
+import { Star, HandshakeIcon, MapPinned, Timer } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 
-type Props = {};
+type Props = Record<string, never>;
 
 export default function ProfSection({}: Props) {
   return (
@@ -34,7 +26,7 @@ export default function ProfSection({}: Props) {
         <div className="flex flex-col md:flex-row gap-16 w-full">
           <div className="relative w-full lg:w-5/12 flex justify-center shrink-0 items-stretch">
             {/* Main office image with rounded corners */}
-            <div className="w-[300px]">
+            <div className="w-[300px] md:w-full md:pl-12">
               <Image
                 src="/232x.webp"
                 alt="Office space with desks"

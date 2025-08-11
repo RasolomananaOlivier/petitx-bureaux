@@ -1,6 +1,3 @@
-import { Star, Phone, Mail, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import HeroSection from "@/components/sections/hero-section";
 import PartnersInfiniteScroll from "@/components/sections/partners-infinite-scroll";
 import OfficeCategoriesSection from "@/components/sections/office-categories-section";

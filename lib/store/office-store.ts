@@ -46,7 +46,7 @@ export const initialFormData: Office = {
 };
 
 // Zustand store
-export const useOfficeFormStore = create<OfficeFormState>((set, get) => ({
+export const useOfficeFormStore = create<OfficeFormState>((set) => ({
   formData: initialFormData,
   currentStep: 0,
   completedSteps: new Set<number>(),

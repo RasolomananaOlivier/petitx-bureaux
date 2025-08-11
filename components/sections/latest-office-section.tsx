@@ -7,8 +7,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { OfficeWithRelations } from "@/features/offices/types";
@@ -36,7 +34,7 @@ export function OfficeCard({ office }: { office: OfficeWithRelations }) {
       : ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=800"];
 
   return (
-    <div className="relative bg-white rounded-xl border overflow-hidden hover:shadow-lg transition-all duration-300 min-w-[300px]">
+    <div className="relative bg-white rounded-xl border overflow-hidden hover:shadow-lg transition-all duration-300 min-w-[300px] md:min-w-full">
       <div className="relative group">
         <Carousel setApi={setApi} opts={{ loop: true, align: "center" }}>
           <CarouselContent className="-ml-2">
@@ -143,7 +141,7 @@ export default function LatestOfficesSection() {
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl border overflow-hidden animate-pulse min-w-[300px]"
+                className="bg-white rounded-xl border overflow-hidden animate-pulse min-w-[300px] md:min-w-full"
               >
                 <div className="h-48 bg-gray-200" />
                 <div className="p-3 space-y-2">
@@ -160,15 +158,15 @@ export default function LatestOfficesSection() {
   }
 
   return (
-    <div className="lg:p-16">
+    <div className="lg:p-10">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6 md:mb-10 p-4 md:p-8 ">
+        <div className="flex justify-between items-center mb-6 md:mb-8 p-4 md:p-8 ">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 font-roslindale">
             Nos derniers bureaux
           </h1>
         </div>
 
-        <div className="flex overflow-x-auto md:grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-4 scrollbar-hide px-4 md:px-8 ">
+        <div className="flex overflow-x-auto md:grid sm:grid-cols-2 lg:grid-cols-4 lg:gap-4 scrollbar-hide px-4 md:px-8">
           {offices.map((office) => (
             <OfficeCard key={office.id} office={office} />
           ))}

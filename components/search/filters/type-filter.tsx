@@ -13,7 +13,6 @@ interface TypeFilterProps {
   onShowCombinationsChange: (value: string | null) => void;
   onClear: () => void;
   onApply: () => void;
-  resultCount: number;
 }
 
 export function TypeFilter({
@@ -23,7 +22,6 @@ export function TypeFilter({
   onShowCombinationsChange,
   onClear,
   onApply,
-  resultCount,
 }: TypeFilterProps) {
   const types = [
     {

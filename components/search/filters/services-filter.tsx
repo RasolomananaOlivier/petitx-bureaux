@@ -20,7 +20,6 @@ interface ServicesFilterProps {
   onServicesChange: (value: number[] | null) => void;
   onClear: () => void;
   onApply: () => void;
-  resultCount: number;
 }
 
 export function ServicesFilter({
@@ -28,7 +27,6 @@ export function ServicesFilter({
   onServicesChange,
   onClear,
   onApply,
-  resultCount,
 }: ServicesFilterProps) {
   const [availableServices, setAvailableServices] = useState<ServiceCategory[]>(
     []

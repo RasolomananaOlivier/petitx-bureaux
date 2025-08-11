@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 
-type Props = {};
+type Props = Record<string, never>;
 
 export default function HowItWorksSection({}: Props) {
   return (

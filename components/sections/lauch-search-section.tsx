@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-type Props = {};
+type Props = Record<string, never>;
 
 export default function LaunchSearchSection({}: Props) {
   return (
