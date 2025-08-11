@@ -8,12 +8,24 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
   MapPin,
   Users,
   Building,
   DollarSign,
   Filter,
   ChevronDown,
+  ArrowLeft,
+  RotateCcw,
+  ChevronRight,
+  Search,
+  SlidersHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LocationFilter } from "./filters/location-filter";
@@ -58,15 +70,23 @@ export function SearchFilters({
   resultCount,
 }: SearchFiltersProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [selectedMobileFilter, setSelectedMobileFilter] = useState<
+    string | null
+  >(null);
 
   const handleApplyFilters = () => {
     onApplyFilters();
     setActiveFilter(null);
+    setMobileFilterOpen(false);
+    setSelectedMobileFilter(null);
   };
 
   const handleClearFilters = () => {
     onClearFilters();
     setActiveFilter(null);
+    setMobileFilterOpen(false);
+    setSelectedMobileFilter(null);
   };
 
   const getLocationLabel = () => {
@@ -275,11 +295,67 @@ export function SearchFilters({
     }
   };
 
+  const renderMobileFilterList = () => (
+    <div className="space-y-0">
+      {filterButtons.map((button) => (
+        <button
+          key={button.id}
+          onClick={() => setSelectedMobileFilter(button.id)}
+          className="w-full flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <button.icon
+              className={cn(
+                "size-5 text-gray-500",
+                button.active && "text-primary",
+                button.pending && "text-orange-600"
+              )}
+            />
+            <span className="text-gray-900 font-medium">{button.label}</span>
+          </div>
+          <ChevronRight className="size-4 text-gray-400" />
+        </button>
+      ))}
+    </div>
+  );
+
+  const renderMobileFilterContent = () => {
+    if (!selectedMobileFilter) return renderMobileFilterList();
+
+    const selectedButton = filterButtons.find(
+      (b) => b.id === selectedMobileFilter
+    );
+
+    return (
+      <div className="h-full flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+          <button
+            onClick={() => setSelectedMobileFilter(null)}
+            className="flex items-center gap-2 text-gray-600"
+          >
+            <ArrowLeft className="size-5" />
+            <span>Retour</span>
+          </button>
+          <button
+            onClick={handleClearFilters}
+            className="flex items-center gap-2 text-gray-600"
+          >
+            <RotateCcw className="size-4" />
+            <span>Réinitialiser</span>
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4">
+          {renderFilterContent(selectedMobileFilter)}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <section className="flex-shrink-0 bg-white px-6 py-4">
+    <section className="flex-shrink-0 bg-white px-4 md:px-6 pb-4 md:py-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
             {filterButtons.map((button) => (
               <Popover
                 key={button.id}
@@ -321,6 +397,44 @@ export function SearchFilters({
                 </PopoverContent>
               </Popover>
             ))}
+          </div>
+
+          <div className="md:hidden w-full">
+            <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-4 py-6 gap-2 bg-white text-gray-700 border-gray-200 hover:bg-gray-50 w-full"
+                >
+                  <div className="flex items-center gap-2 flex-1">
+                    <Search className="!size-5 text-gray-500" />
+                    <span className="text-gray-400">Modifier ma recherche</span>
+                  </div>
+                  <SlidersHorizontal className="h-3 w-3" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[80vh] p-0">
+                <SheetHeader className="px-4 py-3 border-b border-gray-100">
+                  <SheetTitle className="text-left text-lg font-bold">
+                    Modifier ma recherche
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex-1 overflow-y-auto">
+                  {renderMobileFilterContent()}
+                </div>
+                {selectedMobileFilter && (
+                  <div className="p-4 border-t border-gray-100">
+                    <Button
+                      onClick={handleApplyFilters}
+                      className="w-full py-3 text-base font-semibold"
+                    >
+                      {resultCount.toLocaleString()} résultats
+                    </Button>
+                  </div>
+                )}
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>

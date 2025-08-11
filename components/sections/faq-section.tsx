@@ -13,8 +13,8 @@ type Props = {};
 export default function FaqSection({}: Props) {
   return (
     <section className="pt-16 pb-12">
-      <div className="max-w-7xl mx-auto gap-10 flex flex-col px-10">
-        <h2 className="text-4xl font-bold text-black mb-4 md:mb-0 font-roslindale">
+      <div className="max-w-7xl mx-auto gap-6 md:gap-10 flex flex-col px-4 md:px-10">
+        <h2 className="text-3xl md:text-4xl font-bold text-black mb-4 md:mb-0 font-roslindale">
           La FAQ de Petits Bureaux et de l'immobilier d'entreprise
         </h2>
 

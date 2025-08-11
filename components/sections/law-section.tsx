@@ -7,8 +7,8 @@ type Props = {};
 export default function LawSection({}: Props) {
   return (
     <section className="pt-16 pb-12 bg-[#fbf0ff]">
-      <div className="max-w-4xl mx-auto gap-10 flex flex-col px-10">
-        <h2 className="text-4xl font-bold text-black mb-4 md:mb-0 font-roslindale text-center">
+      <div className="max-w-4xl mx-auto gap-6 md:gap-10 flex flex-col px-4 md:px-10">
+        <h2 className="text-3xl md:text-4xl font-bold text-black mb-4 md:mb-0 font-roslindale text-center">
           Le bureau équipé : la nouvelle norme de l'immobilier d'entreprise
         </h2>
 
@@ -322,7 +322,7 @@ export default function LawSection({}: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-end pt-14 max-w-7xl">
+      <div className="flex flex-col sm:flex-row gap-4 justify-end pt-14 max-w-7xl px-4 md:px-0">
         <div className="flex flex-col sm:flex-row gap-4">
           <Button
             variant="outline"

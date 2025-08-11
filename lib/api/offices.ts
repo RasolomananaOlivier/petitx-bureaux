@@ -1,4 +1,4 @@
-import { PaginatedOfficesResponse } from "@/lib/types";
+import { PaginatedOfficesResponse } from "@/features/offices/types";
 
 export interface GetOfficesParams {
   arr?: number;

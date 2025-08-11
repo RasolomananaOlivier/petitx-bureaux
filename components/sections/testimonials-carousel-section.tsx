@@ -126,8 +126,8 @@ export default function TestimonialsCarouselSection() {
   return (
     <section className="py-20 bg-green-50">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4 md:mb-0 font-roslindale">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-4 lg:px-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-0 md:mb-10 font-roslindale">
             5 000 entreprises ont trouvé leurs bureaux avec PetitsBureaux
           </h2>
           <div className="flex items-center justify-end gap-2">
@@ -142,7 +142,7 @@ export default function TestimonialsCarouselSection() {
         </div>
 
         <div className="flex gap-2 justify-center  max-w-6xl mx-auto">
-          <div className="flex items-center">
+          <div className="lg:flex items-center hidden">
             <Button
               size="icon"
               variant="outline"
@@ -156,7 +156,7 @@ export default function TestimonialsCarouselSection() {
           <Carousel
             opts={{ loop: true, align: "start" }}
             className={cn(
-              "w-full flex-1 cursor-grab select-none",
+              "w-full flex-1 cursor-grab select-none max-w-md lg:max-w-6xl mx-auto ",
               isGrabbing && "cursor-grabbing"
             )}
             setApi={setApi}
@@ -169,14 +169,14 @@ export default function TestimonialsCarouselSection() {
               onMouseLeave={handleMouseUp}
             >
               {testimonials.map((t, i) => (
-                <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/4">
+                <CarouselItem key={i} className="basis-1/2 lg:basis-1/4">
                   <TestimonialCard {...t} />
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
 
-          <div className="flex items-center">
+          <div className="lg:flex items-center hidden">
             <Button
               size="icon"
               variant="outline"

@@ -8,12 +8,12 @@ type Props = {};
 export default function LaunchSearchSection({}: Props) {
   return (
     <section className="pt-16 pb-12 bg-[#ffeee5]">
-      <div className="max-w-7xl mx-auto gap-10 flex flex-col px-10">
-        <h2 className="text-4xl font-bold text-black mb-4 md:mb-0 font-roslindale">
+      <div className="max-w-7xl mx-auto gap-6 md:gap-10 flex flex-col px-4 md:px-10">
+        <h2 className="text-3xl md:text-4xl font-bold text-black mb-4 md:mb-0 font-roslindale">
           Comment voulez-vous lancer votre recherche ?
         </h2>
 
-        <div className="flex justify-between">
+        <div className="flex flex-col md:flex-row justify-between">
           <div className="flex flex-col items-center justify-center gap-6">
             <h2 className="text-[22px] font-bold">
               J'explore, je filtre et je trouve !
@@ -33,6 +33,12 @@ export default function LaunchSearchSection({}: Props) {
               <Search className="!size-6 mr-2" />
               Voir 8 286 annonces
             </Button>
+          </div>
+
+          <div className="my-10 md:hidden flex justify-center items-center gap-2 w-full">
+            <div className="h-[1px] w-full bg-gray-500 rounded-full"></div>
+            <span className="text-gray-500 text-sm">ou</span>
+            <div className="h-[1px] w-full bg-gray-500 rounded-full"></div>{" "}
           </div>
 
           <div className="flex flex-col items-center justify-center gap-6">

@@ -84,16 +84,16 @@ export function OfficeList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hide px-2 pb-10">
+    <div className="flex-1 overflow-y-auto scrollbar-hide md:px-2 pb-10">
       <div className="flex flex-col gap-4 p-4">
-        <div className="text-xl text-gray-700 font-bold flex items-center justify-between">
-          <span>{pagination.total} espaces</span>
+        <div className="text-lg md:text-xl text-gray-700 font-bold flex flex-row items-center justify-between gap-3">
+          <span>{pagination.total.toLocaleString()} espaces</span>
 
           <Select
             value={getCurrentSortValue()}
             onValueChange={handleSortChange}
           >
-            <SelectTrigger className="h-9">
+            <SelectTrigger className="h-9 md:w-full sm:w-auto text-sm md:text-base">
               <SelectValue placeholder="Tri : Recommandations" />
             </SelectTrigger>
             <SelectContent>
@@ -119,7 +119,7 @@ export function OfficeList({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {offices.map((office, index) => (
               <OfficeCard key={index} office={office} />
             ))}

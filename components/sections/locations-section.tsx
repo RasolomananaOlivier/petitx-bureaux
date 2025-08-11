@@ -56,8 +56,8 @@ export default function LocationsSection({}: Props) {
 
   return (
     <div className="flex items-center justify-center py-16 bg-white">
-      <div className="w-full max-w-7xl px-10 mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8 md:mb-12 font-roslindale">
+      <div className="w-full max-w-7xl px-4 md:px-10 mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 md:mb-12 font-roslindale">
           Ubiq vous accompagne partout
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">

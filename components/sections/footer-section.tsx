@@ -19,7 +19,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <div className="bg-muted/30 text-muted-foreground">
-      <footer className="max-w-7xl mx-auto w-full mt-12 px-12">
+      <footer className="max-w-7xl mx-auto w-full mt-12 px-4 md:px-12">
         <div className="container py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Bureaux */}
           <Card className="shadow-none border-0 bg-transparent">

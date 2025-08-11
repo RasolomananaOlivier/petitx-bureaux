@@ -7,14 +7,14 @@ type Props = {};
 
 export default function HowItWorksSection({}: Props) {
   return (
-    <section className="pt-32 pb-16 bg-white">
-      <div className="max-w-7xl mx-auto flex flex-col gap-8 px-10">
-        <h2 className="text-4xl font-bold text-gray-900 font-roslindale">
+    <section className="pt-16 md:pt-32 pb-16 bg-white">
+      <div className="max-w-7xl mx-auto flex flex-col gap-8 px-4 lg:px-10">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 font-roslindale">
           Nos fonctionnalités simplifient votre recherche
         </h2>
 
         <div className="flex flex-col gap-14">
-          <div className="flex gap-8 w-full items-center">
+          <div className="flex flex-col md:flex-row gap-8 w-full items-center">
             <Image
               src="/planning_x600.webp"
               alt="Planning"
@@ -43,7 +43,7 @@ export default function HowItWorksSection({}: Props) {
             </div>
           </div>
 
-          <div className="flex gap-8 w-full items-center flex-row-reverse">
+          <div className="flex flex-col gap-8 w-full items-center md:flex-row-reverse">
             <Image
               src="/recommandation_x600.webp"
               alt="Tableau de bord"
@@ -75,7 +75,7 @@ export default function HowItWorksSection({}: Props) {
             </div>
           </div>
 
-          <div className="flex gap-8 w-full items-center">
+          <div className="flex flex-col md:flex-row gap-8 w-full items-center">
             <Image
               src="/board_x600.webp"
               alt="Planning"
