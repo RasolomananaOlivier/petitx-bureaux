@@ -34,8 +34,18 @@ function OfficeMarkersWithClusteringComponent() {
 }
 
 const GoogleMap = () => {
-  const { filteredOffices, selectedOfficeId, hoveredOfficeId } =
-    useMapListSync();
+  const {
+    filteredOffices,
+    selectedOfficeId,
+    hoveredOfficeId,
+    expandedOfficeId,
+  } = useMapListSync();
+
+  const sortedOffices = [...filteredOffices].sort((a, b) => {
+    if (a.id === expandedOfficeId) return 1;
+    if (b.id === expandedOfficeId) return -1;
+    return 0;
+  });
 
   return (
     <div className="w-full h-full">
@@ -46,8 +56,7 @@ const GoogleMap = () => {
         gestureHandling="cooperative"
         disableDefaultUI={true}
       >
-        {/* <OfficeMarkersWithClusteringComponent />   */}
-        {filteredOffices.map((office) => (
+        {sortedOffices.map((office) => (
           <AdvancedMarkerWithCustomPin key={office.id} office={office} />
         ))}
       </Map>
@@ -60,13 +69,25 @@ const AdvancedMarkerWithCustomPin = ({
 }: {
   office: OfficeWithRelations;
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const { hoveredOfficeId } = useMapListSync();
+  const {
+    hoveredOfficeId,
+    selectedOfficeId,
+    expandedOfficeId,
+    setSelectedOfficeId,
+    setExpandedOfficeId,
+  } = useMapListSync();
+
+  const isExpanded = expandedOfficeId === office.id;
 
   const handleMarkerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    setIsExpanded(!isExpanded);
+    if (isExpanded) {
+      setExpandedOfficeId(null);
+      setSelectedOfficeId(office.id);
+    } else {
+      setExpandedOfficeId(office.id);
+    }
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -75,32 +96,30 @@ const AdvancedMarkerWithCustomPin = ({
 
   useEffect(() => {
     const handleClickOutside = () => {
-      setIsExpanded(false);
+      setExpandedOfficeId(null);
     };
 
     if (isExpanded) {
       document.addEventListener("click", handleClickOutside);
       return () => document.removeEventListener("click", handleClickOutside);
     }
-  }, [isExpanded]);
+  }, [isExpanded, setExpandedOfficeId]);
 
   const renderCustomPin = () => {
     return (
-      <motion.div
-        className="relative cursor-pointer"
+      <div
+        className={cn(
+          "relative cursor-pointer",
+          isExpanded && "relative z-[9999] transform translate-z-0"
+        )}
+        style={isExpanded ? { transform: "translateZ(1px)" } : undefined}
         onClick={handleMarkerClick}
-        initial={{ scale: 0.6, opacity: 0, y: 12 }}
-        animate={{ scale: [0.6, 1.04, 1], opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.45,
-          times: [0, 0.7, 1],
-          ease: [0.25, 0.8, 0.25, 1],
-        }}
       >
         <div
           className={cn(
             "bg-white shadow-xl shadow-black/25 rounded-lg overflow-hidden origin-center transition-all",
-            hoveredOfficeId === office.id && "bg-gray-600"
+            hoveredOfficeId === office.id && "bg-gray-600",
+            isExpanded && "relative z-[9999]"
           )}
         >
           {!isExpanded ? (
@@ -161,29 +180,14 @@ const AdvancedMarkerWithCustomPin = ({
           )}
         </div>
 
-        <motion.div
-          className="absolute bottom-[2px] left-1/2 transform -translate-x-1/2 translate-y-full"
-          animate={{
-            scale: isExpanded ? 1.15 : 1,
-            y: isExpanded ? -1 : 0,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
-          }}
-        >
-          <svg
-            viewBox="0 0 10 6"
-            className={cn(
-              "w-4 h-3 fill-white transition-all",
-              hoveredOfficeId === office.id && "fill-gray-600"
-            )}
-          >
-            <path d="M0,0 Q5,8 10,0 Z" />
-          </svg>
-        </motion.div>
-      </motion.div>
+        <div
+          className={cn(
+            "absolute bottom-[9px] left-1/2 transform -translate-x-1/2 translate-y-full size-[14px] rotate-[135deg] bg-white rounded-sm",
+            isExpanded && "z-[9999]",
+            hoveredOfficeId === office.id && "bg-gray-600"
+          )}
+        ></div>
+      </div>
     );
   };
 

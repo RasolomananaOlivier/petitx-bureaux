@@ -39,6 +39,7 @@ export function useOffices(): UseOfficesResult {
     setError(null);
     try {
       const data = await getOffices(params);
+      console.log("data", data);
       setOffices(data.offices);
       setPagination(data.pagination);
     } catch (err) {

@@ -10,6 +10,8 @@ import {
 import { Pagination } from "@/components/ui/pagination";
 import { OfficeCard } from "@/components/sections/latest-office-section";
 import { OfficeWithRelations } from "@/features/offices/types";
+import { useMapListSync } from "@/components/search/map-list-sync-provider";
+import { useRef, useEffect, useCallback } from "react";
 
 interface PaginationState {
   page: number;
@@ -41,6 +43,15 @@ export function OfficeList({
   onSortChange,
   onPageChange,
 }: OfficeListProps) {
+  const {
+    selectedOfficeId,
+    hoveredOfficeId,
+    setSelectedOfficeId,
+    setHoveredOfficeId,
+  } = useMapListSync();
+  const listRef = useRef<HTMLDivElement>(null);
+  const selectedOfficeRef = useRef<HTMLDivElement>(null);
+
   const handleSortChange = (value: string) => {
     const [newSortBy, newSortOrder] = value.split(":");
     onSortChange(newSortBy, newSortOrder);
@@ -49,6 +60,33 @@ export function OfficeList({
   const getCurrentSortValue = () => {
     return `${sortBy}:${sortOrder}`;
   };
+
+  const handleOfficeHover = useCallback(
+    (office: OfficeWithRelations) => {
+      setHoveredOfficeId(office.id);
+    },
+    [setHoveredOfficeId]
+  );
+
+  const handleOfficeLeave = useCallback(() => {
+    setHoveredOfficeId(null);
+  }, [setHoveredOfficeId]);
+
+  const handleOfficeClick = useCallback(
+    (office: OfficeWithRelations) => {
+      setSelectedOfficeId(office.id);
+    },
+    [setSelectedOfficeId]
+  );
+
+  useEffect(() => {
+    if (selectedOfficeId && selectedOfficeRef.current && listRef.current) {
+      selectedOfficeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [selectedOfficeId]);
 
   if (error) {
     return (
@@ -84,7 +122,10 @@ export function OfficeList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hide md:px-2 pb-10">
+    <div
+      ref={listRef}
+      className="flex-1 overflow-y-auto scrollbar-hide md:px-2 pb-10"
+    >
       <div className="flex flex-col gap-4 p-4">
         <div className="text-lg md:text-xl text-gray-700 font-bold flex flex-row items-center justify-between gap-3">
           <span>{pagination.total.toLocaleString()} espaces</span>
@@ -121,7 +162,19 @@ export function OfficeList({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {offices.map((office, index) => (
-              <OfficeCard key={index} office={office} />
+              <div
+                key={office.id}
+                ref={selectedOfficeId === office.id ? selectedOfficeRef : null}
+              >
+                <OfficeCard
+                  office={office}
+                  isSelected={selectedOfficeId === office.id}
+                  isHovered={hoveredOfficeId === office.id}
+                  onHover={handleOfficeHover}
+                  onLeave={handleOfficeLeave}
+                  onClick={handleOfficeClick}
+                />
+              </div>
             ))}
 
             {pagination.totalPages > 1 && (

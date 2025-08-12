@@ -11,7 +11,21 @@ import {
 } from "@/components/ui/carousel";
 import { OfficeWithRelations } from "@/features/offices/types";
 
-export function OfficeCard({ office }: { office: OfficeWithRelations }) {
+interface OfficeCardProps {
+  office: OfficeWithRelations;
+  isSelected?: boolean;
+  isHovered?: boolean;
+  onHover?: (office: OfficeWithRelations) => void;
+  onLeave?: () => void;
+  onClick?: (office: OfficeWithRelations) => void;
+}
+
+export function OfficeCard({
+  office,
+  onHover,
+  onLeave,
+  onClick,
+}: OfficeCardProps) {
   const [api, setApi] = useState<CarouselApi | undefined>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [snaps, setSnaps] = useState<number[]>([]);
@@ -33,8 +47,25 @@ export function OfficeCard({ office }: { office: OfficeWithRelations }) {
       ? office.photos.map((photo) => photo.url)
       : ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=800"];
 
+  const handleMouseEnter = useCallback(() => {
+    onHover?.(office);
+  }, [office, onHover]);
+
+  const handleMouseLeave = useCallback(() => {
+    onLeave?.();
+  }, [onLeave]);
+
+  const handleClick = useCallback(() => {
+    onClick?.(office);
+  }, [office, onClick]);
+
   return (
-    <div className="relative bg-white rounded-xl border overflow-hidden hover:shadow-lg transition-all duration-300 min-w-[300px] md:min-w-full">
+    <div
+      className={`relative bg-white rounded-xl border overflow-hidden transition-all duration-300 min-w-[300px] md:min-w-full cursor-pointer  hover:shadow-lg`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
+    >
       <div className="relative group">
         <Carousel setApi={setApi} opts={{ loop: true, align: "center" }}>
           <CarouselContent className="-ml-2">
@@ -51,7 +82,10 @@ export function OfficeCard({ office }: { office: OfficeWithRelations }) {
           <Button
             size="icon"
             variant="outline"
-            onClick={() => api?.scrollPrev()}
+            onClick={(e) => {
+              e.stopPropagation();
+              api?.scrollPrev();
+            }}
             className="opacity-0 group-hover:opacity-100 absolute top-1/2 -translate-y-1/2 left-4 transition-opacity rounded-full"
           >
             <ChevronLeft />
@@ -59,7 +93,10 @@ export function OfficeCard({ office }: { office: OfficeWithRelations }) {
           <Button
             size="icon"
             variant="outline"
-            onClick={() => api?.scrollNext()}
+            onClick={(e) => {
+              e.stopPropagation();
+              api?.scrollNext();
+            }}
             className="opacity-0 group-hover:opacity-100 absolute top-1/2 -translate-y-1/2 right-4 transition-opacity rounded-full"
           >
             <ChevronRight />
@@ -74,7 +111,10 @@ export function OfficeCard({ office }: { office: OfficeWithRelations }) {
           {snaps.map((_, idx) => (
             <button
               key={idx}
-              onClick={() => api?.scrollTo(idx)}
+              onClick={(e) => {
+                e.stopPropagation();
+                api?.scrollTo(idx);
+              }}
               className={`rounded-full transition-all ${
                 idx === selectedIndex
                   ? "bg-white size-2"

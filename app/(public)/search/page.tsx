@@ -9,11 +9,16 @@ import { SearchFilters } from "@/components/search/search-filters";
 import { OfficeList } from "@/components/search/office-list";
 import { MobileViewToggle } from "@/components/search/mobile-view-toggle";
 import { SearchProvider } from "@/components/search/search-provider";
+import {
+  MapListSyncProvider,
+  useMapListSync,
+} from "@/components/search/map-list-sync-provider";
 import { GetOfficesParams } from "@/lib/api/offices";
 
 function SearchPageContent() {
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
   const [searchParams, setSearchParams] = useSearchParams();
+  const { setFilteredOffices } = useMapListSync();
 
   const officesParams = useMemo((): GetOfficesParams => {
     const params: GetOfficesParams = {
@@ -41,8 +46,13 @@ function SearchPageContent() {
     usePendingFilters(searchParams);
 
   useEffect(() => {
+    console.log("officesParams", officesParams);
     refetch(officesParams);
   }, [officesParams, refetch]);
+
+  useEffect(() => {
+    setFilteredOffices(offices);
+  }, [offices, setFilteredOffices]);
 
   const handleApplyFilters = () => {
     setSearchParams({ ...pendingFilters, page: 1 });
@@ -131,9 +141,11 @@ function SearchPageContent() {
 export default function SearchPage() {
   return (
     <SearchProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        <SearchPageContent />
-      </Suspense>
+      <MapListSyncProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SearchPageContent />
+        </Suspense>
+      </MapListSyncProvider>
     </SearchProvider>
   );
 }
