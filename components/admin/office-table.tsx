@@ -148,7 +148,13 @@ export function OfficeTable({ searchQuery }: OfficeTableProps) {
                       <DropdownMenuItem asChild>
                         <Link href={`/admin/offices/${office.id}`}>
                           <Eye className="mr-2 h-4 w-4" />
-                          Voir
+                          Voir (Admin)
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/${office.id}`} target="_blank">
+                          <Eye className="mr-2 h-4 w-4" />
+                          Voir (Public)
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>

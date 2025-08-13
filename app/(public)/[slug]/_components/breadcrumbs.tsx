@@ -1,27 +1,28 @@
-import { ChevronRight } from 'lucide-react'
-import Link from 'next/link'
-
-interface Office {
-  title: string
-  workstations: number
-  surface: number
-}
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { type Office } from "@/lib/api/offices";
 
 interface BreadcrumbsProps {
-  office: Office
+  office: Office;
 }
 
 export function Breadcrumbs({ office }: BreadcrumbsProps) {
+  const workstations = office.nbPosts || 0;
+  const surface = Math.round((office.nbPosts || 1) * 5);
+
   const breadcrumbs = [
-    { label: 'Accueil', href: '/' },
-    { label: 'Location bureaux Paris', href: '/search' },
-    { label: 'Location bureaux Paris 2', href: '/search?arrondissement=2' },
-    { 
-      label: `${office.title} - 75002 - ${office.workstations} postes - ${office.surface}m²`,
-      href: '#',
-      current: true
-    }
-  ]
+    { label: "Accueil", href: "/" },
+    { label: "Location bureaux Paris", href: "/search" },
+    {
+      label: `Location bureaux Paris ${office.arr}`,
+      href: `/search?arrondissement=${office.arr}`,
+    },
+    {
+      label: `${office.title} - 7500${office.arr} - ${workstations} postes - ${surface}m²`,
+      href: "#",
+      current: true,
+    },
+  ];
 
   return (
     <nav className="flex items-center space-x-2 text-sm text-gray-600">
@@ -29,7 +30,9 @@ export function Breadcrumbs({ office }: BreadcrumbsProps) {
         <div key={index} className="flex items-center">
           {index > 0 && <ChevronRight className="h-4 w-4 mx-2" />}
           {breadcrumb.current ? (
-            <span className="text-gray-900 font-medium">{breadcrumb.label}</span>
+            <span className="text-gray-900 font-medium">
+              {breadcrumb.label}
+            </span>
           ) : (
             <Link
               href={breadcrumb.href}
@@ -41,5 +44,5 @@ export function Breadcrumbs({ office }: BreadcrumbsProps) {
         </div>
       ))}
     </nav>
-  )
+  );
 }

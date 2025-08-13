@@ -1,8 +1,11 @@
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import PostsBadge from "../posts-badge";
+import PostsBadge from "@/components/posts-badge";
+import Link from "next/link";
 
 type Props = {
   title: string;
@@ -10,13 +13,16 @@ type Props = {
   image: string;
   posts: string;
   buttonText: string;
+  searchParams?: string;
 };
+
 const OfficeCategoryCard = ({
   title,
   description,
   image,
   posts,
   buttonText,
+  searchParams = "",
 }: Props) => {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 flex flex-col h-full w-[280px] md:w-full flex-shrink-0 self-stretch">
@@ -44,12 +50,14 @@ const OfficeCategoryCard = ({
       </CardContent>
 
       <div className="mt-auto flex justify-end px-4 pb-4 group-hover:bg-gray-50 flex-shrink-0">
-        <Button
-          variant="ghost"
-          className="underline hover:bg-transparent p-0 min-h-[44px] text-sm"
-        >
-          {buttonText} <ArrowRight className="size-4 ml-1" />
-        </Button>
+        <Link href={`/search${searchParams}`}>
+          <Button
+            variant="ghost"
+            className="underline hover:bg-transparent p-0 min-h-[44px] text-sm"
+          >
+            {buttonText} <ArrowRight className="size-4 ml-1" />
+          </Button>
+        </Link>
       </div>
     </Card>
   );
@@ -57,24 +65,28 @@ const OfficeCategoryCard = ({
 
 export default function OfficeCategoriesSection() {
   return (
-    <section className="pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-15 bg-white">
+    <section className="py-16 lg:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6 sm:mb-8 px-4 sm:px-6 lg:px-9">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 font-roslindale leading-tight">
-            Tous les bureaux sont sur PetitsBureaux
+        <div className="text-center mb-12 lg:mb-16 px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 font-roslindale">
+            Types de bureaux
           </h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Découvrez nos différents types de bureaux adaptés à tous les besoins
+            et toutes les tailles d'entreprise
+          </p>
         </div>
 
-        {/* Mobile: Horizontal scroll, Desktop: Grid */}
-        <div className="md:hidden">
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide px-4 sm:px-6 pb-2 items-stretch h-[450px]">
-            {/* Cards for mobile horizontal scroll */}
+        {/* Mobile: Horizontal scroll */}
+        <div className="md:hidden px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
             <OfficeCategoryCard
               title="Bureau opéré / Immeuble entier"
               description="Lieu rien que pour votre entreprise : vos collaborateurs et visiteurs vivent votre culture d'entreprise dès l'accueil."
               image="/building.webp"
               posts="70 + postes"
               buttonText="Nous contacter"
+              searchParams="?minPosts=70"
             />
             <OfficeCategoryCard
               title="Étage / plateau indépendant"
@@ -82,6 +94,7 @@ export default function OfficeCategoriesSection() {
               image="/independent.webp"
               posts="20 - 100 postes"
               buttonText="Voir les bureaux"
+              searchParams="?minPosts=20&maxPosts=100"
             />
             <OfficeCategoryCard
               title="Bureau privé clé en main"
@@ -89,6 +102,7 @@ export default function OfficeCategoriesSection() {
               image="/private.webp"
               posts="1 - 40 postes"
               buttonText="Voir les bureaux"
+              searchParams="?minPosts=1&maxPosts=40"
             />
             <OfficeCategoryCard
               title="Poste en open Space"
@@ -96,6 +110,7 @@ export default function OfficeCategoriesSection() {
               image="/open_space.webp"
               posts="1 - 10 postes"
               buttonText="Voir les bureaux"
+              searchParams="?minPosts=1&maxPosts=10"
             />
           </div>
         </div>
@@ -110,6 +125,7 @@ export default function OfficeCategoriesSection() {
               image="/building.webp"
               posts="70 + postes"
               buttonText="Nous contacter"
+              searchParams="?minPosts=70"
             />
 
             {/* Card 2: Étage / plateau indépendant */}
@@ -119,6 +135,7 @@ export default function OfficeCategoriesSection() {
               image="/independent.webp"
               posts="20 - 100 postes"
               buttonText="Voir les bureaux"
+              searchParams="?minPosts=20&maxPosts=100"
             />
 
             {/* Card 3: Bureau privé clé en main */}
@@ -128,6 +145,7 @@ export default function OfficeCategoriesSection() {
               image="/private.webp"
               posts="1 - 40 postes"
               buttonText="Voir les bureaux"
+              searchParams="?minPosts=1&maxPosts=40"
             />
 
             {/* Card 4: Poste en open Space */}
@@ -137,6 +155,7 @@ export default function OfficeCategoriesSection() {
               image="/open_space.webp"
               posts="1 - 10 postes"
               buttonText="Voir les bureaux"
+              searchParams="?minPosts=1&maxPosts=10"
             />
           </div>
         </div>

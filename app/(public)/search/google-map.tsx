@@ -8,6 +8,7 @@ import { Home, MapPin, Euro } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const PARIS_CENTER = { lat: 48.8566, lng: 2.3522 };
 
@@ -139,44 +140,46 @@ const AdvancedMarkerWithCustomPin = ({
               </div>
             </div>
           ) : (
-            <div
-              className="p-2 min-w-[280px] max-w-[320px]"
-              onClick={handleCardClick}
-            >
-              <div className="flex items-start gap-3">
-                <img
-                  src={office.photos[0].url}
-                  alt={office.title}
-                  className="rounded-lg w-24 h-24 object-cover"
-                />
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-gray-900 truncate">
-                    {office.title}
-                  </h3>
-                  <div className="flex items-center gap-1 mt-1 text-xs text-gray-600">
-                    <MapPin className="w-3 h-3" />
-                    <span className="truncate">
-                      Arrondissement {office.arr}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <div className="flex items-center gap-1">
-                      <Euro className="w-3 h-3 text-green-600" />
-                      <span className="text-sm font-semibold text-green-600">
-                        {office.priceCents
-                          ? `${Math.round(office.priceCents / 100)}€`
-                          : "Prix sur demande"}
+            <Link href={`/${office.slug}`}>
+              <div
+                className="p-2 min-w-[280px] max-w-[320px] cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={handleCardClick}
+              >
+                <div className="flex items-start gap-3">
+                  <img
+                    src={office.photos[0]?.url || "/open_space.webp"}
+                    alt={office.title}
+                    className="rounded-lg w-24 h-24 object-cover"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-gray-900 truncate">
+                      {office.title}
+                    </h3>
+                    <div className="flex items-center gap-1 mt-1 text-xs text-gray-600">
+                      <MapPin className="w-3 h-3" />
+                      <span className="truncate">
+                        Arrondissement {office.arr}
                       </span>
                     </div>
-                    {office.nbPosts && (
-                      <span className="text-xs text-gray-500">
-                        {office.nbPosts} postes
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="flex items-center gap-1">
+                        <Euro className="w-3 h-3 text-green-600" />
+                        <span className="text-sm font-semibold text-green-600">
+                          {office.priceCents
+                            ? `${Math.round(office.priceCents / 100)}€`
+                            : "Prix sur demande"}
+                        </span>
+                      </div>
+                      {office.nbPosts && (
+                        <span className="text-xs text-gray-500">
+                          {office.nbPosts} postes
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           )}
         </div>
 

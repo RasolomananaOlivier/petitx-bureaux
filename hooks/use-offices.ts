@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getOffices, GetOfficesParams } from "@/lib/api/offices";
-import { OfficeWithRelations } from "@/features/offices/types";
+import { getOffices, GetOfficesParams, type Office } from "@/lib/api/offices";
 
 interface PaginationState {
   page: number;
@@ -14,7 +13,7 @@ interface PaginationState {
 }
 
 interface UseOfficesResult {
-  offices: OfficeWithRelations[];
+  offices: Office[];
   pagination: PaginationState;
   loading: boolean;
   error: string | null;
@@ -22,7 +21,7 @@ interface UseOfficesResult {
 }
 
 export function useOffices(): UseOfficesResult {
-  const [offices, setOffices] = useState<OfficeWithRelations[]>([]);
+  const [offices, setOffices] = useState<Office[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     limit: 12,
@@ -38,10 +37,32 @@ export function useOffices(): UseOfficesResult {
     setLoading(true);
     setError(null);
     try {
-      const data = await getOffices(params);
-      console.log("data", data);
-      setOffices(data.offices);
-      setPagination(data.pagination);
+      const searchParams = new URLSearchParams();
+
+      if (params.arr) searchParams.append("arr", params.arr.toString());
+      if (params.minPosts)
+        searchParams.append("minPosts", params.minPosts.toString());
+      if (params.maxPosts)
+        searchParams.append("maxPosts", params.maxPosts.toString());
+      if (params.minPrice)
+        searchParams.append("minPrice", params.minPrice.toString());
+      if (params.maxPrice)
+        searchParams.append("maxPrice", params.maxPrice.toString());
+      if (params.services?.length)
+        searchParams.append("services", params.services.join(","));
+      if (params.page) searchParams.append("page", params.page.toString());
+      if (params.limit) searchParams.append("limit", params.limit.toString());
+      if (params.sortBy) searchParams.append("sortBy", params.sortBy);
+      if (params.sortOrder) searchParams.append("sortOrder", params.sortOrder);
+
+      const response = await getOffices(searchParams);
+      console.log("data", response);
+      setOffices(response.data);
+      setPagination({
+        ...response.pagination,
+        hasNext: response.pagination.page < response.pagination.totalPages,
+        hasPrev: response.pagination.page > 1,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
