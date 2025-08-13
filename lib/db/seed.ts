@@ -1,7 +1,8 @@
-import { seedServices, seedOffices } from "./seeders";
+import { seedServices, seedOffices, seedAdmins } from "./seeders";
 
 async function seed() {
   console.log("🌱 Starting database seeding...");
+  await seedAdmins();
   const createdServices = await seedServices();
   await seedOffices(createdServices);
   console.log("🎉 Seeding completed successfully!");

@@ -1,120 +1,76 @@
 # Database Seeders
 
-This directory contains modular seeders for populating the database with test data.
+This directory contains database seeders for populating the application with initial data.
 
-## Structure
+## Admin Seeder
 
-- `index.ts` - Exports all seeder functions
-- `services.seeder.ts` - Seeds services data (WiFi, Parking, etc.)
-- `offices.seeder.ts` - Seeds offices data with comprehensive Paris locations
+The admin seeder creates admin and editor accounts using Supabase Auth, similar to the sign-up form functionality.
 
-## Usage
+### Default Admin Accounts
 
-### Running all seeders
+When running the main seed script, the following default accounts are created:
+
+- **Admin**: `admin@petitsbureaux.fr` / `Admin123!`
+- **Editor**: `editor@petitsbureaux.fr` / `Editor123!`
+
+### Usage
+
+#### 1. Run Full Seed (includes admin accounts)
 
 ```bash
 npm run db:seed
 ```
 
-### Individual seeders
+#### 2. Create Individual Admin Account
 
-```typescript
-import { seedServices, seedOffices } from "@/lib/db/seeders";
-
-// Seed services first
-const services = await seedServices();
-
-// Then seed offices (requires services for relationships)
-const offices = await seedOffices(services);
+```bash
+npm run create-admin <email> <password> [role]
 ```
 
-## Office Locations
+Examples:
 
-The offices seeder includes 21 offices strategically located around Paris:
+```bash
+# Create admin account
+npm run create-admin admin@example.com Admin123! admin
 
-### Central Paris (1er-6ème)
+# Create editor account
+npm run create-admin editor@example.com Editor123! editor
 
-- **Louvre** (1er) - Premium office with Louvre views
-- **Le Marais** (3ème) - Creative studio in historic district
-- **Île de la Cité** (4ème) - Office with Notre-Dame views
-- **Quartier Latin** (5ème) - Test office for filters
-- **Saint-Germain** (6ème) - Traditional office in prestigious area
-
-### Left Bank (7ème-13ème)
-
-- **Champ de Mars** (7ème) - Office with direct Eiffel Tower views
-- **Invalides** (7ème) - Office with Seine and Invalides views
-- **Champs-Élysées** (8ème) - Modern office with avenue views
-- **Arc de Triomphe** (8ème) - Office with Arc de Triomphe views
-- **Opéra** (9ème) - Flexible workspace near Opéra Garnier
-- **Canal Saint-Martin** (10ème) - Collaborative space by the canal
-- **République** (11ème) - Dynamic coworking space
-- **Bastille** (11ème) - Modern studio in vibrant area
-- **Oberkampf** (11ème) - Loft studio in trendy neighborhood
-- **Bibliothèque** (13ème) - Innovation hub near BNF
-- **Station F** (13ème) - Startup space near Station F
-
-### Right Bank (16ème-20ème)
-
-- **Trocadéro** (16ème) - Elegant office with Eiffel Tower views
-- **Pigalle** (18ème) - Office with Montmartre views
-- **Buttes-Chaumont** (19ème) - Ecological office near the park
-- **Belleville** (20ème) - Artistic studio in multicultural area
-
-### La Défense
-
-- **La Défense** (92) - Tech space in business district
-
-## Services
-
-Each office is equipped with various services:
-
-- WiFi
-- Parking
-- Café
-- Meeting rooms
-- Printer
-- Air conditioning
-- 24/7 security
-- Reception
-- Relaxation area
-- Terrace
-
-## Data Structure
-
-### Office Data
-
-```typescript
-interface OfficeData {
-  title: string;
-  description: string;
-  slug: string;
-  arr: number; // Arrondissement
-  priceCents: number;
-  nbPosts: number;
-  lat: number;
-  lng: number;
-  isFake: boolean;
-  publishedAt: Date;
-}
+# Default role is admin
+npm run create-admin user@example.com Password123!
 ```
 
-### Service Data
+#### 3. Programmatic Usage
 
 ```typescript
-interface ServiceData {
-  name: string;
-  icon: string; // Lucide React icon name
-}
+import { seedAdmins, seedSingleAdmin } from "@/lib/db/seeders";
+
+// Create default admin accounts
+await seedAdmins();
+
+// Create custom admin accounts
+await seedAdmins([
+  { email: "custom@example.com", password: "Custom123!", role: "admin" },
+  { email: "editor@example.com", password: "Editor123!", role: "editor" },
+]);
+
+// Create single admin account
+await seedSingleAdmin("admin@example.com", "Admin123!", "admin");
 ```
 
-## Adding New Seeders
+### Features
 
-1. Create a new seeder file: `new-entity.seeder.ts`
-2. Export the seeder function
-3. Add the export to `index.ts`
-4. Update the main `seed.ts` file if needed
+- ✅ Uses Supabase Auth admin API (same as sign-up form)
+- ✅ Automatically confirms email addresses
+- ✅ Creates corresponding account records in the database
+- ✅ Supports both admin and editor roles
+- ✅ Error handling and logging
+- ✅ Password validation (handled by Supabase)
+- ✅ CLI tool for easy admin creation
 
-## Testing
+### Security Notes
 
-The seeders are designed to be idempotent - they can be run multiple times safely. Existing data will be skipped with a warning message.
+- Admin accounts are created with confirmed email addresses
+- Passwords must meet Supabase's security requirements
+- Role information is stored in both user metadata and accounts table
+- Use strong passwords in production environments

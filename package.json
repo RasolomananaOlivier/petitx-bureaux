@@ -13,7 +13,8 @@
     "db:reset": "npx tsx lib/db/reset.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "create-admin": "npx tsx scripts/create-admin.ts"
   },
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.6.2",

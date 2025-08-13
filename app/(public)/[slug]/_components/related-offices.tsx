@@ -21,12 +21,6 @@ import { OfficeCard } from "@/components/sections/latest-office-section";
 export function RelatedOffices() {
   const { slug } = useParams();
   const [api, setApi] = useState<CarouselApi>();
-  const [isGrabbing, setIsGrabbing] = useState(false);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0) setIsGrabbing(true);
-  };
-  const handleMouseUp = () => setIsGrabbing(false);
 
   const [offices, setOffices] = useState<OfficeWithRelations[]>([]);
 
@@ -64,8 +58,7 @@ export function RelatedOffices() {
         <Carousel
           opts={{ align: "center" }}
           className={cn(
-            "w-full flex-1 cursor-grab select-none max-w-md lg:max-w-6xl mx-auto",
-            isGrabbing && "cursor-grabbing"
+            "w-full flex-1 cursor-grab select-none max-w-md lg:max-w-6xl mx-auto"
           )}
         >
           <CarouselContent className="-ml-5 px-4">
