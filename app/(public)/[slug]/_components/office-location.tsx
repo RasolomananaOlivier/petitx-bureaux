@@ -5,11 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Map, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useRef } from "react";
 
-interface MetroStation {
-  name: string;
-  time: number;
-}
-
 interface Coordinates {
   lat: number;
   lng: number;
@@ -17,7 +12,6 @@ interface Coordinates {
 
 interface OfficeLocationProps {
   address: string;
-  metroStations: MetroStation[];
   coordinates: Coordinates;
 }
 
@@ -33,18 +27,6 @@ function OfficeMarker({ coordinates }: { coordinates: Coordinates }) {
       position: { lat: coordinates.lat, lng: coordinates.lng },
       map: map,
       title: "Office Location",
-      icon: {
-        url:
-          "data:image/svg+xml;charset=UTF-8," +
-          encodeURIComponent(`
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="16" cy="16" r="16" fill="#3B82F6"/>
-            <circle cx="16" cy="16" r="8" fill="white"/>
-          </svg>
-        `),
-        scaledSize: new google.maps.Size(32, 32),
-        anchor: new google.maps.Point(16, 16),
-      },
     });
 
     // Center map on the office location
@@ -61,11 +43,7 @@ function OfficeMarker({ coordinates }: { coordinates: Coordinates }) {
   return null;
 }
 
-export function OfficeLocation({
-  address,
-  metroStations,
-  coordinates,
-}: OfficeLocationProps) {
+export function OfficeLocation({ address, coordinates }: OfficeLocationProps) {
   return (
     <div className="flex flex-col gap-4">
       <h3 className="text-xl font-bold text-gray-900">{address}</h3>

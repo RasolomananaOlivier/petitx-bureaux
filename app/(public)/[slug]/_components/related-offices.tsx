@@ -11,73 +11,15 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { OfficeWithRelations } from "@/features/offices/types";
+import { getSuggestedOffices } from "@/lib/api/offices";
+import { useParams } from "next/navigation";
+import { OfficeCard } from "@/components/sections/latest-office-section";
 
-interface RelatedOffice {
-  id: string;
-  slug?: string;
-  title: string;
-  address: string;
-  workstations: number;
-  surface: number;
-  price: number;
-  image: string;
-  available: boolean;
-}
-
-interface RelatedOfficesProps {
-  offices: RelatedOffice[];
-}
-
-function RelatedOfficeCard({ office }: { office: RelatedOffice }) {
-  return (
-    <Link href={`/${office.slug || office.id}`}>
-      <Card className="border-gray-200 hover:border-gray-300 transition-colors cursor-pointer">
-        <CardContent className="p-0">
-          <div className="relative">
-            <div className="aspect-[4/3] relative overflow-hidden rounded-t-lg">
-              <Image
-                src={office.image}
-                alt={office.title}
-                fill
-                className="object-cover"
-              />
-              {office.available && (
-                <div className="absolute top-3 left-3">
-                  <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                    Dispo
-                  </span>
-                </div>
-              )}
-              <button
-                className="absolute top-3 right-3 p-1 bg-white/80 rounded-full hover:bg-white"
-                onClick={(e) => e.preventDefault()}
-              >
-                <Heart className="h-4 w-4 text-gray-600" />
-              </button>
-            </div>
-
-            <div className="p-4">
-              <h3 className="font-medium text-gray-900 mb-1">{office.title}</h3>
-              <p className="text-sm text-gray-600 mb-2">{office.address}</p>
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                <span>
-                  {office.workstations} postes - {office.surface} m²
-                </span>
-              </div>
-              <div className="text-lg font-semibold text-gray-900">
-                {office.price.toLocaleString()} € HT/mois
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
-
-export function RelatedOffices({ offices }: RelatedOfficesProps) {
+export function RelatedOffices() {
+  const { slug } = useParams();
   const [api, setApi] = useState<CarouselApi>();
   const [isGrabbing, setIsGrabbing] = useState(false);
 
@@ -85,6 +27,17 @@ export function RelatedOffices({ offices }: RelatedOfficesProps) {
     if (e.button === 0) setIsGrabbing(true);
   };
   const handleMouseUp = () => setIsGrabbing(false);
+
+  const [offices, setOffices] = useState<OfficeWithRelations[]>([]);
+
+  useEffect(() => {
+    const fetchOffices = async () => {
+      const offices = await getSuggestedOffices(slug as string);
+      console.log(offices);
+      setOffices(offices);
+    };
+    fetchOffices();
+  }, []);
 
   if (offices.length === 0) {
     return null;
@@ -124,7 +77,7 @@ export function RelatedOffices({ offices }: RelatedOfficesProps) {
           >
             {offices.map((office) => (
               <CarouselItem key={office.id} className="basis-1/2 lg:basis-1/3">
-                <RelatedOfficeCard office={office} />
+                <OfficeCard office={office} />
               </CarouselItem>
             ))}
           </CarouselContent>

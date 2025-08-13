@@ -32,6 +32,11 @@ export async function GET(
         lte(offices.nbPosts, currentNbPosts + 5)
       ),
       with: {
+        officeServices: {
+          with: {
+            service: true,
+          },
+        },
         photos: {
           limit: 1,
         },

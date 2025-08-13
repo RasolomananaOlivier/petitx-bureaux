@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getOffices, GetOfficesParams, type Office } from "@/lib/api/offices";
+import { getOffices, GetOfficesParams } from "@/lib/api/offices";
+import { OfficeWithRelations } from "@/features/offices/types";
 
 interface PaginationState {
   page: number;
@@ -13,7 +14,7 @@ interface PaginationState {
 }
 
 interface UseOfficesResult {
-  offices: Office[];
+  offices: OfficeWithRelations[];
   pagination: PaginationState;
   loading: boolean;
   error: string | null;
@@ -21,7 +22,7 @@ interface UseOfficesResult {
 }
 
 export function useOffices(): UseOfficesResult {
-  const [offices, setOffices] = useState<Office[]>([]);
+  const [offices, setOffices] = useState<OfficeWithRelations[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     limit: 12,
@@ -56,8 +57,8 @@ export function useOffices(): UseOfficesResult {
       if (params.sortOrder) searchParams.append("sortOrder", params.sortOrder);
 
       const response = await getOffices(searchParams);
-      console.log("data", response);
-      setOffices(response.data);
+
+      setOffices(response.offices);
       setPagination({
         ...response.pagination,
         hasNext: response.pagination.page < response.pagination.totalPages,
