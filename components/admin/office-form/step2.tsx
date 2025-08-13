@@ -19,6 +19,14 @@ interface Step2Props {
 }
 
 export default function Step2({ form }: Step2Props) {
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const euros = parseFloat(e.target.value) || 0;
+    const cents = Math.round(euros * 100);
+    form.setValue("priceCents", cents);
+  };
+
+  const priceInEuros = (form.watch("priceCents") || 0) / 100;
+
   return (
     <Card>
       <CardHeader>
@@ -32,13 +40,14 @@ export default function Step2({ form }: Step2Props) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label htmlFor="priceCents">Prix HT par mois (€) *</Label>
+          <Label htmlFor="priceEuros">Prix HT par mois (€) *</Label>
           <Input
-            id="priceCents"
+            id="priceEuros"
             type="number"
             min="0"
             step="0.01"
-            {...form.register("priceCents", { valueAsNumber: true })}
+            value={priceInEuros}
+            onChange={handlePriceChange}
             className={form.formState.errors.priceCents ? "border-red-500" : ""}
           />
           {form.formState.errors.priceCents && (

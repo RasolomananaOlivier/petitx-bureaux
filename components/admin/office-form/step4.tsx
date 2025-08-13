@@ -9,7 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Upload, X } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Upload, X, AlertCircle } from "lucide-react";
 import { useOfficeFormStore } from "@/lib/store/office-store";
 
 interface Step4Props {
@@ -48,8 +49,11 @@ export default function Step4({ form }: Step4Props) {
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
-    maxSize: 5 * 1024 * 1024, // 5MB
+    maxSize: 5 * 1024 * 1024,
   });
+
+  const photoCount = photos.length;
+  const isValid = photoCount >= 4;
 
   return (
     <div className="space-y-4">
@@ -57,7 +61,14 @@ export default function Step4({ form }: Step4Props) {
         <CardHeader>
           <CardTitle>Upload de médias</CardTitle>
           <CardDescription>
-            Glissez-déposez vos images ou cliquez pour sélectionner
+            Glissez-déposez vos images ou cliquez pour sélectionner.{" "}
+            <span className="font-medium text-blue-600">
+              Minimum 4 photos requises.
+            </span>
+            <br />
+            <span className="text-sm text-gray-500">
+              Photos uploadées: {photoCount}/4
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -90,6 +101,15 @@ export default function Step4({ form }: Step4Props) {
         </CardContent>
       </Card>
 
+      {form.formState.errors.photos && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-800">
+            {form.formState.errors.photos.message}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="mt-4 grid grid-cols-3 gap-4">
         {photos.map(({ file, id }) => {
           const previewUrl = URL.createObjectURL(file);
@@ -99,7 +119,7 @@ export default function Step4({ form }: Step4Props) {
                 src={previewUrl}
                 alt={file.name}
                 className="object-cover w-full h-32"
-                onLoad={() => URL.revokeObjectURL(previewUrl)} // free memory
+                onLoad={() => URL.revokeObjectURL(previewUrl)}
               />
               <button
                 onClick={() => removeFile(id)}

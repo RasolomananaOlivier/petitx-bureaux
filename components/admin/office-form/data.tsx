@@ -24,8 +24,20 @@ const step1Schema = z.object({
 });
 
 const step2Schema = z.object({
-  priceCents: z.number().min(0, "Le prix doit être positif"),
-  nbPosts: z.number().min(1, "La capacité doit être d'au moins 1 personne"),
+  priceCents: z
+    .number({
+      required_error: "Le prix est requis",
+      invalid_type_error: "Le prix doit être un nombre",
+    })
+    .int("Le prix doit être un nombre entier")
+    .min(1000, "Le prix doit être d'au moins 10 € (1000 centimes)"),
+  nbPosts: z
+    .number({
+      required_error: "La capacité est requise",
+      invalid_type_error: "La capacité doit être un nombre",
+    })
+    .int("La capacité doit être un nombre entier")
+    .min(1, "La capacité doit être d'au moins 1 poste"),
   isFake: z.boolean(),
 });
 
@@ -34,12 +46,14 @@ const step3Schema = z.object({
 });
 
 const step4Schema = z.object({
-  photos: z.array(
-    z.object({
-      file: z.instanceof(File),
-      id: z.string(),
-    })
-  ),
+  photos: z
+    .array(
+      z.object({
+        file: z.instanceof(File),
+        id: z.string(),
+      })
+    )
+    .min(4, "Au moins 4 photos sont requises"),
 });
 
 export const steps: Step[] = [
