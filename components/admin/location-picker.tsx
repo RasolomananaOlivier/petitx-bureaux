@@ -148,7 +148,7 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
           );
       });
     },
-    [arrName, form, latName, lngName, titleName]
+    [arrName, form, latName, lngName, titleName, geocoder]
   );
 
   const center = useMemo(() => position ?? PARIS_CENTER, [position]);
