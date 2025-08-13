@@ -1,11 +1,8 @@
-import { createClient } from "../supabase/client";
+import { createClient } from "../client";
+import { bucketName } from "./config";
+import { extractSupabasePath, isSupabasePhoto } from "./utils";
 
-const bucketName = "petits-bureaux";
-
-export async function uploadFiles(
-  files: File[],
-  officeId: number
-): Promise<string[]> {
+async function uploadFiles(files: File[], officeId: number): Promise<string[]> {
   const uploadedUrls: string[] = [];
   const supabase = createClient();
 
@@ -21,8 +18,6 @@ export async function uploadFiles(
         contentType: file.type,
       });
 
-    console.log("uploaded", data);
-
     if (error) {
       console.error("failed updaloded", error);
       continue;
@@ -36,3 +31,22 @@ export async function uploadFiles(
 
   return uploadedUrls;
 }
+
+async function removePhotosFromStorage(
+  photos: Array<{ id: number; url: string; alt: string }>
+): Promise<void> {
+  const supabase = createClient();
+  for (const photo of photos) {
+    if (isSupabasePhoto(photo.url)) {
+      const path = extractSupabasePath(photo.url);
+      if (path) {
+        await supabase.storage.from(bucketName).remove([path]);
+      }
+    }
+  }
+}
+
+export const supabaseStorage = {
+  uploadFiles,
+  removePhotosFromStorage,
+};

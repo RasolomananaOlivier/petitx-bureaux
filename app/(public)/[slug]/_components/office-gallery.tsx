@@ -44,7 +44,7 @@ export function OfficeGallery({ images }: OfficeGalleryProps) {
       </div>
 
       <div className="hidden col-span-1 lg:grid grid-cols-2 gap-4">
-        {images.slice(0, 4).map((image, index) => (
+        {images.slice(1, 5).map((image, index) => (
           <button
             key={index}
             className={`w-full aspect-video relative overflow-hidden rounded-md transition-all ${"hover:opacity-80"}`}

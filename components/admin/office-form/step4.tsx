@@ -81,7 +81,6 @@ export default function Step4({ form }: Step4Props) {
   });
 
   const totalPhotoCount = photos.length + existingPhotos.length;
-  const isValid = totalPhotoCount >= 4;
 
   return (
     <div className="space-y-4">
@@ -91,11 +90,11 @@ export default function Step4({ form }: Step4Props) {
           <CardDescription>
             Glissez-déposez vos images ou cliquez pour sélectionner.{" "}
             <span className="font-medium text-blue-600">
-              Minimum 4 photos requises.
+              Minimum 5 photos requises.
             </span>
             <br />
             <span className="text-sm text-gray-500">
-              Photos totales: {totalPhotoCount}/4
+              Photos totales: {totalPhotoCount}/5
             </span>
           </CardDescription>
         </CardHeader>

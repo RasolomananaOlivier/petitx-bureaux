@@ -17,11 +17,13 @@ import { steps } from "./office-form/data";
 import Step4 from "./office-form/step4";
 import { Stepper } from "./office-form/stepper";
 import { api } from "@/lib/api/axios";
-import { uploadFiles } from "@/lib/api/upload-files";
 import { syncPhotos } from "@/lib/api/photo-sync";
 import { Office as DBOffice } from "@/lib/db/schema";
 import { toast } from "sonner";
 import { useUpdateAdminOffice } from "@/hooks/use-admin-offices";
+import { supabaseStorage } from "@/lib/supabase/storage";
+import { photosApi } from "@/lib/api/photos";
+import { useRouter } from "next/navigation";
 
 interface OfficeStepperFormProps {
   mode?: "create" | "edit";
@@ -44,6 +46,7 @@ export default function OfficeStepperForm({
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const updateOfficeMutation = useUpdateAdminOffice();
+  const router = useRouter();
 
   const form = useForm<Office>({
     resolver: zodResolver(steps[currentStep].schema),
@@ -98,43 +101,12 @@ export default function OfficeStepperForm({
 
       try {
         if (mode === "edit" && officeId) {
-          await updateOfficeMutation.mutateAsync({
-            id: officeId,
-            data: finalData,
-          });
-
-          if (
-            finalData.photos.length > 0 ||
-            finalData.removedPhotos.length > 0
-          ) {
-            await syncPhotos({
-              newPhotos: finalData.photos.map((f) => f.file),
-              removedPhotoIds: finalData.removedPhotos,
-              existingPhotos: finalData.existingPhotos,
-              officeId,
-            });
-          }
+          await handleUpdateOffice(finalData, officeId);
 
           toast.success("Bureau modifié avec succès !");
+          router.push(`/admin/offices/`);
         } else {
-          const res = await api.post<DBOffice>("/api/admin/offices", finalData);
-
-          if (finalData.photos.length > 0) {
-            const imageUrls = await uploadFiles(
-              finalData.photos.map((f) => f.file),
-              res.data.id
-            );
-
-            if (imageUrls.length > 0) {
-              await api.post("/api/admin/offices/photos", {
-                photos: imageUrls.map((item) => ({
-                  url: item,
-                  alt: finalData.title,
-                })),
-                officeId: res.data.id,
-              });
-            }
-          }
+          await handleCreateOffice(finalData);
 
           resetForm();
           form.reset({
@@ -153,6 +125,37 @@ export default function OfficeStepperForm({
       } finally {
         setIsLoading(false);
       }
+    }
+  };
+
+  const handleCreateOffice = async (finalData: Office) => {
+    const res = await api.post<DBOffice>("/api/admin/offices", finalData);
+
+    if (finalData.photos.length > 0) {
+      const imageUrls = await supabaseStorage.uploadFiles(
+        finalData.photos.map((f) => f.file),
+        res.data.id
+      );
+
+      if (imageUrls.length > 0) {
+        await photosApi.addPhotos(imageUrls, res.data.id);
+      }
+    }
+  };
+
+  const handleUpdateOffice = async (finalData: Office, officeId: number) => {
+    await updateOfficeMutation.mutateAsync({
+      id: officeId,
+      data: finalData,
+    });
+
+    if (finalData.photos.length > 0 || finalData.removedPhotos.length > 0) {
+      await syncPhotos({
+        newPhotos: finalData.photos.map((f) => f.file),
+        removedPhotoIds: finalData.removedPhotos,
+        existingPhotos: finalData.existingPhotos,
+        officeId,
+      });
     }
   };
 
