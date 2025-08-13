@@ -17,6 +17,10 @@ import {
 } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useGeocoder } from "@/hooks/useGeocoder";
+import { Coordinates } from "@/lib/types";
+import { buildTitleFrom, extractArrondissement } from "@/lib/utils/google-map";
+import { MAP_ID, PARIS_CENTER } from "@/lib/utils/constants";
 
 interface LocationPickerProps<TFieldValues extends FieldValues> {
   form: UseFormReturn<TFieldValues>;
@@ -24,52 +28,6 @@ interface LocationPickerProps<TFieldValues extends FieldValues> {
   lngName: FieldPath<TFieldValues>;
   titleName: FieldPath<TFieldValues>;
   arrName: FieldPath<TFieldValues>;
-}
-
-type Coordinates = { lat: number; lng: number };
-
-const PARIS_CENTER: Coordinates = { lat: 48.8566, lng: 2.3522 };
-
-function extractArrondissement(
-  addressComponents: google.maps.GeocoderAddressComponent[]
-): number | null {
-  const sublocality = addressComponents.find((c) =>
-    c.types.includes("sublocality_level_1")
-  );
-  if (sublocality) {
-    const match = sublocality.long_name.match(/(\d{1,2})/);
-    if (match) return Number(match[1]);
-  }
-  const postalCode = addressComponents.find((c) =>
-    c.types.includes("postal_code")
-  )?.long_name;
-  if (postalCode && /^750\d{2}$/.test(postalCode)) {
-    const n = Number(postalCode.slice(3));
-    if (n >= 1 && n <= 20) return n;
-  }
-  const admin3 = addressComponents.find((c) =>
-    c.types.includes("administrative_area_level_3")
-  );
-  if (admin3) {
-    const match = admin3.long_name.match(/(\d{1,2})/);
-    if (match) return Number(match[1]);
-  }
-  return null;
-}
-
-function buildTitle(
-  addressComponents: google.maps.GeocoderAddressComponent[],
-  arrondissement: number | null
-): string | null {
-  const route = addressComponents.find((c) =>
-    c.types.includes("route")
-  )?.long_name;
-  const locality = addressComponents.find((c) =>
-    c.types.includes("locality")
-  )?.long_name;
-  if (!route || !locality) return null;
-  const arrText = arrondissement ? ` ${arrondissement}` : "";
-  return `${route}, ${locality}${arrText}`;
 }
 
 export default function LocationPicker<TFieldValues extends FieldValues>({
@@ -88,11 +46,7 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
   const [position, setPosition] = useState<Coordinates | null>(null);
   const [reverseAddress, setReverseAddress] = useState<string>("");
 
-  const geocodingLib = useMapsLibrary("geocoding");
-  const geocoder = useMemo(
-    () => geocodingLib && new geocodingLib.Geocoder(),
-    [geocodingLib]
-  );
+  const geocode = useGeocoder();
 
   useEffect(() => {
     if (
@@ -118,9 +72,8 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
         coords.lng as unknown as FieldPathValue<TFieldValues, typeof lngName>,
         { shouldValidate: true, shouldDirty: true }
       );
-      if (!geocoder) return;
-      geocoder.geocode({ location: coords }, (results, status) => {
-        console.log("results", results);
+      if (!geocode) return;
+      geocode({ location: coords }, (results, status) => {
         if (
           status !== google.maps.GeocoderStatus.OK ||
           !results ||
@@ -136,7 +89,7 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
             arr as unknown as FieldPathValue<TFieldValues, typeof arrName>,
             { shouldValidate: true, shouldDirty: true }
           );
-        const nextTitle = buildTitle(best.address_components, arr);
+        const nextTitle = buildTitleFrom(best.address_components, arr);
         if (nextTitle)
           form.setValue(
             titleName,
@@ -148,7 +101,7 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
           );
       });
     },
-    [arrName, form, latName, lngName, titleName, geocoder]
+    [arrName, form, latName, lngName, titleName, geocode]
   );
 
   const center = useMemo(() => position ?? PARIS_CENTER, [position]);
@@ -156,7 +109,7 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
   return (
     <div className="space-y-3">
       <Map
-        mapId="8bd9c5116791156d9b61917d"
+        mapId={MAP_ID}
         defaultZoom={13}
         defaultCenter={center}
         gestureHandling="cooperative"

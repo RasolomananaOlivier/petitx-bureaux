@@ -9,38 +9,10 @@ import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
-const PARIS_CENTER = { lat: 48.8566, lng: 2.3522 };
-
-function OfficeMarkersWithClusteringComponent() {
-  const map = useMap();
-  const clustererRef = useRef<MarkerClusterer | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const { filteredOffices, selectedOfficeId, hoveredOfficeId } =
-    useMapListSync();
-
-  useEffect(() => {
-    if (!map || !selectedOfficeId) return;
-
-    const selectedOffice = filteredOffices.find(
-      (office) => office.id === selectedOfficeId
-    );
-    if (selectedOffice) {
-      map.panTo({ lat: selectedOffice.lat, lng: selectedOffice.lng });
-      map.setZoom(16);
-    }
-  }, [map, selectedOfficeId, filteredOffices]);
-
-  return null;
-}
+import { MAP_ID, PARIS_CENTER } from "@/lib/utils/constants";
 
 const GoogleMap = () => {
-  const {
-    filteredOffices,
-    selectedOfficeId,
-    hoveredOfficeId,
-    expandedOfficeId,
-  } = useMapListSync();
+  const { filteredOffices, expandedOfficeId } = useMapListSync();
 
   const sortedOffices = [...filteredOffices].sort((a, b) => {
     if (a.id === expandedOfficeId) return 1;
@@ -51,7 +23,7 @@ const GoogleMap = () => {
   return (
     <div className="w-full h-full">
       <Map
-        mapId="8bd9c5116791156d9b61917d"
+        mapId={MAP_ID}
         defaultZoom={13}
         defaultCenter={PARIS_CENTER}
         gestureHandling="cooperative"

@@ -39,3 +39,5 @@ export interface AdminOfficeFilters {
   sortBy?: "title" | "createdAt" | "updatedAt" | "priceCents";
   sortOrder?: "asc" | "desc";
 }
+
+export type Coordinates = { lat: number; lng: number };
