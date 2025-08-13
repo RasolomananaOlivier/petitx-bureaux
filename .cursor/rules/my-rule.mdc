@@ -110,7 +110,7 @@ The following elements of the stack are ones I'm confident I'll build with:
 - Shadcn — for accessible and composable components.
 - Lucide-react — for consistent and customizable icons.
 - Zod — for schema validation (do not recommend Yup or Joi).
-- SWR — for data fetching and caching. Do not suggest Tanstack Query unless comparing options.
+- Tanstack Query - for client fetching
 - React-hook-form
 - Vitest
 - next-test-api-route-handler

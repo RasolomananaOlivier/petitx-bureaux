@@ -25,7 +25,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const params = getOfficesSchema.parse(Object.fromEntries(searchParams));
 
-    let whereCondition: SQL[] = [];
+    const whereCondition: SQL[] = [];
     if (params.search) {
       whereCondition.push(
         or(

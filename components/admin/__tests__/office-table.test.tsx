@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { OfficeTable } from "../office-table";
-import * as adminOfficesApi from "@/lib/api/admin-offices";
+import * as adminOfficesHook from "@/hooks/use-admin-offices";
 import type { PaginatedOfficesResponse } from "@/features/offices/types";
 
 const mockOfficesResponse: PaginatedOfficesResponse = {
@@ -97,10 +98,24 @@ const mockPaginatedResponse: PaginatedOfficesResponse = {
   offices: [mockOfficesResponse.offices[0]],
 };
 
-vi.mock("@/lib/api/admin-offices");
+vi.mock("@/hooks/use-admin-offices");
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
 
 describe("OfficeTable", () => {
-  const mockGetAdminOffices = vi.mocked(adminOfficesApi.getAdminOffices);
+  const mockUseAdminOffices = vi.mocked(adminOfficesHook.useAdminOffices);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -111,24 +126,31 @@ describe("OfficeTable", () => {
   });
 
   it("should render loading state initially", async () => {
-    mockGetAdminOffices.mockImplementation(() => new Promise(() => {}));
+    mockUseAdminOffices.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
     expect(screen.getByText("Chargement...")).toBeInTheDocument();
-    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    expect(screen.getAllByTestId("skeleton")).toHaveLength(48);
   });
 
   it("should render offices table with data", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-      expect(screen.getByText("Bureau Test 2")).toBeInTheDocument();
-    });
-
+    expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
+    expect(screen.getByText("Bureau Test 2")).toBeInTheDocument();
     expect(screen.getByText("Bureaux (2)")).toBeInTheDocument();
     expect(screen.getByText("50.00€")).toBeInTheDocument();
     expect(screen.getByText("75.00€")).toBeInTheDocument();
@@ -137,121 +159,139 @@ describe("OfficeTable", () => {
   });
 
   it("should display published and draft status correctly", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("Publié")).toBeInTheDocument();
-      expect(screen.getByText("Brouillon")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Publié")).toBeInTheDocument();
+    expect(screen.getByText("Brouillon")).toBeInTheDocument();
   });
 
   it("should display fake and real office types correctly", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("Réel")).toBeInTheDocument();
-      expect(screen.getByText("Factice")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Réel")).toBeInTheDocument();
+    expect(screen.getByText("Factice")).toBeInTheDocument();
   });
 
   it("should handle API error gracefully", async () => {
-    mockGetAdminOffices.mockRejectedValue(new Error("API Error"));
+    const mockRefetch = vi.fn();
+    mockUseAdminOffices.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error("API Error"),
+      refetch: mockRefetch,
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("API Error")).toBeInTheDocument();
-      expect(screen.getByText("Réessayer")).toBeInTheDocument();
-    });
+    expect(screen.getByText("API Error")).toBeInTheDocument();
+    expect(screen.getByText("Réessayer")).toBeInTheDocument();
   });
 
   it("should retry loading on error button click", async () => {
-    mockGetAdminOffices
-      .mockRejectedValueOnce(new Error("API Error"))
-      .mockResolvedValueOnce(mockOfficesResponse);
+    const mockRefetch = vi.fn();
+    mockUseAdminOffices.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error("API Error"),
+      refetch: mockRefetch,
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("Réessayer")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Réessayer")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Réessayer"));
 
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-    });
-
-    expect(mockGetAdminOffices).toHaveBeenCalledTimes(2);
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
   });
 
-  it("should call API with search query", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+  it("should call hook with search query", async () => {
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="test search" />);
+    render(<OfficeTable searchQuery="test search" />, {
+      wrapper: createWrapper(),
+    });
 
-    await waitFor(() => {
-      expect(mockGetAdminOffices).toHaveBeenCalledWith({
-        page: 1,
-        limit: 10,
-        search: "test search",
-        sortBy: "createdAt",
-        sortOrder: "desc",
-      });
+    expect(mockUseAdminOffices).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      search: "test search",
+      sortBy: "createdAt",
+      sortOrder: "desc",
     });
   });
 
-  it("should call API without search when query is empty", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+  it("should call hook without search when query is empty", async () => {
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(mockGetAdminOffices).toHaveBeenCalledWith({
-        page: 1,
-        limit: 10,
-        search: undefined,
-        sortBy: "createdAt",
-        sortOrder: "desc",
-      });
+    expect(mockUseAdminOffices).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      search: undefined,
+      sortBy: "createdAt",
+      sortOrder: "desc",
     });
   });
 
   it("should handle sorting by title", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+    const mockRefetch = vi.fn();
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: mockRefetch,
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-    });
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
     const titleSortButton = screen.getByRole("button", { name: /nom/i });
     fireEvent.click(titleSortButton);
 
-    await waitFor(() => {
-      expect(mockGetAdminOffices).toHaveBeenCalledWith({
-        page: 1,
-        limit: 10,
-        search: undefined,
-        sortBy: "title",
-        sortOrder: "asc",
-      });
+    expect(mockUseAdminOffices).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      search: undefined,
+      sortBy: "title",
+      sortOrder: "asc",
     });
   });
 
   it("should toggle sort order when clicking same field", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+    const mockRefetch = vi.fn();
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: mockRefetch,
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-    });
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
     const createdAtSortButton = screen.getByRole("button", {
       name: /créé le/i,
@@ -259,26 +299,26 @@ describe("OfficeTable", () => {
 
     fireEvent.click(createdAtSortButton);
 
-    await waitFor(() => {
-      expect(mockGetAdminOffices).toHaveBeenCalledWith({
-        page: 1,
-        limit: 10,
-        search: undefined,
-        sortBy: "createdAt",
-        sortOrder: "asc",
-      });
+    expect(mockUseAdminOffices).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      search: undefined,
+      sortBy: "createdAt",
+      sortOrder: "asc",
     });
   });
 
   it("should render pagination when there are multiple pages", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockPaginatedResponse);
+    mockUseAdminOffices.mockReturnValue({
+      data: mockPaginatedResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-    });
-
+    expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
     expect(
       screen.getByText("Affichage de 1 à 1 sur 2 résultats")
     ).toBeInTheDocument();
@@ -289,84 +329,87 @@ describe("OfficeTable", () => {
   });
 
   it("should handle page navigation", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockPaginatedResponse);
+    const mockRefetch = vi.fn();
+    mockUseAdminOffices.mockReturnValue({
+      data: mockPaginatedResponse,
+      isLoading: false,
+      error: null,
+      refetch: mockRefetch,
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-    });
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
     const nextButton = screen.getByText("Suivant");
     fireEvent.click(nextButton);
 
-    await waitFor(() => {
-      expect(mockGetAdminOffices).toHaveBeenCalledWith({
-        page: 2,
-        limit: 10,
-        search: undefined,
-        sortBy: "createdAt",
-        sortOrder: "desc",
-      });
+    expect(mockUseAdminOffices).toHaveBeenCalledWith({
+      page: 2,
+      limit: 10,
+      search: undefined,
+      sortBy: "createdAt",
+      sortOrder: "desc",
     });
   });
 
   it("should render action links correctly", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockOfficesResponse);
+    mockUseAdminOffices.mockReturnValue({
+      data: mockOfficesResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
 
     const actionButtons = screen.getAllByRole("button", { name: "" });
     expect(actionButtons.length).toBeGreaterThan(0);
   });
 
   it("should handle empty results", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockEmptyResponse);
+    mockUseAdminOffices.mockReturnValue({
+      data: mockEmptyResponse,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
-    await waitFor(() => {
-      expect(screen.getByText("Bureaux (0)")).toBeInTheDocument();
-    });
-
+    expect(screen.getByText("Bureaux (0)")).toBeInTheDocument();
     expect(screen.queryByText("Bureau Test 1")).not.toBeInTheDocument();
   });
 
   it("should reset page to 1 when sorting changes", async () => {
-    mockGetAdminOffices.mockResolvedValue(mockPaginatedResponse);
+    const mockRefetch = vi.fn();
+    mockUseAdminOffices.mockReturnValue({
+      data: mockPaginatedResponse,
+      isLoading: false,
+      error: null,
+      refetch: mockRefetch,
+    } as any);
 
-    render(<OfficeTable searchQuery="" />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Bureau Test 1")).toBeInTheDocument();
-    });
+    render(<OfficeTable searchQuery="" />, { wrapper: createWrapper() });
 
     const nextButton = screen.getByText("Suivant");
     fireEvent.click(nextButton);
 
-    await waitFor(() => {
-      expect(mockGetAdminOffices).toHaveBeenCalledWith(
-        expect.objectContaining({ page: 2 })
-      );
-    });
+    expect(mockUseAdminOffices).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 2 })
+    );
 
-    mockGetAdminOffices.mockClear();
+    mockUseAdminOffices.mockClear();
 
     const titleSortButton = screen.getByRole("button", { name: /nom/i });
     fireEvent.click(titleSortButton);
 
-    await waitFor(() => {
-      expect(mockGetAdminOffices).toHaveBeenCalledWith({
-        page: 1,
-        limit: 10,
-        search: undefined,
-        sortBy: "title",
-        sortOrder: "asc",
-      });
+    expect(mockUseAdminOffices).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      search: undefined,
+      sortBy: "title",
+      sortOrder: "asc",
     });
   });
 });

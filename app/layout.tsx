@@ -3,6 +3,7 @@ import "./globals.css";
 import { GoogleMapProvider } from "@/providers/google-map-provider";
 import { roslindaleBlack, robertSans } from "./font";
 import { Toaster } from "sonner";
+import { QueryProvider } from "@/providers/query-provider";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -19,17 +20,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log(roslindaleBlack.variable);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${robertSans.className} ${roslindaleBlack.variable} antialiased `}
       >
-        <GoogleMapProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY!}>
-          {children}
-          <Toaster />
-        </GoogleMapProvider>
+        <QueryProvider>
+          <GoogleMapProvider
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY!}
+          >
+            {children}
+            <Toaster />
+          </GoogleMapProvider>
+        </QueryProvider>
       </body>
     </html>
   );
