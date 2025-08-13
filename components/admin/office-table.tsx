@@ -33,8 +33,10 @@ import {
   Eye,
   ChevronUp,
   ChevronDown,
+  Trash2,
 } from "lucide-react";
 import { useAdminOffices } from "@/hooks/use-admin-offices";
+import { DeleteOfficeDialog } from "@/components/admin/delete-office-dialog";
 import type { AdminOfficeFilters } from "@/lib/types";
 
 interface OfficeTableProps {
@@ -254,6 +256,12 @@ export function OfficeTable({ searchQuery }: OfficeTableProps) {
                             <Edit className="mr-2 h-4 w-4" />
                             Éditer
                           </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <DeleteOfficeDialog
+                            officeId={office.id}
+                            officeTitle={office.title}
+                          />
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

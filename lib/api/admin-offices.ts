@@ -1,5 +1,6 @@
 import type { AdminOfficeFilters } from "@/lib/types";
 import type { PaginatedOfficesResponse } from "@/features/offices/types";
+import { api } from "./axios";
 
 export async function getAdminOffices(
   filters: AdminOfficeFilters = {}
@@ -12,16 +13,13 @@ export async function getAdminOffices(
   if (filters.sortBy) searchParams.set("sortBy", filters.sortBy);
   if (filters.sortOrder) searchParams.set("sortOrder", filters.sortOrder);
 
-  const response = await fetch(`/api/admin/offices?${searchParams}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await api.get(`/api/admin/offices?${searchParams}`);
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch offices: ${response.statusText}`);
-  }
+  return response.data;
+}
 
-  return response.json();
+export async function deleteAdminOffice(id: number): Promise<void> {
+  const response = await api.delete(`/api/admin/offices/${id}`);
+
+  return response.data;
 }
