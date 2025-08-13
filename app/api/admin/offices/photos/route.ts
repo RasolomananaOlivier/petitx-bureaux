@@ -1,49 +1,81 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { photos } from "@/lib/db/schema"; // your photos table from pgTable
+import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db/drizzle";
-
-const photoSchema = z.object({
-  url: z.string().url().max(500),
-  alt: z.string().max(255).optional(),
-});
-
-const requestSchema = z.object({
-  officeId: z.number().int().positive(),
-  photos: z.array(photoSchema).min(1),
-}); // import the schema above or define here
+import { photos } from "@/lib/db/schema";
+import { eq, inArray } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
-    const json = await request.json();
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    // Validate body
-    const { officeId, photos: photosToAdd } = requestSchema.parse(json);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    const insertedPhotos = await db
-      .insert(photos)
-      .values(
-        photosToAdd.map((photo) => ({
-          officeId,
-          url: photo.url,
-          alt: photo.alt || null,
-        }))
-      )
-      .returning();
+    const body = await request.json();
+    const { photos: photoData, officeId } = body;
 
-    return NextResponse.json(
-      { success: true, insertedPhotos },
-      { status: 201 }
-    );
-  } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (!photoData || !Array.isArray(photoData) || !officeId) {
       return NextResponse.json(
-        { success: false, errors: error.errors },
+        { error: "Invalid request data" },
         { status: 400 }
       );
     }
+
+    const photosToInsert = photoData.map((photo: any) => ({
+      officeId,
+      url: photo.url,
+      alt: photo.alt || "",
+    }));
+
+    const insertedPhotos = await db
+      .insert(photos)
+      .values(photosToInsert)
+      .returning();
+
+    return NextResponse.json(insertedPhotos);
+  } catch (error) {
+    console.error("Error creating photos:", error);
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
+      { error: "Failed to create photos" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const ids = searchParams.get("ids");
+
+    if (!ids) {
+      return NextResponse.json(
+        { error: "Photo IDs are required" },
+        { status: 400 }
+      );
+    }
+
+    const photoIds = ids.split(",").map(Number);
+
+    await db.delete(photos).where(inArray(photos.id, photoIds));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting photos:", error);
+    return NextResponse.json(
+      { error: "Failed to delete photos" },
       { status: 500 }
     );
   }

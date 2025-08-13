@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Card,
@@ -20,27 +20,55 @@ interface Step4Props {
 export default function Step4({ form }: Step4Props) {
   const {
     updateFormData,
-    formData: { photos },
+    formData: { photos, existingPhotos, removedPhotos },
   } = useOfficeFormStore();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = acceptedFiles.map((file) => ({
-      file,
-      id: Math.random().toString(36).substr(2, 9),
-    }));
+  useEffect(() => {
+    form.setValue("photos", photos);
+    form.setValue("existingPhotos", existingPhotos);
+    form.setValue("removedPhotos", removedPhotos);
+  }, [form, photos, existingPhotos, removedPhotos]);
 
-    const newPhotos = [...photos, ...newFiles];
-    form.setValue("photos", newPhotos);
-    updateFormData({
-      photos: newPhotos,
-    });
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const newFiles = acceptedFiles.map((file) => ({
+        file,
+        id: Math.random().toString(36).substr(2, 9),
+      }));
+
+      const newPhotos = [...photos, ...newFiles];
+      form.setValue("photos", newPhotos);
+      form.setValue("existingPhotos", existingPhotos);
+      form.setValue("removedPhotos", removedPhotos);
+      updateFormData({
+        photos: newPhotos,
+      });
+    },
+    [photos, existingPhotos, removedPhotos, form, updateFormData]
+  );
 
   const removeFile = (fileId: string) => {
     const updated = photos.filter((file) => file.id !== fileId);
     form.setValue("photos", updated);
+    form.setValue("existingPhotos", existingPhotos);
+    form.setValue("removedPhotos", removedPhotos);
     updateFormData({
       photos: updated,
+    });
+  };
+
+  const removeExistingPhoto = (photoId: number) => {
+    const updatedExistingPhotos = existingPhotos.filter(
+      (photo) => photo.id !== photoId
+    );
+    const updatedRemovedPhotos = [...removedPhotos, photoId];
+
+    form.setValue("photos", photos);
+    form.setValue("existingPhotos", updatedExistingPhotos);
+    form.setValue("removedPhotos", updatedRemovedPhotos);
+    updateFormData({
+      existingPhotos: updatedExistingPhotos,
+      removedPhotos: updatedRemovedPhotos,
     });
   };
 
@@ -52,8 +80,8 @@ export default function Step4({ form }: Step4Props) {
     maxSize: 5 * 1024 * 1024,
   });
 
-  const photoCount = photos.length;
-  const isValid = photoCount >= 4;
+  const totalPhotoCount = photos.length + existingPhotos.length;
+  const isValid = totalPhotoCount >= 4;
 
   return (
     <div className="space-y-4">
@@ -67,7 +95,7 @@ export default function Step4({ form }: Step4Props) {
             </span>
             <br />
             <span className="text-sm text-gray-500">
-              Photos uploadées: {photoCount}/4
+              Photos totales: {totalPhotoCount}/4
             </span>
           </CardDescription>
         </CardHeader>
@@ -111,6 +139,26 @@ export default function Step4({ form }: Step4Props) {
       )}
 
       <div className="mt-4 grid grid-cols-3 gap-4">
+        {existingPhotos.map((photo) => (
+          <div
+            key={photo.id}
+            className="relative border rounded overflow-hidden"
+          >
+            <img
+              src={photo.url}
+              alt={photo.alt}
+              className="object-cover w-full h-32"
+            />
+            <button
+              onClick={() => removeExistingPhoto(photo.id)}
+              className="absolute top-1 right-1 bg-black bg-opacity-50 rounded-full p-1 text-white"
+              type="button"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
+
         {photos.map(({ file, id }) => {
           const previewUrl = URL.createObjectURL(file);
           return (

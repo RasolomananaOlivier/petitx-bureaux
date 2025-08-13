@@ -1,6 +1,10 @@
 import type { AdminOfficeFilters } from "@/lib/types";
-import type { PaginatedOfficesResponse } from "@/features/offices/types";
+import type {
+  PaginatedOfficesResponse,
+  OfficeWithRelations,
+} from "@/features/offices/types";
 import { api } from "./axios";
+import type { Office } from "@/lib/store/office-store";
 
 export async function getAdminOffices(
   filters: AdminOfficeFilters = {}
@@ -21,5 +25,18 @@ export async function getAdminOffices(
 export async function deleteAdminOffice(id: number): Promise<void> {
   const response = await api.delete(`/api/admin/offices/${id}`);
 
+  return response.data;
+}
+
+export async function getAdminOffice(id: number): Promise<OfficeWithRelations> {
+  const response = await api.get(`/api/admin/offices/${id}`);
+  return response.data;
+}
+
+export async function updateAdminOffice(
+  id: number,
+  data: Office
+): Promise<OfficeWithRelations> {
+  const response = await api.put(`/api/admin/offices/${id}`, data);
   return response.data;
 }

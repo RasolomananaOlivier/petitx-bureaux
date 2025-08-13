@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -18,11 +18,20 @@ import Step4 from "./office-form/step4";
 import { Stepper } from "./office-form/stepper";
 import { api } from "@/lib/api/axios";
 import { uploadFiles } from "@/lib/api/upload-files";
+import { syncPhotos } from "@/lib/api/photo-sync";
 import { Office as DBOffice } from "@/lib/db/schema";
 import { toast } from "sonner";
+import { useUpdateAdminOffice } from "@/hooks/use-admin-offices";
 
-// Main OfficeStepperForm component
-export default function OfficeStepperForm() {
+interface OfficeStepperFormProps {
+  mode?: "create" | "edit";
+  officeId?: number;
+}
+
+export default function OfficeStepperForm({
+  mode = "create",
+  officeId,
+}: OfficeStepperFormProps) {
   const {
     formData,
     currentStep,
@@ -34,12 +43,23 @@ export default function OfficeStepperForm() {
   } = useOfficeFormStore();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const updateOfficeMutation = useUpdateAdminOffice();
 
   const form = useForm<Office>({
     resolver: zodResolver(steps[currentStep].schema),
     defaultValues: formData,
     mode: "onChange",
   });
+
+  useEffect(() => {
+    if (mode === "edit" && formData !== initialFormData) {
+      form.reset(formData);
+    }
+  }, [formData, form, mode]);
+
+  useEffect(() => {
+    form.reset(formData);
+  }, [currentStep, form, formData]);
 
   const nextStep = async (): Promise<void> => {
     const isValid = await form.trigger();
@@ -50,7 +70,6 @@ export default function OfficeStepperForm() {
 
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
-        // Reset form with new schema and updated data
         setTimeout(() => {
           form.reset({ ...formData, ...currentData });
         }, 0);
@@ -64,7 +83,6 @@ export default function OfficeStepperForm() {
 
       updateFormData(currentData);
       setCurrentStep(currentStep - 1);
-      // Reset form with previous step schema
       setTimeout(() => {
         form.reset({ ...formData, ...currentData });
       }, 0);
@@ -79,35 +97,59 @@ export default function OfficeStepperForm() {
       const finalData: Office = { ...formData, ...form.getValues() };
 
       try {
-        const res = await api.post<DBOffice>("/api/admin/offices", finalData);
+        if (mode === "edit" && officeId) {
+          await updateOfficeMutation.mutateAsync({
+            id: officeId,
+            data: finalData,
+          });
 
-        if (finalData.photos.length > 0) {
-          const imageUrls = await uploadFiles(
-            finalData.photos.map((f) => f.file),
-            res.data.id
-          );
-
-          // Add photos to office
-          if (imageUrls.length > 0) {
-            await api.post("/api/admin/offices/photos", {
-              photos: imageUrls.map((item) => ({
-                url: item,
-                alt: finalData.title,
-              })),
-              officeId: res.data.id,
+          if (
+            finalData.photos.length > 0 ||
+            finalData.removedPhotos.length > 0
+          ) {
+            await syncPhotos({
+              newPhotos: finalData.photos.map((f) => f.file),
+              removedPhotoIds: finalData.removedPhotos,
+              existingPhotos: finalData.existingPhotos,
+              officeId,
             });
           }
+
+          toast.success("Bureau modifié avec succès !");
+        } else {
+          const res = await api.post<DBOffice>("/api/admin/offices", finalData);
+
+          if (finalData.photos.length > 0) {
+            const imageUrls = await uploadFiles(
+              finalData.photos.map((f) => f.file),
+              res.data.id
+            );
+
+            if (imageUrls.length > 0) {
+              await api.post("/api/admin/offices/photos", {
+                photos: imageUrls.map((item) => ({
+                  url: item,
+                  alt: finalData.title,
+                })),
+                officeId: res.data.id,
+              });
+            }
+          }
+
+          resetForm();
+          form.reset({
+            ...initialFormData,
+          });
+
+          toast.success("Bureau créé avec succès !");
         }
-
-        resetForm();
-        form.reset({
-          ...initialFormData,
-        });
-
-        toast.success("Bureau créé avec succès !");
       } catch (error) {
-        console.error("Error creating office:", error);
-        toast.error("Erreur lors de la création du bureau");
+        console.error("Error saving office:", error);
+        toast.error(
+          mode === "edit"
+            ? "Erreur lors de la modification du bureau"
+            : "Erreur lors de la création du bureau"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -162,11 +204,19 @@ export default function OfficeStepperForm() {
               <Button
                 type="button"
                 onClick={handleSubmit}
-                disabled={isLoading}
+                disabled={isLoading || updateOfficeMutation.isPending}
                 className="flex items-center gap-2"
               >
-                {isLoading && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-                {isLoading ? "Création en cours..." : "Créer le bureau"}
+                {(isLoading || updateOfficeMutation.isPending) && (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                )}
+                {isLoading || updateOfficeMutation.isPending
+                  ? mode === "edit"
+                    ? "Modification en cours..."
+                    : "Création en cours..."
+                  : mode === "edit"
+                  ? "Modifier le bureau"
+                  : "Créer le bureau"}
               </Button>
             )}
           </div>

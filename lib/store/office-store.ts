@@ -2,10 +2,15 @@ import { create } from "zustand";
 import * as z from "zod";
 import { NewOffice } from "../db/schema";
 
-// Types
 type UploadFile = {
   file: File;
   id: string;
+};
+
+type ExistingPhoto = {
+  id: number;
+  url: string;
+  alt: string;
 };
 
 export type Office = Omit<NewOffice, "lat" | "lng"> & {
@@ -13,6 +18,8 @@ export type Office = Omit<NewOffice, "lat" | "lng"> & {
   lng?: number;
   amenities: string[];
   photos: UploadFile[];
+  existingPhotos: ExistingPhoto[];
+  removedPhotos: number[];
 };
 
 export type Step = {
@@ -43,9 +50,10 @@ export const initialFormData: Office = {
   slug: "",
   amenities: [],
   photos: [],
+  existingPhotos: [],
+  removedPhotos: [],
 };
 
-// Zustand store
 export const useOfficeFormStore = create<OfficeFormState>((set) => ({
   formData: initialFormData,
   currentStep: 0,

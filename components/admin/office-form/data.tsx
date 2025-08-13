@@ -45,16 +45,33 @@ const step3Schema = z.object({
   amenities: z.array(z.string()).min(1, "Ajoutez au moins un équipement"),
 });
 
-const step4Schema = z.object({
-  photos: z
-    .array(
+const step4Schema = z
+  .object({
+    photos: z.array(
       z.object({
         file: z.instanceof(File),
         id: z.string(),
       })
-    )
-    .min(4, "Au moins 4 photos sont requises"),
-});
+    ),
+    existingPhotos: z.array(
+      z.object({
+        id: z.number(),
+        url: z.string(),
+        alt: z.string(),
+      })
+    ),
+    removedPhotos: z.array(z.number()),
+  })
+  .refine(
+    (data) => {
+      const totalPhotos = data.photos.length + data.existingPhotos.length;
+      return totalPhotos >= 5;
+    },
+    {
+      message: "Au moins 5 photos sont requises (nouvelles + existantes)",
+      path: ["photos"],
+    }
+  );
 
 export const steps: Step[] = [
   {
