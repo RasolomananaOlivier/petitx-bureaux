@@ -1,8 +1,76 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@/lib/db/drizzle"; // your drizzle db instance
-import { offices, officeServices, services } from "@/lib/db/schema"; // your schema
-import { eq, inArray } from "drizzle-orm";
+import { db } from "@/lib/db/drizzle";
+import { offices, officeServices, services, photos } from "@/lib/db/schema";
+import { eq, inArray, count, desc, asc, like, or, SQL, and } from "drizzle-orm";
+import type { PaginatedOfficesResponse } from "@/features/offices/types";
+import {
+  createPaginationResponse,
+  normalizePagination,
+} from "@/features/offices/utils/pagination";
+import { OfficesService } from "@/features/offices/repositories/offices.service";
+
+const getOfficesSchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(10),
+  search: z.string().optional(),
+  sortBy: z
+    .enum(["title", "createdAt", "updatedAt", "priceCents"])
+    .default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+});
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const params = getOfficesSchema.parse(Object.fromEntries(searchParams));
+
+    let whereCondition: SQL[] = [];
+    if (params.search) {
+      whereCondition.push(
+        or(
+          like(offices.title, `%${params.search}%`),
+          like(offices.description, `%${params.search}%`),
+          like(offices.slug, `%${params.search}%`)
+        )!
+      );
+    }
+
+    const totalCount = await db.$count(offices, and(...whereCondition));
+    const { page, limit } = normalizePagination(params.page, params.limit);
+
+    const service = new OfficesService();
+    const officesData = await service.getOffices(
+      and(...whereCondition),
+      offices[params.sortBy],
+      params.sortOrder === "desc" ? desc : asc,
+      page,
+      limit
+    );
+
+    const response = createPaginationResponse(
+      officesData,
+      page,
+      limit,
+      totalCount
+    );
+
+    return NextResponse.json(response);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation failed", details: err.errors },
+        { status: 400 }
+      );
+    }
+
+    console.error("Error fetching offices:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 
 // Zod schema for request body validation
 const officeSchema = z.object({

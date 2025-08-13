@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -27,114 +27,204 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { MoreHorizontal, Edit, Copy, Trash2, Eye } from "lucide-react";
+import { Pagination } from "@/components/ui/pagination";
+import {
+  MoreHorizontal,
+  Edit,
+  Copy,
+  Trash2,
+  Eye,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import { getAdminOffices } from "@/lib/api/admin-offices";
+import type { AdminOfficeFilters } from "@/lib/types";
+import type { PaginatedOfficesResponse } from "@/features/offices/types";
 
 interface OfficeTableProps {
   searchQuery: string;
 }
 
-// Mock data - replace with actual API call
-const mockOffices = [
-  {
-    id: "1",
-    name: "Bureau Marais Cosy",
-    description: "Un bureau chaleureux au cœur du Marais",
-    address: "15 rue des Rosiers, 75004 Paris",
-    arrondissement: 4,
-    pricePerDay: 45,
-    pricePerHour: 8,
-    capacity: 4,
-    amenities: ["WiFi", "Café", "Imprimante"],
-    photos: ["/office1.jpg", "/office1-2.jpg"],
-    isActive: true,
-    isFake: false,
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-02-01"),
-    coordinates: { lat: 48.8566, lng: 2.3522 },
-  },
-  {
-    id: "2",
-    name: "Espace Montparnasse",
-    description: "Bureau moderne près de la gare",
-    address: "32 avenue du Maine, 75015 Paris",
-    arrondissement: 15,
-    pricePerDay: 38,
-    pricePerHour: 6,
-    capacity: 2,
-    amenities: ["WiFi", "Climatisation"],
-    photos: ["/office2.jpg"],
-    isActive: false,
-    isFake: true,
-    createdAt: new Date("2024-01-20"),
-    updatedAt: new Date("2024-01-25"),
-    coordinates: { lat: 48.8414, lng: 2.3206 },
-  },
-];
+type SortField = "title" | "createdAt" | "updatedAt" | "priceCents";
+type SortOrder = "asc" | "desc";
 
 export function OfficeTable({ searchQuery }: OfficeTableProps) {
-  const [offices, setOffices] = useState(mockOffices);
+  const [data, setData] = useState<PaginatedOfficesResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
-  const filteredOffices = offices.filter(
-    (office) =>
-      office.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      office.address.toLowerCase().includes(searchQuery.toLowerCase())
+  const fetchOffices = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const filters: AdminOfficeFilters = {
+        page: currentPage,
+        limit: 10,
+        search: searchQuery || undefined,
+        sortBy: sortField,
+        sortOrder: sortOrder,
+      };
+
+      const response = await getAdminOffices(filters);
+      setData(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch offices");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOffices();
+  }, [currentPage, sortField, sortOrder, searchQuery]);
+
+  const handleSort = (field: SortField) => {
+    if (field === sortField) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const formatPrice = (priceCents: number) => {
+    return `${(priceCents / 100).toFixed(2)}€`;
+  };
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString("fr-FR");
+  };
+
+  const SortButton = ({
+    field,
+    children,
+  }: {
+    field: SortField;
+    children: React.ReactNode;
+  }) => (
+    <Button
+      variant="ghost"
+      onClick={() => handleSort(field)}
+      className="h-auto p-0 font-medium hover:bg-transparent"
+    >
+      {children}
+      {sortField === field &&
+        (sortOrder === "asc" ? (
+          <ChevronUp className="ml-1 h-4 w-4" />
+        ) : (
+          <ChevronDown className="ml-1 h-4 w-4" />
+        ))}
+    </Button>
   );
 
-  const handleDuplicate = (office: (typeof mockOffices)[0]) => {
-    const duplicated = {
-      ...office,
-      id: Date.now().toString(),
-      name: `${office.name} (Copie)`,
-      isFake: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    setOffices([duplicated, ...offices]);
-  };
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Bureaux</CardTitle>
+          <CardDescription>Chargement...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center h-32">
+            <div
+              className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"
+              data-testid="loading-spinner"
+            ></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const handleDelete = (id: string) => {
-    setOffices(offices.filter((office) => office.id !== id));
-  };
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Bureaux</CardTitle>
+          <CardDescription>Erreur lors du chargement</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-red-600 text-center py-8">
+            {error}
+            <br />
+            <Button onClick={() => fetchOffices()} className="mt-4">
+              Réessayer
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bureaux ({filteredOffices.length})</CardTitle>
+        <CardTitle>Bureaux ({data.pagination.total})</CardTitle>
         <CardDescription>
           Liste de tous les bureaux référencés sur la plateforme
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nom</TableHead>
-              <TableHead>Adresse</TableHead>
-              <TableHead>Prix/jour</TableHead>
+              <TableHead>
+                <SortButton field="title">Nom</SortButton>
+              </TableHead>
+              <TableHead>Arrondissement</TableHead>
+              <TableHead>
+                <SortButton field="priceCents">Prix</SortButton>
+              </TableHead>
               <TableHead>Capacité</TableHead>
               <TableHead>Statut</TableHead>
               <TableHead>Type</TableHead>
+              <TableHead>
+                <SortButton field="createdAt">Créé le</SortButton>
+              </TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredOffices.map((office) => (
+            {data.offices.map((office) => (
               <TableRow key={office.id}>
-                <TableCell className="font-medium">{office.name}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">
-                  {office.address}
+                <TableCell className="font-medium">
+                  <div>
+                    <div>{office.title}</div>
+                    {office.description && (
+                      <div className="text-sm text-muted-foreground truncate max-w-xs">
+                        {office.description}
+                      </div>
+                    )}
+                  </div>
                 </TableCell>
-                <TableCell>{office.pricePerDay}€</TableCell>
-                <TableCell>{office.capacity} pers.</TableCell>
+                <TableCell>{office.arr}ème</TableCell>
+                <TableCell>{formatPrice(office.priceCents)}</TableCell>
+                <TableCell>{office.nbPosts || "N/A"}</TableCell>
                 <TableCell>
-                  <Badge variant={office.isActive ? "default" : "secondary"}>
-                    {office.isActive ? "Actif" : "Inactif"}
+                  <Badge variant={office.publishedAt ? "default" : "secondary"}>
+                    {office.publishedAt ? "Publié" : "Brouillon"}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge variant={office.isFake ? "destructive" : "outline"}>
                     {office.isFake ? "Factice" : "Réel"}
                   </Badge>
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {formatDate(office.createdAt)}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -152,7 +242,7 @@ export function OfficeTable({ searchQuery }: OfficeTableProps) {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/${office.id}`} target="_blank">
+                        <Link href={`/${office.slug}`} target="_blank">
                           <Eye className="mr-2 h-4 w-4" />
                           Voir (Public)
                         </Link>
@@ -163,19 +253,6 @@ export function OfficeTable({ searchQuery }: OfficeTableProps) {
                           Éditer
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleDuplicate(office)}>
-                        <Copy className="mr-2 h-4 w-4" />
-                        Dupliquer
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(office.id)}
-                        className="text-red-600"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Supprimer
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -183,6 +260,69 @@ export function OfficeTable({ searchQuery }: OfficeTableProps) {
             ))}
           </TableBody>
         </Table>
+
+        {data.pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-muted-foreground">
+              Affichage de{" "}
+              {(data.pagination.page - 1) * data.pagination.limit + 1} à{" "}
+              {Math.min(
+                data.pagination.page * data.pagination.limit,
+                data.pagination.total
+              )}{" "}
+              sur {data.pagination.total} résultats
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(data.pagination.page - 1)}
+                disabled={!data.pagination.hasPrev}
+              >
+                Précédent
+              </Button>
+              <div className="flex items-center space-x-1">
+                {Array.from(
+                  { length: data.pagination.totalPages },
+                  (_, i) => i + 1
+                )
+                  .filter((page) => {
+                    const current = data.pagination.page;
+                    return (
+                      page === 1 ||
+                      page === data.pagination.totalPages ||
+                      (page >= current - 1 && page <= current + 1)
+                    );
+                  })
+                  .map((page, index, array) => (
+                    <div key={page} className="flex items-center">
+                      {index > 0 && array[index - 1] !== page - 1 && (
+                        <span className="px-1">...</span>
+                      )}
+                      <Button
+                        variant={
+                          page === data.pagination.page ? "default" : "outline"
+                        }
+                        size="sm"
+                        onClick={() => handlePageChange(page)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {page}
+                      </Button>
+                    </div>
+                  ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(data.pagination.page + 1)}
+                disabled={!data.pagination.hasNext}
+              >
+                Suivant
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

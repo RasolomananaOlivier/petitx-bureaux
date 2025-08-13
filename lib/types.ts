@@ -31,3 +31,11 @@ export interface Analytics {
     timestamp: Date;
   }>;
 }
+
+export interface AdminOfficeFilters {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: "title" | "createdAt" | "updatedAt" | "priceCents";
+  sortOrder?: "asc" | "desc";
+}
