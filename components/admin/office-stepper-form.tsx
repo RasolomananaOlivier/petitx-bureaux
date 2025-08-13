@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Loader2 } from "lucide-react";
@@ -19,6 +19,7 @@ import { Stepper } from "./office-form/stepper";
 import { api } from "@/lib/api/axios";
 import { uploadFiles } from "@/lib/api/upload-files";
 import { Office as DBOffice } from "@/lib/db/schema";
+import { toast } from "sonner";
 
 // Main OfficeStepperForm component
 export default function OfficeStepperForm() {
@@ -34,7 +35,7 @@ export default function OfficeStepperForm() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const form = useForm<any>({
+  const form = useForm<Office>({
     resolver: zodResolver(steps[currentStep].schema),
     defaultValues: formData,
     mode: "onChange",
@@ -103,10 +104,10 @@ export default function OfficeStepperForm() {
           ...initialFormData,
         });
 
-        // alert("Bureau créé avec succès !");
+        toast.success("Bureau créé avec succès !");
       } catch (error) {
         console.error("Error creating office:", error);
-        alert("Erreur lors de la création du bureau");
+        toast.error("Erreur lors de la création du bureau");
       } finally {
         setIsLoading(false);
       }

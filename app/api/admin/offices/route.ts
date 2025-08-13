@@ -65,12 +65,14 @@ export async function POST(req: Request) {
         .where(inArray(services.name, parsed.amenities));
 
       // 3️⃣ Link office to services
-      await tx.insert(officeServices).values(
-        serviceRows.map((s) => ({
-          officeId: office.id,
-          serviceId: s.id,
-        }))
-      );
+      if (serviceRows.length > 0) {
+        await tx.insert(officeServices).values(
+          serviceRows.map((s) => ({
+            officeId: office.id,
+            serviceId: s.id,
+          }))
+        );
+      }
 
       return office;
     });

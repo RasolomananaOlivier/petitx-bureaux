@@ -8,7 +8,9 @@ type UploadFile = {
   id: string;
 };
 
-export type Office = NewOffice & {
+export type Office = Omit<NewOffice, "lat" | "lng"> & {
+  lat?: number;
+  lng?: number;
   amenities: string[];
   photos: UploadFile[];
 };
@@ -38,8 +40,6 @@ export const initialFormData: Office = {
   priceCents: 0,
   nbPosts: 1,
   isFake: false,
-  lat: 0,
-  lng: 0,
   slug: "",
   amenities: [],
   photos: [],

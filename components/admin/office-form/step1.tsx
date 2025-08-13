@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/card";
 import { Building2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useWatch } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
+import LocationPicker from "@/components/admin/location-picker";
+import { Office } from "@/lib/store/office-store";
 
 interface Step1Props {
-  form: any;
+  form: UseFormReturn<Office>;
 }
 
 function slugify(text: string) {
@@ -51,6 +53,17 @@ export default function Step1({ form }: Step1Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div>
+          <Label>Localisation</Label>
+          <LocationPicker<Office>
+            form={form}
+            latName="lat"
+            lngName="lng"
+            titleName="title"
+            arrName="arr"
+          />
+        </div>
+
         <div>
           <Label htmlFor="title">Nom du bureau *</Label>
           <Input
@@ -103,43 +116,6 @@ export default function Step1({ form }: Step1Props) {
               {form.formState.errors.description.message}
             </p>
           )}
-        </div>
-
-        {/* Latitude & Longitude Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="lat">Latitude *</Label>
-            <Input
-              id="lat"
-              type="number"
-              step="any"
-              {...form.register("lat", { valueAsNumber: true })}
-              className={form.formState.errors.lat ? "border-red-500" : ""}
-              placeholder="Ex: 48.8566"
-            />
-            {form.formState.errors.lat && (
-              <p className="text-red-500 text-sm mt-1">
-                {form.formState.errors.lat.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="lng">Longitude *</Label>
-            <Input
-              id="lng"
-              type="number"
-              step="any"
-              {...form.register("lng", { valueAsNumber: true })}
-              className={form.formState.errors.lng ? "border-red-500" : ""}
-              placeholder="Ex: 2.3522"
-            />
-            {form.formState.errors.lng && (
-              <p className="text-red-500 text-sm mt-1">
-                {form.formState.errors.lng.message}
-              </p>
-            )}
-          </div>
         </div>
 
         <div>

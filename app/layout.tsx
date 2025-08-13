@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { GoogleMapProvider } from "@/providers/google-map-provider";
 import { roslindaleBlack, robertSans } from "./font";
+import { Toaster } from "sonner";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -27,6 +28,7 @@ export default function RootLayout({
       >
         <GoogleMapProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY!}>
           {children}
+          <Toaster />
         </GoogleMapProvider>
       </body>
     </html>
