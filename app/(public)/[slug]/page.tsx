@@ -27,11 +27,10 @@ export default async function OfficePage({ params }: OfficePageProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 space-y-8 sm:px-6 lg:px-8 py-8">
-        <Breadcrumbs office={office} />
+      <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8 sm:px-6 lg:px-8 pb-8 lg:py-8">
         <OfficeGallery images={office.photos.map((photo) => photo.url)} />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 px-4 lg:px-0">
+          <div className="grid-cols-1 lg:col-span-2 space-y-8">
             <OfficeHeader
               title={office.title}
               workstations={office.nbPosts || 0}
@@ -41,6 +40,17 @@ export default async function OfficePage({ params }: OfficePageProps) {
               period="HT par mois"
               availability="Dispo immédiatement"
             />
+            <div className="lg:hidden">
+              <OfficeContact
+                contact={{
+                  name: "Paul",
+                  avatar: "/avatar1.webp",
+                  partnerSince: 2025,
+                  responseTime: "quelques jours",
+                  responseRate: 50,
+                }}
+              />
+            </div>
             <OfficeLocation
               address={`Paris ${office.arr}`}
               coordinates={{
@@ -56,7 +66,7 @@ export default async function OfficePage({ params }: OfficePageProps) {
             />
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="hidden lg:block lg:col-span-1">
             <div className="sticky top-20 space-y-6">
               <OfficeContact
                 contact={{
@@ -71,7 +81,7 @@ export default async function OfficePage({ params }: OfficePageProps) {
           </div>
         </div>
 
-        <div className="mt-16 space-y-12">
+        <div className="lg:mt-16 space-y-12">
           <RelatedOffices />
         </div>
       </div>

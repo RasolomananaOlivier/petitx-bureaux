@@ -36,9 +36,9 @@ export function OfficeServices({ services }: OfficeServicesProps) {
   const hasMoreServices = services.length > 6;
 
   return (
-    <div>
+    <div className="">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">Services</h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 grid-rows-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 ">
         {displayedServices.map((service, index) => {
           const IconComponent = serviceIcons[service] || Monitor;
           return (

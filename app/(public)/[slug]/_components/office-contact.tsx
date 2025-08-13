@@ -20,8 +20,8 @@ export function OfficeContact({ contact }: OfficeContactProps) {
   return (
     <div className="space-y-8">
       <Card className="border-gray-200 shadow-xl">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-4 mb-6">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-4">
             <div className="relative">
               <div className="size-16 bg-pink-100 rounded-full flex items-center justify-center">
                 <span className="text-pink-600 font-semibold text-lg">
@@ -42,11 +42,11 @@ export function OfficeContact({ contact }: OfficeContactProps) {
 
           <Separator className="my-4" />
 
-          <div className="flex items-center gap-2 flex-col">
+          <div className="flex items-center gap-4 flex-col">
             <h2 className="text-xl font-bold text-gray-900 text-center">
               Cette annonce vous intéresse ?
             </h2>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mb-6">
+            <Button className="w-full bg-primary font-bold text-white py-6">
               Contacter
             </Button>
           </div>

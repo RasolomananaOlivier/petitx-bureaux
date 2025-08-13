@@ -44,8 +44,8 @@ export function RelatedOffices() {
   }
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+    <div className="pt-4">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 px-4 lg:px-0">
         Ces bureaux pourraient vous plaire
       </h2>
 
@@ -62,21 +62,18 @@ export function RelatedOffices() {
         </div>
 
         <Carousel
-          opts={{ loop: true, align: "start" }}
+          opts={{ align: "center" }}
           className={cn(
             "w-full flex-1 cursor-grab select-none max-w-md lg:max-w-6xl mx-auto",
             isGrabbing && "cursor-grabbing"
           )}
-          setApi={setApi}
-          onContextMenu={(e) => e.preventDefault()}
         >
-          <CarouselContent
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-          >
+          <CarouselContent className="-ml-5 px-4">
             {offices.map((office) => (
-              <CarouselItem key={office.id} className="basis-1/2 lg:basis-1/3">
+              <CarouselItem
+                key={office.id}
+                className="basis-[80%] lg:basis-1/4"
+              >
                 <OfficeCard office={office} />
               </CarouselItem>
             ))}

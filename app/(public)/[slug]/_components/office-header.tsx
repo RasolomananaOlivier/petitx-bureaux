@@ -23,9 +23,9 @@ export function OfficeHeader({
   return (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
       <div className="space-y-1 w-full">
-        <div className="flex items-center justify-between w-full text-[22px] font-bold text-gray-900">
+        <div className="flex flex-col lg:flex-row lg:items-center items-start justify-between w-full text-[22px] font-bold text-gray-900">
           <h1 className="  ">{title}</h1>
-          <div className="text-right flex gap-2">
+          <div className="hidden lg:flex text-right gap-2">
             <div className=" ">
               {price.toLocaleString()} {currency}
             </div>
@@ -50,19 +50,16 @@ export function OfficeHeader({
             <span className="relative inline-flex rounded-full size-2 bg-green-500"></span>
           </span>
         </div>
-      </div>
 
-      {/* <div className="flex flex-col items-end gap-3">
-        <div className="flex gap-2">
-          <Button variant="outline" className="text-gray-700">
-            Salle de réunion privée
-          </Button>
-          <Button variant="outline" className="text-gray-700">
-            Voir tous les services
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+        <div className="flex lg:hidden text-right gap-2 text-[22px] font-bold text-gray-900">
+          <div className=" ">
+            {price.toLocaleString()} {currency}
+          </div>
+          <div className="text-sm text-gray-600 font-normal pt-0.5">
+            {period}
+          </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }

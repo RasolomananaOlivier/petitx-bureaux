@@ -48,7 +48,7 @@ export function OfficeLocation({ address, coordinates }: OfficeLocationProps) {
     <div className="flex flex-col gap-4">
       <h3 className="text-xl font-bold text-gray-900">{address}</h3>
 
-      <div className="relative h-[300px] w-[500px] bg-gray-100 rounded-lg overflow-hidden">
+      <div className="relative h-[200px] lg:h-[300px] w-full lg:w-[500px] bg-gray-100 rounded-lg overflow-hidden">
         <Map
           defaultZoom={16}
           defaultCenter={{ lat: coordinates.lat, lng: coordinates.lng }}
