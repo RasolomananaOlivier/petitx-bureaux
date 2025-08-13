@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -88,11 +89,13 @@ export function MediaUpload({}: MediaUploadProps) {
           const previewUrl = URL.createObjectURL(file);
           return (
             <div key={id} className="relative border rounded overflow-hidden">
-              <img
+              <Image
                 src={previewUrl}
                 alt={file.name}
+                width={200}
+                height={128}
                 className="object-cover w-full h-32"
-                onLoad={() => URL.revokeObjectURL(previewUrl)} // free memory
+                onLoad={() => URL.revokeObjectURL(previewUrl)}
               />
               <button
                 onClick={() => removeFile(id)}

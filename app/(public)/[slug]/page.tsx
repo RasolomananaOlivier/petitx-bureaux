@@ -5,11 +5,7 @@ import { OfficeDetails } from "./_components/office-details";
 import { OfficeLocation } from "./_components/office-location";
 import { OfficeContact } from "./_components/office-contact";
 import { OfficeServices } from "./_components/office-services";
-import { OfficeContract } from "./_components/office-contract";
 import { RelatedOffices } from "./_components/related-offices";
-import { Breadcrumbs } from "./_components/breadcrumbs";
-import { PromotionalBanner } from "./_components/promotional-banner";
-import { ExploreSection } from "./_components/explore-section";
 import { getOfficeBySlug } from "@/lib/api/offices";
 
 interface OfficePageProps {

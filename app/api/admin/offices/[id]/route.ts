@@ -3,7 +3,6 @@ import { z } from "zod";
 import { db } from "@/lib/db/drizzle";
 import { offices, officeServices, services, photos } from "@/lib/db/schema";
 import { and, eq, inArray, ne } from "drizzle-orm";
-import type { OfficeWithRelations } from "@/features/offices/types";
 
 const deleteOfficeSchema = z.object({
   id: z.coerce.number().int().positive(),

@@ -1,4 +1,3 @@
-import { api } from "./axios";
 import { supabaseStorage } from "../supabase/storage";
 import { photosApi } from "./photos";
 

@@ -1,14 +1,12 @@
 "use client";
-import React, { useEffect, useRef, useCallback, useState } from "react";
-import { AdvancedMarker, Map, useMap } from "@vis.gl/react-google-maps";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import React, { useEffect } from "react";
+import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
 import { useMapListSync } from "@/components/search/map-list-sync-provider";
 import { OfficeWithRelations } from "@/features/offices/types";
-import { Home, MapPin, Euro } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import Image from "next/image";
+import { MapPin, Euro } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { MAP_ID, PARIS_CENTER } from "@/lib/utils/constants";
 
 const GoogleMap = () => {
@@ -44,7 +42,6 @@ const AdvancedMarkerWithCustomPin = ({
 }) => {
   const {
     hoveredOfficeId,
-    selectedOfficeId,
     expandedOfficeId,
     setSelectedOfficeId,
     setExpandedOfficeId,
@@ -118,9 +115,11 @@ const AdvancedMarkerWithCustomPin = ({
                 onClick={handleCardClick}
               >
                 <div className="flex items-start gap-3">
-                  <img
+                  <Image
                     src={office.photos[0]?.url || "/open_space.webp"}
                     alt={office.title}
+                    width={96}
+                    height={96}
                     className="rounded-lg w-24 h-24 object-cover"
                   />
                   <div className="flex-1 min-w-0">

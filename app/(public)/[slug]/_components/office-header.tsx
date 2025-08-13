@@ -1,6 +1,3 @@
-import { CheckCircle, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
 interface OfficeHeaderProps {
   title: string;
   workstations: number;

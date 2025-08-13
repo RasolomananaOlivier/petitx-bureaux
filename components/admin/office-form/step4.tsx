@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -143,9 +144,11 @@ export default function Step4({ form }: Step4Props) {
             key={photo.id}
             className="relative border rounded overflow-hidden"
           >
-            <img
+            <Image
               src={photo.url}
               alt={photo.alt}
+              width={200}
+              height={128}
               className="object-cover w-full h-32"
             />
             <button
@@ -162,9 +165,11 @@ export default function Step4({ form }: Step4Props) {
           const previewUrl = URL.createObjectURL(file);
           return (
             <div key={id} className="relative border rounded overflow-hidden">
-              <img
+              <Image
                 src={previewUrl}
                 alt={file.name}
+                width={200}
+                height={128}
                 className="object-cover w-full h-32"
                 onLoad={() => URL.revokeObjectURL(previewUrl)}
               />

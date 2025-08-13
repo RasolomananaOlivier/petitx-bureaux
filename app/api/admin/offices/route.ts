@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db/drizzle";
-import { offices, officeServices, services, photos } from "@/lib/db/schema";
-import { eq, inArray, count, desc, asc, like, or, SQL, and } from "drizzle-orm";
-import type { PaginatedOfficesResponse } from "@/features/offices/types";
+import { offices, services, officeServices } from "@/lib/db/schema";
+import { eq, inArray, desc, asc, like, or, SQL, and } from "drizzle-orm";
 import {
   createPaginationResponse,
   normalizePagination,

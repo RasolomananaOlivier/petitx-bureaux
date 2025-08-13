@@ -33,7 +33,6 @@ const serviceIcons: Record<
 
 export function OfficeServices({ services }: OfficeServicesProps) {
   const displayedServices = services.slice(0, 6);
-  const hasMoreServices = services.length > 6;
 
   return (
     <div className="">

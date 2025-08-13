@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db/drizzle";
 import { accounts } from "@/lib/db/schema";
-import { cookies } from "next/headers";
 import { createClient as createClientDirect } from "@supabase/supabase-js";
 
 interface AdminSeedData {

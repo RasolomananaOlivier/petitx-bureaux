@@ -1,10 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselApi,
@@ -31,7 +28,7 @@ export function RelatedOffices() {
       setOffices(offices);
     };
     fetchOffices();
-  }, []);
+  }, [slug]);
 
   if (offices.length === 0) {
     return null;
@@ -56,6 +53,7 @@ export function RelatedOffices() {
         </div>
 
         <Carousel
+          setApi={setApi}
           opts={{ align: "center" }}
           className={cn(
             "w-full flex-1 cursor-grab select-none max-w-md lg:max-w-6xl mx-auto"

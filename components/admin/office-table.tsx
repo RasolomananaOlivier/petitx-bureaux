@@ -33,7 +33,6 @@ import {
   Eye,
   ChevronUp,
   ChevronDown,
-  Trash2,
 } from "lucide-react";
 import { useAdminOffices } from "@/hooks/use-admin-offices";
 import { DeleteOfficeDialog } from "@/components/admin/delete-office-dialog";
@@ -376,23 +375,5 @@ const OfficeTableRow = ({ office }: { office: OfficeWithRelations }) => {
         </DropdownMenu>
       </TableCell>
     </TableRow>
-  );
-};
-
-const SkeletonTableRows = () => {
-  return (
-    <>
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="grid grid-cols-8 gap-4 w-full">
-          <Skeleton className="h-12 w-full col-span-2" data-testid="skeleton" />
-          <Skeleton className="h-12 w-full" data-testid="skeleton" />
-          <Skeleton className="h-12 w-full" data-testid="skeleton" />
-          <Skeleton className="h-12 w-full" data-testid="skeleton" />
-          <Skeleton className="h-12 w-full" data-testid="skeleton" />
-          <Skeleton className="h-12 w-full" data-testid="skeleton" />
-          <Skeleton className="h-12 w-full" data-testid="skeleton" />
-        </div>
-      ))}
-    </>
   );
 };

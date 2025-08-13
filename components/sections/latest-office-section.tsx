@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { OfficeWithRelations } from "@/features/offices/types";
 import Link from "next/link";
+import Image from "next/image";
 
 interface OfficeCardProps {
   office: OfficeWithRelations;
@@ -73,9 +74,11 @@ export function OfficeCard({
             <CarouselContent className="-ml-2">
               {images.map((src, idx) => (
                 <CarouselItem key={idx} className="pl-0">
-                  <img
+                  <Image
                     src={src}
                     alt={`Image ${idx + 1} — ${office.title}`}
+                    width={400}
+                    height={192}
                     className="w-full h-48 object-cover"
                   />
                 </CarouselItem>

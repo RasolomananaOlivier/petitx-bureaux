@@ -1,9 +1,9 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { type Office } from "@/lib/api/offices";
+import { type OfficeWithRelations } from "@/features/offices/types";
 
 interface BreadcrumbsProps {
-  office: Office;
+  office: OfficeWithRelations;
 }
 
 export function Breadcrumbs({ office }: BreadcrumbsProps) {

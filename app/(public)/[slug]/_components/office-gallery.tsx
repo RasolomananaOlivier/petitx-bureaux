@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Carousel,
@@ -64,9 +63,11 @@ export function OfficeGallery({ images }: OfficeGalleryProps) {
           <CarouselContent className="-ml-2">
             {images.map((src, idx) => (
               <CarouselItem key={idx} className="pl-0">
-                <img
+                <Image
                   src={src}
                   alt="Office space"
+                  width={400}
+                  height={256}
                   className="w-full h-64 object-cover"
                 />
               </CarouselItem>

@@ -1,13 +1,7 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Map, AdvancedMarker, useMapsLibrary } from "@vis.gl/react-google-maps";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import {
   FieldPath,
   FieldPathValue,

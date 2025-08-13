@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { DELETE, GET, PUT } from "../route";
 import { db } from "@/lib/db/drizzle";
-import { offices, photos, officeServices, services } from "@/lib/db/schema";
 
 vi.mock("@/lib/db/drizzle", () => ({
   db: {

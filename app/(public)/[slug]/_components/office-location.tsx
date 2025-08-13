@@ -1,6 +1,5 @@
 "use client";
 
-import { MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Map, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useRef } from "react";

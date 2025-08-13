@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { GET } from "../route";
-import { NextRequest } from "next/server";
 
 describe("GET /api/services", () => {
   it("should return all services", async () => {
