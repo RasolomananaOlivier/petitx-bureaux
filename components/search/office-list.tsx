@@ -160,7 +160,7 @@ export function OfficeList({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
             {offices.map((office) => (
               <div
                 key={office.id}
