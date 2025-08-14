@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/drizzle";
-import { officeServices } from "@/lib/db/schema";
+import { officeServices, offices } from "@/lib/db/schema";
 import { DrizzleDB } from "@/lib/db/types";
-import { inArray, sql } from "drizzle-orm";
+import { inArray, sql, eq } from "drizzle-orm";
 
 async function getOffices(
   db: DrizzleDB, // Inject db dependency
@@ -29,6 +29,20 @@ async function getOffices(
   });
 }
 
+async function getOfficeById(db: DrizzleDB, id: number) {
+  return await db.query.offices.findFirst({
+    where: eq(offices.id, id),
+    with: {
+      photos: true,
+      officeServices: {
+        with: {
+          service: true,
+        },
+      },
+    },
+  });
+}
+
 async function getOfficesWithServices(db: DrizzleDB, serviceIds: number[]) {
   const officesWithServices = await db
     .select({ officeId: officeServices.officeId })
@@ -44,5 +58,6 @@ async function getOfficesWithServices(db: DrizzleDB, serviceIds: number[]) {
 
 export const officesRepository = {
   getOffices,
+  getOfficeById,
   getOfficesWithServices,
 };

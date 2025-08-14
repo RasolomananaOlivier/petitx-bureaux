@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Star } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 interface Contact {
   name: string;
@@ -13,9 +14,10 @@ interface Contact {
 
 interface OfficeContactProps {
   contact: Contact;
+  officeId: number;
 }
 
-export function OfficeContact({ contact }: OfficeContactProps) {
+export function OfficeContact({ contact, officeId }: OfficeContactProps) {
   return (
     <div className="space-y-8">
       <Card className="border-gray-200 shadow-xl">
@@ -45,8 +47,11 @@ export function OfficeContact({ contact }: OfficeContactProps) {
             <h2 className="text-xl font-bold text-gray-900 text-center">
               Cette annonce vous intéresse ?
             </h2>
-            <Button className="w-full bg-primary font-bold text-white py-6">
-              Contacter
+            <Button
+              asChild
+              className="w-full bg-primary font-bold text-white py-6"
+            >
+              <Link href={`/lead?officeId=${officeId}`}>Contacter</Link>
             </Button>
           </div>
         </CardContent>

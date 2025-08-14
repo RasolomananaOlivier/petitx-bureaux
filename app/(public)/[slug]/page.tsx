@@ -45,6 +45,7 @@ export default async function OfficePage({ params }: OfficePageProps) {
                   responseTime: "quelques jours",
                   responseRate: 50,
                 }}
+                officeId={office.id}
               />
             </div>
             <OfficeLocation
@@ -72,6 +73,7 @@ export default async function OfficePage({ params }: OfficePageProps) {
                   responseTime: "quelques jours",
                   responseRate: 50,
                 }}
+                officeId={office.id}
               />
             </div>
           </div>
