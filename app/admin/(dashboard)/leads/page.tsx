@@ -40,9 +40,8 @@ export default function LeadsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous les statuts</SelectItem>
-            <SelectItem value="new">Nouveau</SelectItem>
+            <SelectItem value="pending">En attente</SelectItem>
             <SelectItem value="contacted">Contacté</SelectItem>
-            <SelectItem value="qualified">Qualifié</SelectItem>
             <SelectItem value="converted">Converti</SelectItem>
             <SelectItem value="rejected">Rejeté</SelectItem>
           </SelectContent>

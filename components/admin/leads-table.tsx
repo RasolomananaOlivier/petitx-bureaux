@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -25,101 +25,174 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail, Phone, MessageSquare } from "lucide-react";
-import { Lead } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Mail,
+  Phone,
+  MessageSquare,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import { useAdminLeads, useUpdateLeadStatus } from "@/hooks/use-admin-leads";
+import type { AdminLeadFilters } from "@/lib/api/admin-leads";
+import { toast } from "sonner";
 
 interface LeadsTableProps {
   searchQuery: string;
   statusFilter: string;
 }
 
-// Mock data
-const mockLeads: Lead[] = [
-  {
-    id: "1",
-    name: "Marie Dubois",
-    email: "marie.dubois@email.com",
-    phone: "+33 6 12 34 56 78",
-    message:
-      "Bonjour, je souhaiterais réserver le bureau pour une journée la semaine prochaine.",
-    officeId: "1",
-    status: "new",
-    source: "Website",
-    createdAt: new Date("2024-02-10T10:30:00"),
-    updatedAt: new Date("2024-02-10T10:30:00"),
-  },
-  {
-    id: "2",
-    name: "Pierre Martin",
-    email: "p.martin@startup.fr",
-    phone: "+33 7 98 76 54 32",
-    message:
-      "Notre équipe cherche un bureau pour 2 semaines. Avez-vous des tarifs préférentiels ?",
-    officeId: "1",
-    status: "contacted",
-    source: "Google Ads",
-    createdAt: new Date("2024-02-09T14:15:00"),
-    updatedAt: new Date("2024-02-10T09:00:00"),
-  },
-  {
-    id: "3",
-    name: "Sophie Bernard",
-    email: "sophie.b@freelance.com",
-    message:
-      "Intéressée par le bureau Montparnasse pour du télétravail occasionnel.",
-    officeId: "2",
-    status: "qualified",
-    source: "Référencement naturel",
-    createdAt: new Date("2024-02-08T16:45:00"),
-    updatedAt: new Date("2024-02-09T11:30:00"),
-  },
-];
+type SortField = "createdAt" | "updatedAt" | "name" | "email";
+type SortOrder = "asc" | "desc";
 
 const statusColors = {
-  new: "destructive",
+  pending: "destructive",
   contacted: "default",
-  qualified: "secondary",
-  converted: "default",
+  converted: "secondary",
   rejected: "outline",
 } as const;
 
 const statusLabels = {
-  new: "Nouveau",
+  pending: "En attente",
   contacted: "Contacté",
-  qualified: "Qualifié",
   converted: "Converti",
   rejected: "Rejeté",
 } as const;
 
+const SortButton = ({
+  children,
+  field,
+  currentField,
+  currentOrder,
+  onSort,
+}: {
+  children: React.ReactNode;
+  field: SortField;
+  currentField: SortField;
+  currentOrder: SortOrder;
+  onSort: (field: SortField) => void;
+}) => (
+  <Button
+    variant="ghost"
+    onClick={() => onSort(field)}
+    className="h-auto p-0 font-medium hover:bg-transparent"
+  >
+    {children}
+    {currentField === field &&
+      (currentOrder === "asc" ? (
+        <ChevronUp className="ml-1 h-4 w-4" />
+      ) : (
+        <ChevronDown className="ml-1 h-4 w-4" />
+      ))}
+  </Button>
+);
+
 export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
-  const [leads, setLeads] = useState<Lead[]>(mockLeads);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
-  const filteredLeads = leads.filter((lead) => {
-    const matchesSearch =
-      lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.message.toLowerCase().includes(searchQuery.toLowerCase());
+  const filters: AdminLeadFilters = {
+    page: currentPage,
+    limit: 10,
+    search: searchQuery || undefined,
+    status: statusFilter === "all" ? undefined : (statusFilter as any),
+    sortBy: sortField,
+    sortOrder: sortOrder,
+  };
 
-    const matchesStatus =
-      statusFilter === "all" || lead.status === statusFilter;
+  const { data, isPending, error, isPlaceholderData, isFetching, refetch } =
+    useAdminLeads({ ...filters });
 
-    return matchesSearch && matchesStatus;
-  });
+  const updateLeadStatusMutation = useUpdateLeadStatus();
 
-  const updateLeadStatus = (leadId: string, newStatus: Lead["status"]) => {
-    setLeads(
-      leads.map((lead) =>
-        lead.id === leadId
-          ? { ...lead, status: newStatus, updatedAt: new Date() }
-          : lead
-      )
+  const handleSort = (field: SortField) => {
+    if (field === sortField) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleStatusUpdate = async (leadId: number, newStatus: string) => {
+    try {
+      await updateLeadStatusMutation.mutateAsync({ leadId, status: newStatus });
+      toast.success("Statut mis à jour avec succès");
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour du statut");
+    }
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
+
+  if (isPending) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Leads</CardTitle>
+          <CardDescription>
+            Liste des demandes clients et leur statut de suivi
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center space-x-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Erreur</CardTitle>
+          <CardDescription>
+            Impossible de charger les leads. Veuillez réessayer.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fr-FR");
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Leads ({filteredLeads.length})</CardTitle>
+        <CardTitle>Leads ({data.pagination.total})</CardTitle>
         <CardDescription>
           Liste des demandes clients et leur statut de suivi
         </CardDescription>
@@ -128,17 +201,33 @@ export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Contact</TableHead>
-              <TableHead>Message</TableHead>
+              <TableHead>
+                <SortButton
+                  field="name"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Contact
+                </SortButton>
+              </TableHead>
               <TableHead>Bureau</TableHead>
-              <TableHead>Source</TableHead>
               <TableHead>Statut</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>
+                <SortButton
+                  field="createdAt"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Date
+                </SortButton>
+              </TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredLeads.map((lead) => (
+            {data.leads.map((lead) => (
               <TableRow key={lead.id}>
                 <TableCell>
                   <div>
@@ -155,17 +244,10 @@ export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="max-w-xs">
-                  <div className="flex items-start gap-2">
-                    <MessageSquare className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
-                    <span className="text-sm line-clamp-3">{lead.message}</span>
-                  </div>
-                </TableCell>
                 <TableCell>
-                  <span className="text-sm">Bureau #{lead.officeId}</span>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">{lead.source}</span>
+                  <span className="text-sm">
+                    {lead.office?.title || `Bureau #${lead.officeId}`}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <Badge variant={statusColors[lead.status]}>
@@ -174,29 +256,26 @@ export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="text-sm">
-                    <div>{lead.createdAt.toLocaleDateString("fr-FR")}</div>
+                    <div>{formatDate(lead.createdAt)}</div>
                     <div className="text-muted-foreground">
-                      {lead.createdAt.toLocaleTimeString("fr-FR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatTime(lead.createdAt)}
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
                   <Select
                     value={lead.status}
-                    onValueChange={(value: Lead["status"]) =>
-                      updateLeadStatus(lead.id, value)
+                    onValueChange={(value) =>
+                      handleStatusUpdate(lead.id, value)
                     }
+                    disabled={updateLeadStatusMutation.isPending}
                   >
                     <SelectTrigger className="w-32">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="new">Nouveau</SelectItem>
+                      <SelectItem value="pending">En attente</SelectItem>
                       <SelectItem value="contacted">Contacté</SelectItem>
-                      <SelectItem value="qualified">Qualifié</SelectItem>
                       <SelectItem value="converted">Converti</SelectItem>
                       <SelectItem value="rejected">Rejeté</SelectItem>
                     </SelectContent>
@@ -206,6 +285,41 @@ export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
             ))}
           </TableBody>
         </Table>
+
+        {data.pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4">
+            <div className="text-sm text-muted-foreground">
+              Affichage de{" "}
+              {(data.pagination.page - 1) * data.pagination.limit + 1} à{" "}
+              {Math.min(
+                data.pagination.page * data.pagination.limit,
+                data.pagination.total
+              )}{" "}
+              sur {data.pagination.total} résultats
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(data.pagination.page - 1)}
+                disabled={!data.pagination.hasPrev}
+              >
+                Précédent
+              </Button>
+              <span className="text-sm">
+                Page {data.pagination.page} sur {data.pagination.totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(data.pagination.page + 1)}
+                disabled={!data.pagination.hasNext}
+              >
+                Suivant
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

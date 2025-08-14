@@ -3,15 +3,13 @@ import { type Office as DbOffice } from "@/lib/db/schema";
 export type Office = DbOffice;
 
 export interface Lead {
-  id: string;
+  id: number;
   name: string;
   email: string;
   phone?: string;
-  message: string;
-  officeId: string;
+  officeId: number;
   office?: Office;
-  status: "new" | "contacted" | "qualified" | "converted" | "rejected";
-  source: string;
+  status: "pending" | "contacted" | "converted" | "rejected";
   createdAt: Date;
   updatedAt: Date;
 }
