@@ -213,6 +213,7 @@ export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
               </TableHead>
               <TableHead>Bureau</TableHead>
               <TableHead>Statut</TableHead>
+              <TableHead>Email vérifié</TableHead>
               <TableHead>
                 <SortButton
                   field="createdAt"
@@ -252,6 +253,13 @@ export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
                 <TableCell>
                   <Badge variant={statusColors[lead.status]}>
                     {statusLabels[lead.status]}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={lead.emailVerifiedAt ? "default" : "secondary"}
+                  >
+                    {lead.emailVerifiedAt ? "Vérifié" : "Non vérifié"}
                   </Badge>
                 </TableCell>
                 <TableCell>

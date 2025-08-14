@@ -22,6 +22,8 @@ export class LeadsService {
         phone: leads.phone,
         status: leads.status,
         officeId: leads.officeId,
+        emailVerifiedAt: leads.emailVerifiedAt,
+        emailVerificationToken: leads.emailVerificationToken,
         createdAt: leads.createdAt,
         updatedAt: leads.updatedAt,
         office: {

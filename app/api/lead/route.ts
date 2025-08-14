@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db/drizzle";
-import { leads } from "@/lib/db/schema";
+import { leads, offices } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { emailService } from "@/lib/email/email.service";
 
 const leadSchema = z.object({
   firstname: z.string().min(1, "First name is required").max(255),
@@ -63,7 +65,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newLead = await db
+    const verificationToken = emailService.generateVerificationToken();
+
+    const [newLead] = await db
       .insert(leads)
       .values({
         officeId,
@@ -71,15 +75,44 @@ export async function POST(request: NextRequest) {
         email,
         phone,
         status: "pending",
+        emailVerificationToken: verificationToken,
         utmJson: null,
       })
       .returning();
 
+    const office = await db
+      .select({ title: offices.title })
+      .from(offices)
+      .where(eq(offices.id, officeId))
+      .limit(1);
+
+    const officeTitle = office[0]?.title || "Bureau";
+
+    try {
+      await emailService.sendVerificationEmail(
+        email,
+        `${firstname} ${lastname}`,
+        verificationToken,
+        officeTitle
+      );
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Lead created but verification email failed to send",
+          lead: newLead,
+        },
+        { status: 201 }
+      );
+    }
+
     return NextResponse.json(
       {
         success: true,
-        message: "Lead created successfully",
-        lead: newLead[0],
+        message:
+          "Lead created successfully. Please check your email to verify your address.",
+        lead: newLead,
       },
       { status: 201 }
     );

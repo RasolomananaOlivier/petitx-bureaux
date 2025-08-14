@@ -16,6 +16,8 @@ export interface AdminLead {
   phone?: string;
   status: "pending" | "contacted" | "converted" | "rejected";
   officeId: number;
+  emailVerifiedAt?: string;
+  emailVerificationToken?: string;
   createdAt: string;
   updatedAt: string;
   office?: {

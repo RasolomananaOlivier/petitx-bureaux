@@ -60,6 +60,8 @@ export const leads = pgTable("leads", {
   email: varchar("email", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 20 }),
   status: varchar("status", { length: 50 }).notNull().default("pending"), // pending, contacted, converted, rejected
+  emailVerifiedAt: timestamp("email_verified_at"), // Email verification timestamp
+  emailVerificationToken: varchar("email_verification_token", { length: 255 }), // Verification token
   utmJson: jsonb("utm_json"), // UTM parameters and tracking data
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
