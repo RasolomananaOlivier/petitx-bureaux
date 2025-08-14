@@ -102,7 +102,7 @@ export function OfficeList({
   if (loading) {
     return (
       <div className="flex-1 overflow-y-auto scrollbar-hide px-2 pb-10">
-        <div className="p-4 grid grid-cols-2 gap-4">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 p-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
