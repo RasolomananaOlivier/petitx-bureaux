@@ -41,6 +41,20 @@ export interface AdminLeadsResponse {
   };
 }
 
+export interface CSVExportRequest {
+  startDate: string;
+  endDate: string;
+  status?: "all" | "pending" | "contacted" | "converted" | "rejected";
+  email: string;
+}
+
+export interface CSVExportResponse {
+  success: boolean;
+  message: string;
+  leadCount?: number;
+  downloadUrl?: string;
+}
+
 export const adminLeadsApi = {
   getLeads: async (
     filters: AdminLeadFilters = {}
@@ -74,6 +88,13 @@ export const adminLeadsApi = {
       message: string;
       lead: NewLead;
     }>("/api/lead", lead);
+    return response.data;
+  },
+
+  exportToCSV: async (
+    request: CSVExportRequest
+  ): Promise<CSVExportResponse> => {
+    const response = await api.post("/api/admin/leads/export", request);
     return response.data;
   },
 };

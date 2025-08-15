@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LeadsTable } from "@/components/admin/leads-table";
+import { CSVExportDialog } from "@/components/admin/csv-export-dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -18,9 +19,14 @@ export default function LeadsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Gestion des Leads</h1>
-        <p className="text-gray-600">Suivi et gestion des demandes clients</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gestion des Leads
+          </h1>
+          <p className="text-gray-600">Suivi et gestion des demandes clients</p>
+        </div>
+        <CSVExportDialog />
       </div>
 
       <div className="flex items-center space-x-4">

@@ -61,6 +61,33 @@ export class EmailService {
       throw new Error("Failed to send confirmation email");
     }
   }
+
+  async sendCSVExportEmail(
+    to: string,
+    downloadUrl: string,
+    startDate: string,
+    endDate: string,
+    leadCount: number
+  ): Promise<void> {
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to,
+      subject: "Export CSV des leads - Petits Bureaux",
+      html: templates.csvExportEmail(
+        downloadUrl,
+        startDate,
+        endDate,
+        leadCount
+      ),
+    };
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error("Error sending CSV export email:", error);
+      throw new Error("Failed to send CSV export email");
+    }
+  }
 }
 
 export const emailService = new EmailService();

@@ -94,7 +94,73 @@ const leadConfirmationEmailTemplate = (name: string, officeTitle: string) => {
       `;
 };
 
+const csvExportEmailTemplate = (
+  downloadUrl: string,
+  startDate: string,
+  endDate: string,
+  leadCount: number
+) => {
+  return `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
+            <h1 style="color: #333; margin: 0;">Petits Bureaux</h1>
+          </div>
+          
+          <div style="padding: 30px; background-color: white;">
+            <h2 style="color: #333; margin-bottom: 20px;">Export CSV des leads</h2>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              Votre export CSV des leads pour la période du <strong>${startDate}</strong> au <strong>${endDate}</strong> est prêt.
+            </p>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              <strong>${leadCount}</strong> leads ont été trouvés pour cette période.
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${downloadUrl}" 
+                 style="background-color: #28a745; color: white; padding: 12px 30px; 
+                        text-decoration: none; border-radius: 5px; display: inline-block;">
+                Télécharger le fichier CSV
+              </a>
+            </div>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              Le fichier contient les informations suivantes :
+            </p>
+            
+            <ul style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              <li>ID du lead</li>
+              <li>Nom et email</li>
+              <li>Téléphone</li>
+              <li>Message</li>
+              <li>Statut</li>
+              <li>Bureau associé</li>
+              <li>Statut de vérification email</li>
+              <li>Dates de création et modification</li>
+            </ul>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              <strong>Note :</strong> Ce lien de téléchargement expirera dans 24 heures pour des raisons de sécurité.
+            </p>
+            
+            <p style="color: #666; line-height: 1.6;">
+              Cordialement,<br>
+              L'équipe Petits Bureaux
+            </p>
+          </div>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; text-align: center; color: #666;">
+            <p style="margin: 0; font-size: 14px;">
+              Si vous n'avez pas demandé cet export, vous pouvez ignorer cet email.
+            </p>
+          </div>
+        </div>
+      `;
+};
+
 export const templates = {
   verificationEmail: verificationEmailTemplate,
   leadConfirmationEmail: leadConfirmationEmailTemplate,
+  csvExportEmail: csvExportEmailTemplate,
 };

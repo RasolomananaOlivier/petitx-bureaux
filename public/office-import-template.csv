@@ -1,0 +1,4 @@
+title,description,slug,arr,priceCents,nbPosts,lat,lng,isFake,amenities
+"Bureau moderne - Champs-Élysées","Bureau moderne avec vue sur les Champs-Élysées, idéal pour les entreprises","bureau-champs-elysees","8","150000","5","48.8698","2.3077","false","WiFi;Salle de réunion;Imprimante;Climatisation"
+"Espace coworking - Le Marais","Espace de coworking dynamique dans le quartier du Marais","coworking-marais","3","120000","8","48.8606","2.3376","false","WiFi;Parking;Café;Espace détente"
+"Bureau privatif - Saint-Germain","Bureau privatif dans un immeuble historique","bureau-saint-germain","6","200000","3","48.8534","2.3488","false","WiFi;Sécurité 24/7;Réception;Terrasse"

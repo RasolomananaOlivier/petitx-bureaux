@@ -40,3 +40,36 @@ export async function updateAdminOffice(
   const response = await api.put(`/api/admin/offices/${id}`, data);
   return response.data;
 }
+
+export interface BulkImportOffice {
+  title: string;
+  description?: string;
+  slug: string;
+  arr: number;
+  priceCents: number;
+  nbPosts?: number;
+  lat: number;
+  lng: number;
+  isFake?: boolean;
+  amenities?: string[];
+}
+
+export interface BulkImportResponse {
+  success: boolean;
+  message: string;
+  results: {
+    total: number;
+    created: number;
+    skipped: number;
+    errors: Array<{ row: number; error: string }>;
+  };
+}
+
+export async function bulkImportOffices(
+  offices: BulkImportOffice[]
+): Promise<BulkImportResponse> {
+  const response = await api.post("/api/admin/offices/bulk-import", {
+    offices,
+  });
+  return response.data;
+}

@@ -5,10 +5,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OfficeTable } from "@/components/admin/office-table";
+import { BulkImportDialog } from "@/components/admin/bulk-import-dialog";
 import { Plus, Search } from "lucide-react";
 
 export default function OfficesPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleImportComplete = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   return (
     <div className="space-y-6">
@@ -19,12 +25,15 @@ export default function OfficesPage() {
           </h1>
           <p className="text-gray-600">Créer, éditer et gérer vos bureaux</p>
         </div>
-        <Link href="/admin/offices/new">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Nouveau Bureau
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <BulkImportDialog onImportComplete={handleImportComplete} />
+          <Link href="/admin/offices/new">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Nouveau Bureau
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center space-x-4">
@@ -39,7 +48,7 @@ export default function OfficesPage() {
         </div>
       </div>
 
-      <OfficeTable searchQuery={searchQuery} />
+      <OfficeTable key={refreshKey} searchQuery={searchQuery} />
     </div>
   );
 }
