@@ -81,7 +81,13 @@ export default function Step2({ form }: Step2Props) {
                 Utilisé uniquement pour les tests
               </p>
             </div>
-            <Switch id="isFake" {...form.register("isFake")} />
+            <Switch
+              id="isFake"
+              checked={form.watch("isFake")}
+              onCheckedChange={(checked) => {
+                form.setValue("isFake", checked);
+              }}
+            />
           </div>
         </div>
       </CardContent>

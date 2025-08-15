@@ -50,7 +50,7 @@ export function Stepper({ currentStep, completedSteps }: StepperProps) {
                   >
                     {step.title}
                   </p>
-                  <p className="text-xs text-gray-400">{step.description}</p>
+                  {/* <p className="text-xs text-gray-400">{step.description}</p> */}
                 </div>
               </div>
               {index < steps.length - 1 && (
