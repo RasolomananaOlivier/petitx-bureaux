@@ -58,7 +58,7 @@ export function KPICards({ kpis }: KPICardsProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Bureaux</CardTitle>
           <Building className="h-4 w-4 text-muted-foreground" />
@@ -78,7 +78,7 @@ export function KPICards({ kpis }: KPICardsProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Leads ce mois</CardTitle>
           <Users className="h-4 w-4 text-muted-foreground" />
@@ -96,7 +96,7 @@ export function KPICards({ kpis }: KPICardsProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
             Taux de conversion
@@ -113,7 +113,7 @@ export function KPICards({ kpis }: KPICardsProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Comptes actifs</CardTitle>
           <UserCheck className="h-4 w-4 text-muted-foreground" />

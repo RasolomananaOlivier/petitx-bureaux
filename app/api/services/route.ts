@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db/drizzle";
 import { services } from "@/lib/db/schema";
-import { createServerClient } from "@/lib/supabase/server";
 import { eq } from "drizzle-orm";
 
 export async function GET() {
@@ -20,15 +19,6 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await request.json();
     const { name, icon } = body;
 

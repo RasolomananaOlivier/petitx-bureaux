@@ -15,7 +15,7 @@ import { Bell, Search, User, LogOut } from "lucide-react";
 
 export function AdminHeader() {
   return (
-    <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6">
+    <header className="bg-white h-16 flex items-center justify-between px-6">
       <div className="flex items-center flex-1 max-w-md">
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />

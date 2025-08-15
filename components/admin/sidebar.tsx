@@ -32,7 +32,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col w-64 bg-white shadow-lg">
+    <div className="flex flex-col w-64 bg-white">
       <div className="flex items-center  h-16 px-4">
         <div className="flex items-center space-x-3">
           {/* Logo Icon */}

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db/drizzle";
 import { services } from "@/lib/db/schema";
-import { createServerClient } from "@/lib/supabase/server";
 import { eq } from "drizzle-orm";
 
 export async function PUT(
@@ -9,15 +8,6 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const id = parseInt(params.id);
     if (isNaN(id)) {
       return NextResponse.json(
@@ -67,15 +57,6 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const id = parseInt(params.id);
     if (isNaN(id)) {
       return NextResponse.json(
