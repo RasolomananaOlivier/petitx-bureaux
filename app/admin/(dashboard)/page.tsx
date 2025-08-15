@@ -1,8 +1,51 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, Users, TrendingUp, Eye } from "lucide-react";
-import { AnalyticsCards } from "@/components/admin/analytics-cards";
+"use client";
+
+import { useKPIs, useCharts, useActivity } from "@/hooks/use-dashboard";
+import { KPICards } from "@/components/admin/dashboard/kpi-cards";
+import { DashboardCharts } from "@/components/admin/dashboard/dashboard-charts";
+import { QuickActions } from "@/components/admin/dashboard/quick-actions";
+import { DashboardSkeleton } from "@/components/admin/dashboard/dashboard-skeleton";
 
 export default function AdminDashboard() {
+  const kpis = useKPIs();
+  const charts = useCharts();
+  const activity = useActivity();
+
+  const isLoading = kpis.isLoading || charts.isLoading || activity.isLoading;
+  const error = kpis.error || charts.error || activity.error;
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600">Vue d'ensemble de votre plateforme</p>
+        </div>
+        <div className="p-6 text-center">
+          <p className="text-red-600">Erreur lors du chargement des données</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!kpis.data || !charts.data || !activity.data) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600">Vue d'ensemble de votre plateforme</p>
+        </div>
+        <div className="p-6 text-center">
+          <p className="text-gray-600">Aucune donnée disponible</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -10,65 +53,15 @@ export default function AdminDashboard() {
         <p className="text-gray-600">Vue d'ensemble de votre plateforme</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Bureaux</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">245</div>
-            <p className="text-xs text-muted-foreground">
-              +12 par rapport au mois dernier
-            </p>
-          </CardContent>
-        </Card>
+      <KPICards kpis={kpis.data} />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Leads</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">
-              +18% par rapport au mois dernier
-            </p>
-          </CardContent>
-        </Card>
+      <DashboardCharts
+        leadsOverTime={charts.data.leadsOverTime}
+        topPerformingOffices={charts.data.topPerformingOffices}
+        conversionFunnel={charts.data.conversionFunnel}
+      />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Taux de conversion
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12.5%</div>
-            <p className="text-xs text-muted-foreground">
-              +2.1% par rapport au mois dernier
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Vues mensuelles
-            </CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">45.2K</div>
-            <p className="text-xs text-muted-foreground">
-              +7% par rapport au mois dernier
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <AnalyticsCards />
+      <QuickActions recentActivity={activity.data} />
     </div>
   );
 }

@@ -114,6 +114,7 @@ The following elements of the stack are ones I'm confident I'll build with:
 - React-hook-form
 - Vitest
 - next-test-api-route-handler
+- Yarn : for package manager
 
 ## Mandatory Tests
 
