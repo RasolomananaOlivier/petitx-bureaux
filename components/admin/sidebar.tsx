@@ -21,11 +21,6 @@ const navigation = [
     href: "/admin/leads",
     icon: Users,
   },
-  {
-    name: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-  },
 ];
 
 export function AdminSidebar() {
