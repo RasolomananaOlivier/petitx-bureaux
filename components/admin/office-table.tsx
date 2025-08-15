@@ -347,12 +347,7 @@ const OfficeTableRow = ({ office }: { office: OfficeWithRelations }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href={`/admin/offices/${office.id}`}>
-                <Eye className="mr-2 h-4 w-4" />
-                Voir (Admin)
-              </Link>
-            </DropdownMenuItem>
+
             <DropdownMenuItem asChild>
               <Link href={`/${office.slug}`} target="_blank">
                 <Eye className="mr-2 h-4 w-4" />

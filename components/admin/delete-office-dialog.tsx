@@ -39,9 +39,13 @@ export function DeleteOfficeDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className="w-full">
         {trigger || (
-          <Button variant="ghost" size="sm" className="text-destructive">
+          <Button
+            variant="ghost"
+            size="default"
+            className="text-destructive justify-start px-2"
+          >
             <Trash2 className="mr-2 h-4 w-4" />
             Supprimer
           </Button>
