@@ -59,6 +59,7 @@ export const leads = pgTable("leads", {
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 20 }),
+  message: text("message"),
   status: varchar("status", { length: 50 }).notNull().default("pending"), // pending, contacted, converted, rejected
   emailVerifiedAt: timestamp("email_verified_at"), // Email verification timestamp
   emailVerificationToken: varchar("email_verification_token", { length: 255 }), // Verification token

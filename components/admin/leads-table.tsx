@@ -34,8 +34,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useAdminLeads, useUpdateLeadStatus } from "@/hooks/use-admin-leads";
-import type { AdminLeadFilters } from "@/lib/api/admin-leads";
 import { toast } from "sonner";
+import { AdminLeadFilters } from "@/lib/api/leads";
 
 interface LeadsTableProps {
   searchQuery: string;
@@ -101,8 +101,7 @@ export function LeadsTable({ searchQuery, statusFilter }: LeadsTableProps) {
     sortOrder: sortOrder,
   };
 
-  const { data, isPending, error, isPlaceholderData, isFetching, refetch } =
-    useAdminLeads({ ...filters });
+  const { data, isPending, error } = useAdminLeads({ ...filters });
 
   const updateLeadStatusMutation = useUpdateLeadStatus();
 

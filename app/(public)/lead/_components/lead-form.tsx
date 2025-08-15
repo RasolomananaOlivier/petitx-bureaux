@@ -19,6 +19,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Loader2 } from "lucide-react";
+import { adminLeadsApi } from "@/lib/api/leads";
 
 declare global {
   interface Window {
@@ -87,19 +89,14 @@ export default function LeadForm({ officeId }: LeadFormProps) {
   const onRecaptchaToken = async (token: string) => {
     try {
       const values = form.getValues();
-      const payload = { ...values, token, officeId };
+      const payload = { ...values, token, officeId: officeId! };
 
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || "Failed to submit");
-      setStatusMessage("Thanks! Your message has been sent.");
+      const res = await adminLeadsApi.createLead(payload);
+      if (!res.success) throw new Error(res.message || "Échec de l'envoi");
+      setStatusMessage("Merci! Votre demande a été envoyée.");
       form.reset();
     } catch (err: any) {
-      setStatusMessage(err?.message || "Submission failed");
+      setStatusMessage(err?.message || "Échec de l'envoi");
     } finally {
       setLoading(false);
       if (window.grecaptcha && widgetIdRef.current !== null) {
@@ -110,7 +107,7 @@ export default function LeadForm({ officeId }: LeadFormProps) {
 
   const onSubmit = () => {
     if (!officeId) {
-      setStatusMessage("Office ID is required.");
+      setStatusMessage("L'ID de l'office est requis.");
       return;
     }
     setStatusMessage(null);
@@ -119,12 +116,12 @@ export default function LeadForm({ officeId }: LeadFormProps) {
       window.grecaptcha.execute(widgetIdRef.current);
     } else {
       setLoading(false);
-      setStatusMessage("reCAPTCHA not ready.");
+      setStatusMessage("reCAPTCHA non prêt.");
     }
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm border">
+    <div className="bg-white rounded-2xl p-6 lg:p-8">
       <Script
         src="https://www.google.com/recaptcha/api.js"
         strategy="afterInteractive"
@@ -221,8 +218,13 @@ export default function LeadForm({ officeId }: LeadFormProps) {
             )}
           />
 
-          <Button type="submit" className="py-6 text-base px-4 w-full">
-            {loading ? "Envoie en cours..." : "Envoyer"}
+          <Button
+            type="submit"
+            className="py-6 text-base px-4 w-full"
+            disabled={loading}
+          >
+            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            {loading ? "Envoi en cours..." : "Envoyer ma demande"}
           </Button>
 
           {statusMessage && (

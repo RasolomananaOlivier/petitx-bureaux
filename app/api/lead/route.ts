@@ -5,7 +5,7 @@ import { leads, offices } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { emailService } from "@/lib/email/email.service";
 
-const leadSchema = z.object({
+export const leadSchema = z.object({
   firstname: z.string().min(1, "First name is required").max(255),
   lastname: z.string().min(1, "Last name is required").max(255),
   email: z.string().email("Invalid email address").max(255),
@@ -14,6 +14,8 @@ const leadSchema = z.object({
   officeId: z.number().int().positive("Office ID is required"),
   token: z.string().min(1, "reCAPTCHA token is required"),
 });
+
+export type LeadPayload = z.infer<typeof leadSchema>;
 
 async function verifyRecaptcha(token: string): Promise<boolean> {
   try {
@@ -74,19 +76,18 @@ export async function POST(request: NextRequest) {
         name: `${firstname} ${lastname}`,
         email,
         phone,
+        message,
         status: "pending",
         emailVerificationToken: verificationToken,
         utmJson: null,
       })
       .returning();
 
-    const office = await db
-      .select({ title: offices.title })
-      .from(offices)
-      .where(eq(offices.id, officeId))
-      .limit(1);
+    const office = await db.query.offices.findFirst({
+      where: eq(offices.id, officeId),
+    });
 
-    const officeTitle = office[0]?.title || "Bureau";
+    const officeTitle = office?.title || "Bureau";
 
     try {
       await emailService.sendVerificationEmail(

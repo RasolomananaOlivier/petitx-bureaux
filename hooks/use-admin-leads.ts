@@ -1,10 +1,10 @@
+import { AdminLeadFilters, adminLeadsApi } from "@/lib/api/leads";
 import {
   keepPreviousData,
   useQuery,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { adminLeadsApi, type AdminLeadFilters } from "@/lib/api/admin-leads";
 
 interface UseAdminLeadsParams extends AdminLeadFilters {
   enabled?: boolean;

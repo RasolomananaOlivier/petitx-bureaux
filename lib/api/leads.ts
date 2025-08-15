@@ -1,4 +1,6 @@
+import { LeadPayload } from "@/app/api/lead/route";
 import { api } from "./axios";
+import { NewLead } from "../db/schema";
 
 export interface AdminLeadFilters {
   page?: number;
@@ -63,6 +65,15 @@ export const adminLeadsApi = {
     const response = await api.patch(`/api/admin/leads?id=${leadId}`, {
       status,
     });
+    return response.data;
+  },
+
+  createLead: async (lead: LeadPayload) => {
+    const response = await api.post<{
+      success: boolean;
+      message: string;
+      lead: NewLead;
+    }>("/api/lead", lead);
     return response.data;
   },
 };
