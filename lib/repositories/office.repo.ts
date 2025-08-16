@@ -25,10 +25,12 @@ export class OfficeRepo {
   }
 
   static async duplicateOffice(office: OfficeWithRelations) {
+    const { id: _, ...rest } = office;
+
     const result = await db
       .insert(offices)
       .values({
-        ...office,
+        ...rest,
         title: `${office.title} (2)`,
         slug: `${office.slug}-2`,
       })

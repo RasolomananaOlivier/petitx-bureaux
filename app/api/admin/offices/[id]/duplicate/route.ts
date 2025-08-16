@@ -6,7 +6,10 @@ const officeIdSchema = z.object({
   id: z.coerce.number().int().positive(),
 });
 
-export async function POST({ params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { id } = await params;
     const parsed = officeIdSchema.parse({ id });

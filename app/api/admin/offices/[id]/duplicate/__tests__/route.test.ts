@@ -28,7 +28,10 @@ describe("POST /api/admin/offices/[id]/duplicate", () => {
     });
 
     const params = Promise.resolve({ id: existingOffice.id.toString() });
-    const response = await POST({ params });
+    const request = new Request(
+      "http://localhost:3000/api/admin/offices/1/duplicate"
+    );
+    const response = await POST(request, { params });
 
     const data = await response.json();
     expect(data.message).toBe("Office duplicated successfully");
@@ -39,7 +42,10 @@ describe("POST /api/admin/offices/[id]/duplicate", () => {
     vi.mocked(OfficeRepo.findById).mockResolvedValue(undefined);
 
     const params = Promise.resolve({ id: "999" });
-    const response = await POST({ params });
+    const request = new Request(
+      "http://localhost:3000/api/admin/offices/999/duplicate"
+    );
+    const response = await POST(request, { params });
 
     expect(response.status).toBe(404);
     const data = await response.json();
@@ -48,7 +54,10 @@ describe("POST /api/admin/offices/[id]/duplicate", () => {
 
   it("should return 400 for invalid office id", async () => {
     const params = Promise.resolve({ id: "invalid" });
-    const response = await POST({ params });
+    const request = new Request(
+      "http://localhost:3000/api/admin/offices/invalid/duplicate"
+    );
+    const response = await POST(request, { params });
 
     expect(response.status).toBe(400);
     const data = await response.json();
