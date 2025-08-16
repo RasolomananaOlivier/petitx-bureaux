@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db/drizzle";
 import { services } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { withRateLimit } from "@/lib/rate-limit-middleware";
 
-export async function GET() {
+async function getServicesHandler() {
   try {
     const allServices = await db.select().from(services).orderBy(services.name);
 
@@ -17,7 +18,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function postServicesHandler(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, icon } = body;
@@ -46,3 +47,6 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const GET = withRateLimit(getServicesHandler);
+export const POST = withRateLimit(postServicesHandler);

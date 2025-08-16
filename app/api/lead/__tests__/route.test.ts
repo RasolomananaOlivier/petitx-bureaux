@@ -23,6 +23,17 @@ vi.mock("@/lib/db/drizzle", () => ({
         ),
       })),
     })),
+    query: {
+      offices: {
+        findFirst: vi.fn(() =>
+          Promise.resolve({
+            id: 1,
+            title: "Test Office",
+            slug: "test-office",
+          })
+        ),
+      },
+    },
   },
 }));
 
@@ -63,7 +74,9 @@ describe("POST /api/lead", () => {
     expect(response.status).toBe(201);
     const responseData = await response.json();
     expect(responseData.success).toBe(true);
-    expect(responseData.message).toBe("Lead created successfully");
+    expect(responseData.message).toBe(
+      "Lead created successfully. Please check your email to verify your address."
+    );
   });
 
   it("should return 400 for invalid email", async () => {

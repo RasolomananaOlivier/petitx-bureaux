@@ -4,6 +4,7 @@ import { db } from "@/lib/db/drizzle";
 import { leads, offices } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { emailService } from "@/lib/email/email.service";
+import { withRateLimit } from "@/lib/rate-limit-middleware";
 
 export const leadSchema = z.object({
   firstname: z.string().min(1, "First name is required").max(255),
@@ -41,7 +42,7 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function postLeadHandler(request: NextRequest) {
   try {
     const body = await request.json();
 
@@ -125,3 +126,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const POST = withRateLimit(postLeadHandler);

@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db/drizzle";
 import { offices } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { withRateLimit } from "@/lib/rate-limit-middleware";
 
-export async function GET(
+async function getOfficeHandler(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
@@ -35,3 +36,5 @@ export async function GET(
     );
   }
 }
+
+export const GET = withRateLimit(getOfficeHandler);

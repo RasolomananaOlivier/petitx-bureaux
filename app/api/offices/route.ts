@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { officeServices } from "@/features/offices/services/offices.service";
 import { ZodError } from "zod";
+import { withRateLimit } from "@/lib/rate-limit-middleware";
 
-export async function GET(request: NextRequest) {
+async function getOfficesHandler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
@@ -28,3 +29,5 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export const GET = withRateLimit(getOfficesHandler);
