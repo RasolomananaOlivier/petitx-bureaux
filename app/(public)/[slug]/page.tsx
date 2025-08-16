@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import { OfficeGallery } from "./_components/office-gallery";
 import { OfficeHeader } from "./_components/office-header";
 import { OfficeDetails } from "./_components/office-details";
@@ -10,6 +11,60 @@ import { getOfficeBySlug } from "@/lib/api/offices";
 
 interface OfficePageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: OfficePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const office = await getOfficeBySlug(slug);
+
+  if (!office) {
+    return {
+      title: "Bureau non trouvé | Petits Bureaux",
+      description:
+        "Le bureau que vous recherchez n'existe pas ou a été supprimé.",
+    };
+  }
+
+  const title = `${office.title} - ${office.arr} | PetitsBureaux`;
+  const description = office.description
+    ? `${office.description.substring(0, 160)}...`
+    : `Bureau disponible à ${office.arr}, ${
+        office.nbPosts || 0
+      } postes de travail, ${Math.round(office.priceCents / 100)}€ HT/mois.`;
+
+  const imageUrl =
+    office.photos.length > 0
+      ? office.photos[0].url
+      : `${process.env.VERCEL_URL || "http://localhost:3000"}/hero.webp`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `${process.env.VERCEL_URL || "http://localhost:3000"}/${slug}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: office.title,
+        },
+      ],
+      siteName: "PetitsBureaux",
+      locale: "fr_FR",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
 }
 
 export default async function OfficePage({ params }: OfficePageProps) {

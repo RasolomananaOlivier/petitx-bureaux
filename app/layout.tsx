@@ -11,8 +11,56 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: {
+    default: "PetitsBureaux - Bureaux indépendants à Paris",
+    template: "%s | PetitsBureaux",
+  },
+  description:
+    "Trouvez votre bureau indépendant à Paris. Des espaces de travail flexibles et personnalisés pour entrepreneurs et petites équipes.",
+  keywords: [
+    "bureau paris",
+    "espace de travail",
+    "bureau indépendant",
+    "coworking",
+    "location bureau",
+  ],
+  authors: [{ name: "PetitsBureaux" }],
+  creator: "PetitsBureaux",
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: defaultUrl,
+    siteName: "PetitsBureaux",
+    title: "PetitsBureaux - Bureaux indépendants à Paris",
+    description:
+      "Trouvez votre bureau indépendant à Paris. Des espaces de travail flexibles et personnalisés pour entrepreneurs et petites équipes.",
+    images: [
+      {
+        url: `${defaultUrl}/hero.webp`,
+        width: 1200,
+        height: 630,
+        alt: "PetitsBureaux - Bureaux indépendants à Paris",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PetitsBureaux - Bureaux indépendants à Paris",
+    description:
+      "Trouvez votre bureau indépendant à Paris. Des espaces de travail flexibles et personnalisés pour entrepreneurs et petites équipes.",
+    images: [`${defaultUrl}/hero.webp`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({

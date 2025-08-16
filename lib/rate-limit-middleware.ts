@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimiter, getClientIdentifier } from "./rate-limit";
 
 export function withRateLimit(
-  handler: (request: NextRequest) => Promise<NextResponse>
+  handler: (request: NextRequest, ...args: any[]) => Promise<NextResponse>
 ) {
-  return async (request: NextRequest): Promise<NextResponse> => {
+  return async (
+    request: NextRequest,
+    ...args: any[]
+  ): Promise<NextResponse> => {
     const identifier = getClientIdentifier(request);
     const rateLimitResult = rateLimiter.isRateLimited(identifier);
 
@@ -33,7 +36,7 @@ export function withRateLimit(
       );
     }
 
-    const response = await handler(request);
+    const response = await handler(request, ...args);
 
     response.headers.set("X-RateLimit-Limit", "100");
     response.headers.set(
