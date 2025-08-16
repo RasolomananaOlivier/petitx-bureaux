@@ -58,6 +58,12 @@ interface SearchFiltersProps {
   onPendingFiltersChange: (filters: Partial<PendingFilters>) => void;
   onApplyFilters: () => void;
   onClearFilters: () => void;
+  onResetLocation: () => void;
+  onResetPosts: () => void;
+  onResetType: () => void;
+  onResetBudget: () => void;
+  onResetServices: () => void;
+  hasAppliedFilters: boolean;
   resultCount: number;
 }
 
@@ -67,6 +73,12 @@ export function SearchFilters({
   onPendingFiltersChange,
   onApplyFilters,
   onClearFilters,
+  onResetLocation,
+  onResetPosts,
+  onResetType,
+  onResetBudget,
+  onResetServices,
+  hasAppliedFilters,
   resultCount,
 }: SearchFiltersProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -77,13 +89,6 @@ export function SearchFilters({
 
   const handleApplyFilters = () => {
     onApplyFilters();
-    setActiveFilter(null);
-    setMobileFilterOpen(false);
-    setSelectedMobileFilter(null);
-  };
-
-  const handleClearFilters = () => {
-    onClearFilters();
     setActiveFilter(null);
     setMobileFilterOpen(false);
     setSelectedMobileFilter(null);
@@ -220,7 +225,7 @@ export function SearchFilters({
           <LocationFilter
             value={pendingFilters.location}
             onChange={(value) => onPendingFiltersChange({ location: value })}
-            onClear={handleClearFilters}
+            onClear={onResetLocation}
             onApply={handleApplyFilters}
           />
         );
@@ -236,7 +241,7 @@ export function SearchFilters({
             onMaxPostsChange={(value) =>
               onPendingFiltersChange({ maxPosts: value })
             }
-            onClear={handleClearFilters}
+            onClear={onResetPosts}
             onApply={handleApplyFilters}
           />
         );
@@ -252,7 +257,7 @@ export function SearchFilters({
             onShowCombinationsChange={(value) =>
               onPendingFiltersChange({ showCombinations: value })
             }
-            onClear={handleClearFilters}
+            onClear={onResetType}
             onApply={handleApplyFilters}
           />
         );
@@ -268,7 +273,7 @@ export function SearchFilters({
             onMaxPriceChange={(value) =>
               onPendingFiltersChange({ maxPrice: value })
             }
-            onClear={handleClearFilters}
+            onClear={onResetBudget}
             onApply={handleApplyFilters}
           />
         );
@@ -280,7 +285,7 @@ export function SearchFilters({
             onServicesChange={(value) =>
               onPendingFiltersChange({ services: value })
             }
-            onClear={handleClearFilters}
+            onClear={onResetServices}
             onApply={handleApplyFilters}
           />
         );
@@ -311,6 +316,19 @@ export function SearchFilters({
           <ChevronRight className="size-4 text-gray-400" />
         </button>
       ))}
+      {hasAppliedFilters && (
+        <button
+          onClick={onClearFilters}
+          className="w-full flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <RotateCcw className="size-5 text-gray-500" />
+            <span className="text-gray-900 font-medium">
+              Réinitialiser tout
+            </span>
+          </div>
+        </button>
+      )}
     </div>
   );
 
@@ -328,11 +346,11 @@ export function SearchFilters({
             <span>Retour</span>
           </button>
           <button
-            onClick={handleClearFilters}
+            onClick={onClearFilters}
             className="flex items-center gap-2 text-gray-600"
           >
             <RotateCcw className="size-4" />
-            <span>Réinitialiser</span>
+            <span>Réinitialiser tout</span>
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">
@@ -389,6 +407,20 @@ export function SearchFilters({
               </Popover>
             ))}
           </div>
+
+          {hasAppliedFilters && (
+            <div className="hidden md:block">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={onClearFilters}
+                className="gap-2 text-gray-600 hover:text-gray-800 px-4 py-6"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Réinitialiser tout
+              </Button>
+            </div>
+          )}
 
           <div className="md:hidden w-full">
             <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>

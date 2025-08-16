@@ -78,6 +78,46 @@ function SearchPageContent() {
     });
   };
 
+  const handleResetLocation = () => {
+    updatePendingFilters({ location: null });
+    setSearchParams({ ...searchParams, location: null, page: 1 });
+  };
+
+  const handleResetPosts = () => {
+    updatePendingFilters({ minPosts: null, maxPosts: null });
+    setSearchParams({
+      ...searchParams,
+      minPosts: null,
+      maxPosts: null,
+      page: 1,
+    });
+  };
+
+  const handleResetType = () => {
+    updatePendingFilters({ officeTypes: null, showCombinations: null });
+    setSearchParams({
+      ...searchParams,
+      officeTypes: null,
+      showCombinations: null,
+      page: 1,
+    });
+  };
+
+  const handleResetBudget = () => {
+    updatePendingFilters({ minPrice: null, maxPrice: null });
+    setSearchParams({
+      ...searchParams,
+      minPrice: null,
+      maxPrice: null,
+      page: 1,
+    });
+  };
+
+  const handleResetServices = () => {
+    updatePendingFilters({ services: null });
+    setSearchParams({ ...searchParams, services: null, page: 1 });
+  };
+
   const handleSortChange = (sortBy: string, sortOrder: string) => {
     setSearchParams({ sortBy, sortOrder, page: 1 });
   };
@@ -90,6 +130,17 @@ function SearchPageContent() {
     setMobileView((v) => (v === "list" ? "map" : "list"));
   };
 
+  const hasAppliedFilters = Boolean(
+    searchParams.location?.length ||
+      searchParams.minPosts ||
+      searchParams.maxPosts ||
+      searchParams.minPrice ||
+      searchParams.maxPrice ||
+      searchParams.services?.length ||
+      searchParams.officeTypes?.length ||
+      searchParams.showCombinations
+  );
+
   return (
     <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col bg-background">
       <SearchFilters
@@ -98,6 +149,12 @@ function SearchPageContent() {
         onPendingFiltersChange={updatePendingFilters}
         onApplyFilters={handleApplyFilters}
         onClearFilters={handleClearFilters}
+        onResetLocation={handleResetLocation}
+        onResetPosts={handleResetPosts}
+        onResetType={handleResetType}
+        onResetBudget={handleResetBudget}
+        onResetServices={handleResetServices}
+        hasAppliedFilters={hasAppliedFilters}
         resultCount={pagination.total}
       />
 

@@ -1,4 +1,4 @@
-import { LeadPayload } from "@/app/api/lead/route";
+import { LeadPayload } from "@/lib/schemas/lead.schema";
 import { api } from "./axios";
 import { NewLead } from "../db/schema";
 
