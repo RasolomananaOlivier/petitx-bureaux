@@ -17,12 +17,12 @@ export interface OfficeWithRelations extends Office {
     id: number;
     officeId: number;
     serviceId: number;
-    createdAt: string;
+    createdAt: Date;
     service: {
       id: number;
       name: string;
       icon: string | null;
-      createdAt: string;
+      createdAt: Date;
     };
   }[];
 }

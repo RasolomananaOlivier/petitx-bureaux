@@ -33,9 +33,11 @@ import {
   Eye,
   ChevronUp,
   ChevronDown,
+  Copy,
 } from "lucide-react";
 import { useAdminOffices } from "@/hooks/use-admin-offices";
 import { DeleteOfficeDialog } from "@/components/admin/delete-office-dialog";
+import { DuplicateOfficeDialog } from "@/components/admin/duplicate-office-dialog";
 import type { AdminOfficeFilters } from "@/lib/types";
 import { OfficeWithRelations } from "@/features/offices/types";
 
@@ -359,6 +361,12 @@ const OfficeTableRow = ({ office }: { office: OfficeWithRelations }) => {
                 <Edit className="mr-2 h-4 w-4" />
                 Éditer
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <DuplicateOfficeDialog
+                officeId={office.id}
+                officeTitle={office.title}
+              />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <DeleteOfficeDialog

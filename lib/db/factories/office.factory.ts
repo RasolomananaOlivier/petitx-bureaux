@@ -1,3 +1,4 @@
+import { OfficeWithRelations } from "@/features/offices/types";
 import { NewOffice, NewService, NewOfficeService } from "@/lib/db/schema";
 
 export const createOfficeFactory = (
@@ -13,6 +14,27 @@ export const createOfficeFactory = (
   isFake: false,
   description: "A beautiful test office",
   publishedAt: new Date(),
+  ...overrides,
+});
+
+export const getOfficeFactory = (
+  overrides: Partial<OfficeWithRelations> = {}
+): OfficeWithRelations => ({
+  id: 1,
+  title: "Test Office",
+  slug: "test-office-" + Math.random().toString(36).substr(2, 9),
+  arr: 75001,
+  priceCents: 150000,
+  nbPosts: 10,
+  lat: 48.8566,
+  lng: 2.3522,
+  isFake: false,
+  description: "A beautiful test office",
+  publishedAt: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  photos: [],
+  officeServices: [],
   ...overrides,
 });
 

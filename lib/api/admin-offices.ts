@@ -28,6 +28,13 @@ export async function deleteAdminOffice(id: number): Promise<void> {
   return response.data;
 }
 
+export async function duplicateAdminOffice(
+  id: number
+): Promise<OfficeWithRelations> {
+  const response = await api.post(`/api/admin/offices/${id}/duplicate`);
+  return response.data.office;
+}
+
 export async function getAdminOffice(id: number): Promise<OfficeWithRelations> {
   const response = await api.get(`/api/admin/offices/${id}`);
   return response.data;
