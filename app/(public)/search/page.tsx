@@ -72,15 +72,14 @@ function SearchPageContent() {
       sortBy: "created_at",
       sortOrder: "desc",
       search: null,
-      location: null,
       officeTypes: null,
       showCombinations: null,
     });
   };
 
   const handleResetLocation = () => {
-    updatePendingFilters({ location: null });
-    setSearchParams({ ...searchParams, location: null, page: 1 });
+    updatePendingFilters({ arr: null });
+    setSearchParams({ ...searchParams, arr: null, page: 1 });
   };
 
   const handleResetPosts = () => {

@@ -95,11 +95,30 @@ export function SearchFilters({
   };
 
   const getLocationLabel = () => {
-    if (!appliedFilters.location?.length) return "Localisation";
-    const locations = appliedFilters.location.map(
-      (loc) => loc.charAt(0).toUpperCase() + loc.slice(1)
-    );
-    return locations.length === 1 ? locations[0] : `${locations.length} villes`;
+    if (!appliedFilters.arr) return "Arrondissement";
+    const arrondissementLabels: { [key: number]: string } = {
+      1: "1er arrondissement",
+      2: "2e arrondissement",
+      3: "3e arrondissement",
+      4: "4e arrondissement",
+      5: "5e arrondissement",
+      6: "6e arrondissement",
+      7: "7e arrondissement",
+      8: "8e arrondissement",
+      9: "9e arrondissement",
+      10: "10e arrondissement",
+      11: "11e arrondissement",
+      12: "12e arrondissement",
+      13: "13e arrondissement",
+      14: "14e arrondissement",
+      15: "15e arrondissement",
+      16: "16e arrondissement",
+      17: "17e arrondissement",
+      18: "18e arrondissement",
+      19: "19e arrondissement",
+      20: "20e arrondissement",
+    };
+    return arrondissementLabels[appliedFilters.arr] || "Arrondissement";
   };
 
   const getPostsLabel = () => {
@@ -166,12 +185,8 @@ export function SearchFilters({
       id: "location",
       label: getLocationLabel(),
       icon: MapPin,
-      active: Boolean(appliedFilters.location?.length),
-      pending: Boolean(
-        pendingFilters.location?.length !== appliedFilters.location?.length ||
-          JSON.stringify(pendingFilters.location) !==
-            JSON.stringify(appliedFilters.location)
-      ),
+      active: Boolean(appliedFilters.arr),
+      pending: Boolean(pendingFilters.arr !== appliedFilters.arr),
     },
     {
       id: "posts",
@@ -223,8 +238,8 @@ export function SearchFilters({
       case "location":
         return (
           <LocationFilter
-            value={pendingFilters.location}
-            onChange={(value) => onPendingFiltersChange({ location: value })}
+            value={pendingFilters.arr}
+            onChange={(value) => onPendingFiltersChange({ arr: value })}
             onClear={onResetLocation}
             onApply={handleApplyFilters}
           />

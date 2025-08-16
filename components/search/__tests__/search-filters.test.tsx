@@ -59,7 +59,7 @@ describe("SearchFilters", () => {
   it("renders filter buttons", () => {
     render(<SearchFilters {...mockProps} />);
 
-    expect(screen.getByText("Localisation")).toBeInTheDocument();
+    expect(screen.getByText("Arrondissement")).toBeInTheDocument();
     expect(screen.getByText("Nombre de postes")).toBeInTheDocument();
     expect(screen.getByText("Type de bureaux")).toBeInTheDocument();
     expect(screen.getByText("Budget")).toBeInTheDocument();
@@ -102,7 +102,7 @@ describe("SearchFilters", () => {
       ...mockProps,
       appliedFilters: {
         ...mockAppliedFilters,
-        location: ["paris"],
+        arr: 1,
         minPosts: 5,
         minPrice: 1000,
         services: [1, 2],
@@ -112,7 +112,7 @@ describe("SearchFilters", () => {
 
     render(<SearchFilters {...propsWithActiveFilters} />);
 
-    expect(screen.getByText("Paris")).toBeInTheDocument();
+    expect(screen.getByText("1er arrondissement")).toBeInTheDocument();
     expect(screen.getByText("5+ postes")).toBeInTheDocument();
     expect(screen.getByText("1k€+")).toBeInTheDocument();
     expect(screen.getByText("2 services")).toBeInTheDocument();
@@ -124,17 +124,19 @@ describe("SearchFilters", () => {
       ...mockProps,
       pendingFilters: {
         ...mockPendingFilters,
-        location: ["lyon"],
+        arr: 2,
       },
       appliedFilters: {
         ...mockAppliedFilters,
-        location: ["paris"],
+        arr: 1,
       },
     };
 
     render(<SearchFilters {...propsWithPendingFilters} />);
 
-    const locationButton = screen.getByText("Paris").closest("button");
+    const locationButton = screen
+      .getByText("1er arrondissement")
+      .closest("button");
     expect(locationButton).toHaveClass("border-orange-300");
   });
 });
