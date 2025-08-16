@@ -13,6 +13,8 @@ interface OfficePageProps {
   params: Promise<{ slug: string }>;
 }
 
+const FALLBACK_IMAGE = "/hero.webp";
+
 export async function generateMetadata({
   params,
 }: OfficePageProps): Promise<Metadata> {
@@ -37,7 +39,7 @@ export async function generateMetadata({
   const imageUrl =
     office.photos.length > 0
       ? office.photos[0].url
-      : `${process.env.VERCEL_URL || "http://localhost:3000"}/hero.webp`;
+      : `${process.env.VERCEL_URL || "http://localhost:3000"}${FALLBACK_IMAGE}`;
 
   return {
     title,
@@ -76,10 +78,15 @@ export default async function OfficePage({ params }: OfficePageProps) {
     notFound();
   }
 
+  const images =
+    office.photos.length > 0
+      ? office.photos.map((photo) => photo.url)
+      : [FALLBACK_IMAGE];
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8 sm:px-6 lg:px-8 pb-8 lg:py-8">
-        <OfficeGallery images={office.photos.map((photo) => photo.url)} />
+        <OfficeGallery images={images} />
         <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 px-4 lg:px-0">
           <div className="grid-cols-1 lg:col-span-2 space-y-8">
             <OfficeHeader
