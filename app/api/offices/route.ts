@@ -23,6 +23,11 @@ async function getOfficesHandler(request: NextRequest) {
       );
     }
 
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+
     return NextResponse.json(
       { error: "Erreur lors de la récupération des bureaux" },
       { status: 500 }

@@ -38,8 +38,8 @@ import {
 import { useAdminOffices } from "@/hooks/use-admin-offices";
 import { DeleteOfficeDialog } from "@/components/admin/delete-office-dialog";
 import { DuplicateOfficeDialog } from "@/components/admin/duplicate-office-dialog";
-import type { AdminOfficeFilters } from "@/lib/types";
 import { OfficeWithRelations } from "@/features/offices/types";
+import { AdminOfficeFilters } from "@/types/types";
 
 interface OfficeTableProps {
   searchQuery: string;

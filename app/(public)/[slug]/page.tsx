@@ -7,7 +7,10 @@ import { OfficeLocation } from "./_components/office-location";
 import { OfficeContact } from "./_components/office-contact";
 import { OfficeServices } from "./_components/office-services";
 import { RelatedOffices } from "./_components/related-offices";
-import { getOfficeBySlug } from "@/lib/api/offices";
+import { getOfficeBySlug, getOffices } from "@/lib/api/offices";
+import { db } from "@/lib/db/drizzle";
+import { offices } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 interface OfficePageProps {
   params: Promise<{ slug: string }>;
@@ -69,10 +72,52 @@ export async function generateMetadata({
   };
 }
 
+// export async function generateStaticParams() {
+//   // try {
+//   //   const res = await getOffices(
+//   //     new URLSearchParams({
+//   //       page: "1",
+//   //       limit: "100",
+//   //     })
+//   //   );
+
+//   //   return res.offices.map((office) => ({
+//   //     slug: office.slug,
+//   //   }));
+//   // } catch (error) {
+//   //   console.error("Error generating static params:", error);
+
+//   //   // Return a fallback for known office slugs to prevent build failure
+//   //   return [
+//   //     { slug: "bureau-moderne-champs-elysees" },
+//   //     { slug: "espace-coworking-republique" },
+//   //     { slug: "bureau-elegant-trocadero" },
+//   //     { slug: "studio-creatif-marais" },
+//   //     { slug: "bureau-premium-louvre" },
+//   //     { slug: "espace-flexible-opera" },
+//   //   ];
+//   // }
+//   const officesSlug = await db.select({ slug: offices.slug }).from(offices);
+
+//   return officesSlug.map((office) => ({
+//     slug: office.slug,
+//   }));
+// }
+
 export default async function OfficePage({ params }: OfficePageProps) {
   const { slug } = await params;
 
-  const office = await getOfficeBySlug(slug);
+  const office = await db.query.offices.findFirst({
+    where: eq(offices.slug, slug),
+    with: {
+      photos: true,
+      officeServices: {
+        with: {
+          service: true,
+        },
+      },
+    },
+  });
 
   if (!office) {
     notFound();

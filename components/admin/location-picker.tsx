@@ -12,9 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useGeocoder } from "@/hooks/useGeocoder";
-import { Coordinates } from "@/lib/types";
 import { buildTitleFrom, extractArrondissement } from "@/lib/utils/google-map";
 import { MAP_ID, PARIS_CENTER } from "@/lib/utils/constants";
+import { Coordinates } from "@/types/types";
 
 interface LocationPickerProps<TFieldValues extends FieldValues> {
   form: UseFormReturn<TFieldValues>;

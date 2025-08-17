@@ -11,12 +11,12 @@ import {
   getAdminOffice,
   updateAdminOffice,
 } from "@/lib/api/admin-offices";
-import type { AdminOfficeFilters } from "@/lib/types";
 import type {
   PaginatedOfficesResponse,
   OfficeWithRelations,
 } from "@/features/offices/types";
 import type { Office } from "@/lib/store/office-store";
+import { AdminOfficeFilters } from "@/types/types";
 
 interface UseAdminOfficesParams extends AdminOfficeFilters {
   enabled?: boolean;

@@ -30,6 +30,12 @@ async function getOfficeHandler(
     return NextResponse.json(office);
   } catch (error) {
     console.error("Error fetching office:", error);
+
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+
     return NextResponse.json(
       { error: "Erreur lors de la récupération du bureau" },
       { status: 500 }

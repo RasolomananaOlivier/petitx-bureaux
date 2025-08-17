@@ -1,10 +1,10 @@
-import type { AdminOfficeFilters } from "@/lib/types";
 import type {
   PaginatedOfficesResponse,
   OfficeWithRelations,
 } from "@/features/offices/types";
 import { api } from "./axios";
 import type { Office } from "@/lib/store/office-store";
+import { AdminOfficeFilters } from "@/types/types";
 
 export async function getAdminOffices(
   filters: AdminOfficeFilters = {}
