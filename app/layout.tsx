@@ -5,6 +5,7 @@ import { roslindaleBlack, robertSans } from "./font";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/providers/query-provider";
 import Script from "next/script";
+import { AnalyticsProvider } from "@/components/analytics-provider";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -78,6 +79,7 @@ export default function RootLayout({
           <GoogleMapProvider
             apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY!}
           >
+            <AnalyticsProvider />
             {children}
             <Toaster />
           </GoogleMapProvider>
