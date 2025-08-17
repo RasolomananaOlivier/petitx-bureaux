@@ -4,6 +4,7 @@ import { GoogleMapProvider } from "@/providers/google-map-provider";
 import { roslindaleBlack, robertSans } from "./font";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/providers/query-provider";
+import Script from "next/script";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -81,6 +82,21 @@ export default function RootLayout({
             <Toaster />
           </GoogleMapProvider>
         </QueryProvider>
+
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-F1N46C6RRY`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-F1N46C6RRY', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
       </body>
     </html>
   );
