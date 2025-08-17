@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { adminLeadsApi } from "@/lib/api/leads";
+import * as gtag from "@/lib/gtag";
 
 declare global {
   interface Window {
@@ -93,6 +94,13 @@ export default function LeadForm({ officeId }: LeadFormProps) {
 
       const res = await adminLeadsApi.createLead(payload);
       if (!res.success) throw new Error(res.message || "Échec de l'envoi");
+
+      gtag.event({
+        action: "lead_submit",
+        params: {
+          office_id: officeId,
+        },
+      });
       setStatusMessage("Merci! Votre demande a été envoyée.");
       form.reset();
     } catch (err: any) {

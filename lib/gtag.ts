@@ -10,7 +10,6 @@ declare global {
 
 export const GA_MEASUREMENT_ID = "G-F1N46C6RRY";
 
-// Log pageviews
 export const pageview = (url: string) => {
   if (typeof window !== "undefined") {
     window.gtag("config", GA_MEASUREMENT_ID, {
@@ -19,7 +18,6 @@ export const pageview = (url: string) => {
   }
 };
 
-// Log custom events
 export const event = ({
   action,
   params,
