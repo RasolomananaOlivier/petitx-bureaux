@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
 import { OfficeGallery } from "./_components/office-gallery";
 import { OfficeHeader } from "./_components/office-header";
