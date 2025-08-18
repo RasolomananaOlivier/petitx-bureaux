@@ -7,6 +7,7 @@ import { OfficeLocation } from "./_components/office-location";
 import { OfficeContact } from "./_components/office-contact";
 import { OfficeServices } from "./_components/office-services";
 import { RelatedOffices } from "./_components/related-offices";
+import { Breadcrumbs } from "./_components/breadcrumbs";
 import { getOfficeBySlug, getOffices } from "@/lib/api/offices";
 import { db } from "@/lib/db/drizzle";
 import { offices } from "@/lib/db/schema";
@@ -131,6 +132,9 @@ export default async function OfficePage({ params }: OfficePageProps) {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8 sm:px-6 lg:px-8 pb-8 lg:py-8">
+        <div className="px-4 lg:px-0">
+          <Breadcrumbs office={office} />
+        </div>
         <OfficeGallery images={images} />
         <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 px-4 lg:px-0">
           <div className="grid-cols-1 lg:col-span-2 space-y-8">
