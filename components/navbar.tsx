@@ -46,7 +46,7 @@ export default function Navbar({}: Props) {
             </Avatar>
 
             <div className="flex flex-col gap-0.5">
-              <div>APPELER UBQ</div>
+              <div>APPELER PB</div>
               <div className="font-bold text-sm">+33 1 23 45 67 89</div>
             </div>
           </div>
