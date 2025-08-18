@@ -25,7 +25,7 @@ export function useOffices(): UseOfficesResult {
   const [offices, setOffices] = useState<OfficeWithRelations[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
-    limit: 12,
+    limit: 15,
     total: 0,
     totalPages: 0,
     hasNext: false,
