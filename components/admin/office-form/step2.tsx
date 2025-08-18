@@ -38,9 +38,11 @@ export default function Step2({ form }: Step2Props) {
           Définissez la tarification et les paramètres du bureau
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <Label htmlFor="priceEuros">Prix HT par mois (€) *</Label>
+      <CardContent className="space-y-6">
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="priceEuros" className="font-semibold">
+            Prix HT par mois (€) *
+          </Label>
           <Input
             id="priceEuros"
             type="number"
@@ -57,8 +59,10 @@ export default function Step2({ form }: Step2Props) {
           )}
         </div>
 
-        <div>
-          <Label htmlFor="nbPosts">Capacité (nombre de postes) *</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="nbPosts" className="font-semibold">
+            Capacité (nombre de postes) *
+          </Label>
           <Input
             id="nbPosts"
             type="number"
@@ -76,7 +80,9 @@ export default function Step2({ form }: Step2Props) {
         <div className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="isFake">Bureau factice (test)</Label>
+              <Label htmlFor="isFake" className="font-semibold">
+                Bureau factice (test)
+              </Label>
               <p className="text-sm text-gray-500">
                 Utilisé uniquement pour les tests
               </p>

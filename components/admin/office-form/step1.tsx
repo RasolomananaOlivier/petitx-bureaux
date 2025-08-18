@@ -44,7 +44,7 @@ export default function Step1({ form, officeId }: Step1Props) {
   }, [titleValue, form]);
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Building2 className="w-5 h-5" />
@@ -54,9 +54,9 @@ export default function Step1({ form, officeId }: Step1Props) {
           Renseignez les détails de base du bureau
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         <div>
-          <Label>Localisation</Label>
+          <Label className="font-semibold">Localisation</Label>
           <LocationPicker<Office>
             form={form}
             latName="lat"
@@ -66,8 +66,10 @@ export default function Step1({ form, officeId }: Step1Props) {
           />
         </div>
 
-        <div>
-          <Label htmlFor="title">Nom du bureau *</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="title" className="font-semibold">
+            Nom du bureau *
+          </Label>
           <Input
             id="title"
             placeholder="Open space partagé • coworking"
@@ -81,8 +83,10 @@ export default function Step1({ form, officeId }: Step1Props) {
           )}
         </div>
 
-        <div>
-          <Label htmlFor="slug">Lien personnalisé *</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="slug" className="font-semibold">
+            Lien personnalisé *
+          </Label>
           <Input
             id="slug"
             {...form.register("slug")}
@@ -111,8 +115,10 @@ export default function Step1({ form, officeId }: Step1Props) {
           )}
         </div>
 
-        <div>
-          <Label htmlFor="description">Description *</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="description" className="font-semibold">
+            Description *
+          </Label>
           <Textarea
             id="description"
             {...form.register("description")}
@@ -129,8 +135,10 @@ export default function Step1({ form, officeId }: Step1Props) {
           )}
         </div>
 
-        <div>
-          <Label htmlFor="arr">Arrondissement *</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="arr" className="font-semibold">
+            Arrondissement *
+          </Label>
           <Input
             id="arr"
             type="number"

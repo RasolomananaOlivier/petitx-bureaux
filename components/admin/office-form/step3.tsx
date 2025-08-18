@@ -73,10 +73,10 @@ export default function Step3({ form }: Step3Props) {
           Ajoutez les équipements disponibles dans ce bureau
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <Label>Équipements courants</Label>
-          <div className="grid grid-cols-2 gap-2 mt-2">
+      <CardContent className="space-y-8">
+        <div className="flex flex-col gap-3">
+          <Label className="font-semibold">Équipements courants</Label>
+          <div className="flex flex-wrap gap-2 mt-2">
             {commonAmenities.map((amenity) => (
               <Button
                 key={amenity}
@@ -95,7 +95,9 @@ export default function Step3({ form }: Step3Props) {
         </div>
 
         <div>
-          <Label>Ajouter un équipement personnalisé</Label>
+          <Label className="font-semibold">
+            Ajouter un équipement personnalisé
+          </Label>
           <div className="flex space-x-2 mt-2">
             <Input
               placeholder="Nom de l'équipement..."
@@ -113,7 +115,7 @@ export default function Step3({ form }: Step3Props) {
 
         {formData.amenities.length > 0 && (
           <div>
-            <Label>
+            <Label className="font-semibold">
               Équipements sélectionnés ({formData.amenities.length})
             </Label>
             <div className="flex flex-wrap gap-2 mt-2">

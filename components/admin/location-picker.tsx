@@ -101,39 +101,43 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
   const center = useMemo(() => position ?? PARIS_CENTER, [position]);
 
   return (
-    <div className="space-y-3">
-      <Map
-        mapId={MAP_ID}
-        defaultZoom={13}
-        defaultCenter={center}
-        gestureHandling="cooperative"
-        disableDefaultUI={true}
-        className="w-full h-72 rounded-lg overflow-hidden border"
-        onClick={(e) => {
-          const c = e.detail.latLng;
-          if (!c) return;
-          handlePositionChange({ lat: c.lat, lng: c.lng });
-        }}
-      >
-        {position && (
-          <AdvancedMarker
-            position={position}
-            onDragEnd={(e) => {
-              const t = (e as unknown as google.maps.MapMouseEvent).latLng;
-              if (!t) return;
-              handlePositionChange({ lat: t.lat(), lng: t.lng() });
-            }}
-          />
-        )}
-      </Map>
+    <div className="flex flex-col gap-6 mt-2">
+      <div className="space-y-2">
+        <Map
+          mapId={MAP_ID}
+          defaultZoom={13}
+          defaultCenter={center}
+          gestureHandling="cooperative"
+          disableDefaultUI={true}
+          className="w-full h-72 rounded-lg overflow-hidden border"
+          onClick={(e) => {
+            const c = e.detail.latLng;
+            if (!c) return;
+            handlePositionChange({ lat: c.lat, lng: c.lng });
+          }}
+        >
+          {position && (
+            <AdvancedMarker
+              position={position}
+              onDragEnd={(e) => {
+                const t = (e as unknown as google.maps.MapMouseEvent).latLng;
+                if (!t) return;
+                handlePositionChange({ lat: t.lat(), lng: t.lng() });
+              }}
+            />
+          )}
+        </Map>
 
-      {reverseAddress && (
-        <div className="text-sm text-gray-600">{reverseAddress}</div>
-      )}
+        {reverseAddress && (
+          <div className="text-sm text-gray-600">{reverseAddress}</div>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="lat_picker">Latitude</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="lat_picker" className="font-semibold">
+            Latitude
+          </Label>
           <Input
             id="lat_picker"
             type="number"
@@ -146,8 +150,10 @@ export default function LocationPicker<TFieldValues extends FieldValues>({
             }}
           />
         </div>
-        <div>
-          <Label htmlFor="lng_picker">Longitude</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="lng_picker" className="font-semibold">
+            Longitude
+          </Label>
           <Input
             id="lng_picker"
             type="number"
