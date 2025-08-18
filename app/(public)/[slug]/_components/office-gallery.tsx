@@ -2,12 +2,15 @@
 
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
+import { Eye } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { FullGalleryModal } from "./full-gallery-modal";
 
 interface OfficeGalleryProps {
   images: string[];
@@ -125,10 +128,23 @@ export function OfficeGallery({ images }: OfficeGalleryProps) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           {validImages.slice(1, 5).map((image, index) => (
-            <button
+            <div
               key={index}
-              className={`w-full aspect-video relative overflow-hidden rounded-md transition-all hover:opacity-80`}
+              className={`w-full  overflow-hidden rounded-md transition-all relative cursor-pointer `}
             >
+              {imageCount > 5 && index === 3 && (
+                <FullGalleryModal
+                  images={validImages}
+                  trigger={
+                    <Button className=" z-50 absolute bottom-4 right-4 overflow-hidden rounded-md bg-white hover:bg-white text-black">
+                      <Eye className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                      <span className="font-medium">
+                        +{imageCount - 5} photos
+                      </span>
+                    </Button>
+                  }
+                />
+              )}
               <Image
                 src={image}
                 alt={`Office thumbnail ${index + 1}`}
@@ -136,15 +152,8 @@ export function OfficeGallery({ images }: OfficeGalleryProps) {
                 className="object-cover"
                 onError={handleImageError}
               />
-            </button>
-          ))}
-          {imageCount > 5 && (
-            <div className="w-full aspect-video relative overflow-hidden rounded-md bg-black/50 flex items-center justify-center">
-              <span className="text-white font-medium">
-                +{imageCount - 5} photos
-              </span>
             </div>
-          )}
+          ))}
         </div>
       </div>
     );
@@ -157,7 +166,7 @@ export function OfficeGallery({ images }: OfficeGalleryProps) {
       <div className="relative lg:hidden">
         <Carousel setApi={setApi} opts={{ loop: true, align: "center" }}>
           <CarouselContent className="-ml-2">
-            {validImages.map((src, idx) => (
+            {validImages.slice(0, 5).map((src, idx) => (
               <CarouselItem key={idx} className="pl-0">
                 <Image
                   src={src}
@@ -174,7 +183,7 @@ export function OfficeGallery({ images }: OfficeGalleryProps) {
 
         {imageCount > 1 && (
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1">
-            {snaps.map((_, idx) => (
+            {snaps.slice(0, 5).map((_, idx) => (
               <button
                 key={idx}
                 onClick={(e) => {
@@ -188,6 +197,24 @@ export function OfficeGallery({ images }: OfficeGalleryProps) {
                 }`}
               />
             ))}
+          </div>
+        )}
+
+        {imageCount > 5 && (
+          <div className="absolute top-4 right-4">
+            <FullGalleryModal
+              images={validImages}
+              trigger={
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="bg-white/90 hover:bg-white text-gray-900 shadow-lg"
+                >
+                  <Eye className="h-4 w-4 mr-1" />
+                  Voir tout ({imageCount})
+                </Button>
+              }
+            />
           </div>
         )}
       </div>
