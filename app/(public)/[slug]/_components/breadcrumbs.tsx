@@ -22,7 +22,7 @@ export function Breadcrumbs({ office }: BreadcrumbsProps) {
     { label: "Accueil", href: "/" },
     { label: "Location bureaux Paris", href: "/search" },
     {
-      label: `Location bureaux Paris ${office.arr}`,
+      label: `Paris ${office.arr}`,
       href: `/search?arr=${office.arr}`,
     },
     {
