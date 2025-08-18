@@ -19,6 +19,16 @@ function extractArrondissementNumber(
   return number;
 }
 
+export async function generateStaticParams() {
+  const arr = [...Array.from({ length: 20 }, (_, i) => i + 1)].map(
+    (num) => `bureaux-paris-${num}`
+  );
+
+  return arr.map((arrondissement) => ({
+    arrondissement,
+  }));
+}
+
 export default async function ArrondissementPage({
   params,
 }: ArrondissementPageProps) {
