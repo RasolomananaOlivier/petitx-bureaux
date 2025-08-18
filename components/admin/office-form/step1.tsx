@@ -15,9 +15,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn, useWatch } from "react-hook-form";
 import LocationPicker from "@/components/admin/location-picker";
 import { Office } from "@/lib/store/office-store";
+import { SlugVerification } from "@/components/admin/slug-verification";
 
 interface Step1Props {
   form: UseFormReturn<Office>;
+  officeId?: number;
 }
 
 function slugify(text: string) {
@@ -31,7 +33,7 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
 }
 
-export default function Step1({ form }: Step1Props) {
+export default function Step1({ form, officeId }: Step1Props) {
   const titleValue = useWatch({ control: form.control, name: "title" });
   const slugValue = useWatch({ control: form.control, name: "slug" });
 
@@ -92,6 +94,15 @@ export default function Step1({ form }: Step1Props) {
               {form.formState.errors.slug.message}
             </p>
           )}
+
+          <SlugVerification
+            slug={slugValue}
+            officeId={officeId}
+            onSuggestionClick={(suggestion) => {
+              form.setValue("slug", suggestion, { shouldValidate: true });
+            }}
+            className="mt-2"
+          />
 
           {slugValue && (
             <p className="text-gray-700 text-sm mt-1">

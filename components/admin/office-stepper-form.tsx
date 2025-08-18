@@ -162,7 +162,7 @@ export default function OfficeStepperForm({
   const renderCurrentStep = (): React.ReactNode => {
     switch (currentStep) {
       case 0:
-        return <Step1 form={form} />;
+        return <Step1 form={form} officeId={officeId} />;
       case 1:
         return <Step2 form={form} />;
       case 2:
