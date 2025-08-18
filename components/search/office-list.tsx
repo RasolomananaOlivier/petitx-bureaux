@@ -31,6 +31,7 @@ interface OfficeListProps {
   sortOrder: string;
   onSortChange: (sortBy: string, sortOrder: string) => void;
   onPageChange: (page: number) => void;
+  arrondissementNumber?: number;
 }
 
 export function OfficeList({
@@ -42,6 +43,7 @@ export function OfficeList({
   sortOrder,
   onSortChange,
   onPageChange,
+  arrondissementNumber,
 }: OfficeListProps) {
   const {
     selectedOfficeId,
@@ -128,7 +130,20 @@ export function OfficeList({
     >
       <div className="flex flex-col gap-4 p-4">
         <div className="text-lg md:text-xl text-gray-700 font-bold flex flex-row items-center justify-between gap-3">
-          <span>{pagination.total.toLocaleString()} espaces</span>
+          {arrondissementNumber ? (
+            <div className="bg-white">
+              <h1 className="text-sm font-normal text-gray-600">
+                Bureaux dans le {arrondissementNumber}e arrondissement de Paris
+              </h1>
+              <p className=" text-gray-950 font-bold">
+                {pagination.total} bureau{pagination.total > 1 ? "x" : ""}{" "}
+                disponible
+                {pagination.total > 1 ? "s" : ""}
+              </p>
+            </div>
+          ) : (
+            <span>{pagination.total.toLocaleString()} espaces</span>
+          )}
 
           <Select
             value={getCurrentSortValue()}

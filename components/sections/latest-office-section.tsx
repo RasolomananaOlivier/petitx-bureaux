@@ -62,7 +62,7 @@ export function OfficeCard({
   }, [office, onClick]);
 
   return (
-    <Link href={`/${office.slug}`}>
+    <Link href={`/office/${office.slug}`}>
       <div
         className={`relative bg-white rounded-xl border overflow-hidden transition-all duration-300 min-w-[300px] md:min-w-full cursor-pointer  hover:shadow-lg`}
         onMouseEnter={handleMouseEnter}

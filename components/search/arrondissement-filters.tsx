@@ -2,38 +2,38 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  MapPin,
+  Filter,
+  X,
   Users,
   Building,
   DollarSign,
-  Filter,
   ChevronDown,
+  ChevronRight,
   ArrowLeft,
   RotateCcw,
-  ChevronRight,
   Search,
   SlidersHorizontal,
+  MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LocationFilter } from "./filters/location-filter";
 import { PostsFilter } from "./filters/posts-filter";
 import { TypeFilter } from "./filters/type-filter";
 import { BudgetFilter } from "./filters/budget-filter";
 import { ServicesFilter } from "./filters/services-filter";
-import { PendingFilters } from "@/hooks/use-pending-filters";
 
 interface SearchFilters {
   page: number;
@@ -52,39 +52,46 @@ interface SearchFilters {
   showCombinations: string | null;
 }
 
-interface SearchFiltersProps {
+interface PendingFilters {
+  arr: number | null;
+  minPosts: number | null;
+  maxPosts: number | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  services: number[] | null;
+  officeTypes: string[] | null;
+  showCombinations: string | null;
+}
+
+interface ArrondissementFiltersProps {
   appliedFilters: SearchFilters;
   pendingFilters: PendingFilters;
   onPendingFiltersChange: (filters: Partial<PendingFilters>) => void;
   onApplyFilters: () => void;
   onClearFilters: () => void;
-  onResetLocation: () => void;
   onResetPosts: () => void;
   onResetType: () => void;
   onResetBudget: () => void;
   onResetServices: () => void;
   hasAppliedFilters: boolean;
   resultCount: number;
-  hideLocationFilter?: boolean;
-  showArrondissementFilter?: boolean;
+  arrondissementNumber: number;
 }
 
-export function SearchFilters({
+export function ArrondissementFilters({
   appliedFilters,
   pendingFilters,
   onPendingFiltersChange,
   onApplyFilters,
   onClearFilters,
-  onResetLocation,
   onResetPosts,
   onResetType,
   onResetBudget,
   onResetServices,
   hasAppliedFilters,
   resultCount,
-  hideLocationFilter = false,
-  showArrondissementFilter = false,
-}: SearchFiltersProps) {
+  arrondissementNumber,
+}: ArrondissementFiltersProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [selectedMobileFilter, setSelectedMobileFilter] = useState<
@@ -98,8 +105,45 @@ export function SearchFilters({
     setSelectedMobileFilter(null);
   };
 
-  const getLocationLabel = () => {
-    if (!appliedFilters.arr) return "Arrondissement";
+  const getPostsLabel = () => {
+    if (!appliedFilters.minPosts && !appliedFilters.maxPosts)
+      return "Nombre de postes";
+    if (appliedFilters.minPosts && appliedFilters.maxPosts) {
+      return `${appliedFilters.minPosts}-${appliedFilters.maxPosts} postes`;
+    }
+    if (appliedFilters.minPosts) return `${appliedFilters.minPosts}+ postes`;
+    if (appliedFilters.maxPosts) return `≤${appliedFilters.maxPosts} postes`;
+    return "Nombre de postes";
+  };
+
+  const getTypeLabel = () => {
+    if (!appliedFilters.officeTypes?.length && !appliedFilters.showCombinations)
+      return "Type d'espace";
+    if (appliedFilters.showCombinations) return "Combinaisons";
+    if (appliedFilters.officeTypes?.length === 1) {
+      return appliedFilters.officeTypes[0];
+    }
+    return `${appliedFilters.officeTypes?.length} types`;
+  };
+
+  const getBudgetLabel = () => {
+    if (!appliedFilters.minPrice && !appliedFilters.maxPrice) return "Budget";
+    if (appliedFilters.minPrice && appliedFilters.maxPrice) {
+      return `${appliedFilters.minPrice}€-${appliedFilters.maxPrice}€`;
+    }
+    if (appliedFilters.minPrice) return `${appliedFilters.minPrice}€+`;
+    if (appliedFilters.maxPrice) return `≤${appliedFilters.maxPrice}€`;
+    return "Budget";
+  };
+
+  const getServicesLabel = () => {
+    if (!appliedFilters.services?.length) return "Filtres";
+    return appliedFilters.services.length === 1
+      ? "1 service"
+      : `${appliedFilters.services.length} services`;
+  };
+
+  const getArrondissementLabel = () => {
     const arrondissementLabels: { [key: number]: string } = {
       1: "1er arrondissement",
       2: "2e arrondissement",
@@ -122,75 +166,16 @@ export function SearchFilters({
       19: "19e arrondissement",
       20: "20e arrondissement",
     };
-    return arrondissementLabels[appliedFilters.arr] || "Arrondissement";
+    return arrondissementLabels[arrondissementNumber] || "Arrondissement";
   };
 
-  const getPostsLabel = () => {
-    if (!appliedFilters.minPosts && !appliedFilters.maxPosts)
-      return "Nombre de postes";
-    if (appliedFilters.minPosts && appliedFilters.maxPosts) {
-      return `${appliedFilters.minPosts}-${appliedFilters.maxPosts} postes`;
-    }
-    if (appliedFilters.minPosts) return `${appliedFilters.minPosts}+ postes`;
-    if (appliedFilters.maxPosts) return `≤${appliedFilters.maxPosts} postes`;
-    return "Nombre de postes";
-  };
-
-  const getTypeLabel = () => {
-    if (
-      !appliedFilters.officeTypes?.length &&
-      !appliedFilters.showCombinations
-    ) {
-      return "Type de bureaux";
-    }
-    const typeLabels: { [key: string]: string } = {
-      independent: "Indépendant",
-      private: "Privé",
-      shared: "Partagé",
-    };
-    const types =
-      appliedFilters.officeTypes
-        ?.map((type) => typeLabels[type])
-        .filter(Boolean) || [];
-    if (appliedFilters.showCombinations) types.push("Combinaisons");
-    return types.length === 1 ? types[0] : `${types.length} types`;
-  };
-
-  const formatPrice = (price: number) => {
-    if (price >= 1000) {
-      return `${(price / 1000).toFixed(price % 1000 === 0 ? 0 : 1)}k`;
-    }
-    return price.toString();
-  };
-
-  const getBudgetLabel = () => {
-    if (!appliedFilters.minPrice && !appliedFilters.maxPrice) return "Budget";
-    if (appliedFilters.minPrice && appliedFilters.maxPrice) {
-      return `${formatPrice(appliedFilters.minPrice)} - ${formatPrice(
-        appliedFilters.maxPrice
-      )}€`;
-    }
-    if (appliedFilters.minPrice)
-      return `${formatPrice(appliedFilters.minPrice)}€+`;
-    if (appliedFilters.maxPrice)
-      return `≤${formatPrice(appliedFilters.maxPrice)}€`;
-    return "Budget";
-  };
-
-  const getServicesLabel = () => {
-    if (!appliedFilters.services?.length) return "Filtres";
-    return appliedFilters.services.length === 1
-      ? "1 service"
-      : `${appliedFilters.services.length} services`;
-  };
-
-  const allFilterButtons = [
+  const filterButtons = [
     {
-      id: "location",
-      label: getLocationLabel(),
+      id: "arrondissement",
+      label: getArrondissementLabel(),
       icon: MapPin,
-      active: Boolean(appliedFilters.arr),
-      pending: Boolean(pendingFilters.arr !== appliedFilters.arr),
+      active: true,
+      pending: false,
     },
     {
       id: "posts",
@@ -237,21 +222,22 @@ export function SearchFilters({
     },
   ];
 
-  const filterButtons =
-    hideLocationFilter && !showArrondissementFilter
-      ? allFilterButtons.filter((button) => button.id !== "location")
-      : allFilterButtons;
-
   const renderFilterContent = (filterId: string) => {
     switch (filterId) {
-      case "location":
+      case "arrondissement":
         return (
-          <LocationFilter
-            value={pendingFilters.arr}
-            onChange={(value) => onPendingFiltersChange({ arr: value })}
-            onClear={onResetLocation}
-            onApply={handleApplyFilters}
-          />
+          <div className="p-4">
+            <div className="text-center text-gray-600">
+              <p className="text-sm">Vous consultez actuellement</p>
+              <p className="text-lg font-semibold text-gray-900 mt-1">
+                {getArrondissementLabel()}
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                {resultCount} bureau{resultCount > 1 ? "x" : ""} disponible
+                {resultCount > 1 ? "s" : ""}
+              </p>
+            </div>
+          </div>
         );
 
       case "posts":
@@ -325,7 +311,9 @@ export function SearchFilters({
         <button
           key={button.id}
           onClick={() => setSelectedMobileFilter(button.id)}
-          className="w-full flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors"
+          className={cn(
+            "w-full flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 transition-colors hover:bg-gray-50"
+          )}
         >
           <div className="flex items-center gap-3">
             <button.icon

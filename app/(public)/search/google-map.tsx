@@ -109,7 +109,7 @@ const AdvancedMarkerWithCustomPin = ({
               </div>
             </div>
           ) : (
-            <Link href={`/${office.slug}`}>
+            <Link href={`/office/${office.slug}`}>
               <div
                 className="p-2 min-w-[280px] max-w-[320px] cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={handleCardClick}

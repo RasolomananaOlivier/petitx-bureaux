@@ -139,4 +139,24 @@ describe("SearchFilters", () => {
       .closest("button");
     expect(locationButton).toHaveClass("border-orange-300");
   });
+
+  it("hides location filter when hideLocationFilter is true", () => {
+    render(<SearchFilters {...mockProps} hideLocationFilter={true} />);
+
+    expect(screen.queryByText("Arrondissement")).not.toBeInTheDocument();
+    expect(screen.getByText("Nombre de postes")).toBeInTheDocument();
+    expect(screen.getByText("Type de bureaux")).toBeInTheDocument();
+    expect(screen.getByText("Budget")).toBeInTheDocument();
+    expect(screen.getByText("Filtres")).toBeInTheDocument();
+  });
+
+  it("shows location filter when hideLocationFilter is false", () => {
+    render(<SearchFilters {...mockProps} hideLocationFilter={false} />);
+
+    expect(screen.getByText("Arrondissement")).toBeInTheDocument();
+    expect(screen.getByText("Nombre de postes")).toBeInTheDocument();
+    expect(screen.getByText("Type de bureaux")).toBeInTheDocument();
+    expect(screen.getByText("Budget")).toBeInTheDocument();
+    expect(screen.getByText("Filtres")).toBeInTheDocument();
+  });
 });
