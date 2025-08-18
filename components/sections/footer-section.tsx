@@ -77,7 +77,7 @@ export default function Footer() {
           <Card className="shadow-none border-0 bg-transparent">
             <CardHeader className="p-0">
               <CardTitle className="text-xs text-gray-500 font-semibold">
-                À PROPOS D&apos;UBIQ
+                À PROPOS DE PETITS BUREAUX
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 pt-4 space-y-2 text-sm">
@@ -173,7 +173,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center sm:text-left text-xs text-muted-foreground pb-16">
-          © 2012-2025 Ubiq. Tous droits réservés.{" "}
+          © 2012-2025 Petits Bureaux. Tous droits réservés.{" "}
           <Link href="#" className="hover:underline">
             À propos
           </Link>{" "}

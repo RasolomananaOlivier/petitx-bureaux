@@ -64,9 +64,9 @@ export function OfficeContact({ contact, officeId }: OfficeContactProps) {
       <div className="bg-gray-50 border border-blue-400 rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-xs">U</span>
+            <span className="text-white font-bold text-xs">P</span>
           </div>
-          <span className="font-semibold text-gray-900">Ubiq</span>
+          <span className="font-semibold text-gray-900">Petits Bureaux</span>
         </div>
 
         <div className="space-y-2 mb-4">

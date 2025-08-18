@@ -38,7 +38,7 @@ export default function FaqSection({}: Props) {
 function FAQList() {
   const faqs: FAQProps[] = [
     {
-      question: "Trouver mes bureaux avec Ubiq : comment ça marche ?",
+      question: "Trouver mes bureaux avec Petits Bureaux : comment ça marche ?",
       answer: (
         <>
           Vous choisissez comment lancer votre recherche : contactez directement
@@ -53,23 +53,24 @@ function FAQList() {
       ),
     },
     {
-      question: "Combien ça coûte ?",
+      question: "Combien ça coûte ?",
       answer: (
         <>
-          Votre recherche de bureau est <strong>sans honoraires</strong> ! Nous
+          Votre recherche de bureau est <strong>sans honoraires</strong> ! Nous
           nous rémunérons selon un modèle d'apport d'affaires au succès et
           auprès de nos partenaires qui commercialisent des bureaux.
         </>
       ),
     },
     {
-      question: "Pourquoi faire équipe avec Ubiq pour trouver mes bureaux ?",
+      question:
+        "Pourquoi faire équipe avec Petits Bureaux pour trouver mes bureaux ?",
       answer: (
         <>
-          Ubiq est l'unique combinaison du numérique et du conseil : en
-          cherchant des bureaux avec Ubiq, vous vous appuyez sur le seul site où
-          l'offre de bureaux est mise à jour en temps réel et sur des
-          fonctionnalités poussées pensées pour centraliser votre recherche.
+          Petits Bureaux est l'unique combinaison du numérique et du conseil :
+          en cherchant des bureaux avec Petits Bureaux, vous vous appuyez sur le
+          seul site où l'offre de bureaux est mise à jour en temps réel et sur
+          des fonctionnalités poussées pensées pour centraliser votre recherche.
           Vous faites aussi équipe avec nos experts qui vous éclairent sur le
           marché.
         </>
@@ -77,32 +78,33 @@ function FAQList() {
     },
     {
       question:
-        "Quels types de bureaux vais-je trouver sur Ubiq ? Et à quelles conditions contractuelles ?",
+        "Quels types de bureaux vais-je trouver sur Petits Bureaux ? Et à quelles conditions contractuelles ?",
       answer: (
         <>
-          Tous les bureaux sont sur Ubiq : nos offres vont de l'Open Space à
-          l'espace totalement indépendant en passant par le bureau privé tout
-          équipé. Ces bureaux sont proposés par des espaces de coworking ou des
-          entreprises classiques (marché qu'on appelle communément "sous loc",
-          ne pas confondre avec le contrat de sous-location).
+          Tous les bureaux sont sur Petits Bureaux : nos offres vont de l'Open
+          Space à l'espace totalement indépendant en passant par le bureau privé
+          tout équipé. Ces bureaux sont proposés par des espaces de coworking ou
+          des entreprises classiques (marché qu'on appelle communément "sous
+          loc", ne pas confondre avec le contrat de sous-location).
           <br />
           <br />
-          Dans la plupart des cas, Ubiq préconise les bureaux commercialisés en
-          contrat de prestation de service car il est plus flexible que le bail
-          3/6/9. Nos experts vous accompagnent aussi sur les autres modalités
-          contractuelles : prix, préavis, engagement.
+          Dans la plupart des cas, Petits Bureaux préconise les bureaux
+          commercialisés en contrat de prestation de service car il est plus
+          flexible que le bail 3/6/9. Nos experts vous accompagnent aussi sur
+          les autres modalités contractuelles : prix, préavis, engagement.
         </>
       ),
     },
     {
-      question: "Qu'est ce qu'un \"bureau opéré\" ?",
+      question: "Qu'est ce qu'un \"bureau opéré\" ?",
       answer: (
         <>
-          Le "bureau opéré" est un terme lancé par Ubiq à l'occasion de sa
-          première édition de l'Ubiqdata en 2021 et adopté par l'ensemble du
-          marché. Un bureau opéré est un espace de travail indépendant dédié à
-          une unique entreprise dès l'accueil, incluant de nombreux services et
-          commercialisé via un contrat de prestation de service flexible.
+          Le "bureau opéré" est un terme lancé par Petits Bureaux à l'occasion
+          de sa première édition de la PetitsBureauxData en 2021 et adopté par
+          l'ensemble du marché. Un bureau opéré est un espace de travail
+          indépendant dédié à une unique entreprise dès l'accueil, incluant de
+          nombreux services et commercialisé via un contrat de prestation de
+          service flexible.
           <br />
           <br />
           <a href="#" className="underline hover:no-underline">
@@ -112,24 +114,26 @@ function FAQList() {
       ),
     },
     {
-      question: "Quelle est la place de Ubiq dans l'immobilier d'entreprise ?",
+      question:
+        "Quelle est la place de Petits Bureaux dans l'immobilier d'entreprise ?",
       answer: (
         <>
-          Ubiq participe depuis 10 ans à l'évolution de l'immobilier
+          Petits Bureaux participe depuis 10 ans à l'évolution de l'immobilier
           d'entreprise en promouvant les solutions émergentes les plus
           intéressantes pour vous comme le contrat de prestation de service, le
           coworking, la "sous-loc" (location auprès d'une entreprise classique)
           ou encore le "bureau opéré".
           <br />
           <br />
-          En tant que startup de la Proptech, Ubiq facilite la lisibilité, la
-          compréhension et l'accès à l'offre de bureau flexible. Ubiq transforme
-          votre recherche de bureaux en expérience transparente au sein du
-          secteur de l'immobilier d'entreprise traditionnellement opaque.
+          En tant que startup de la Proptech, Petits Bureaux facilite la
+          lisibilité, la compréhension et l'accès à l'offre de bureau flexible.
+          Petits Bureaux transforme votre recherche de bureaux en expérience
+          transparente au sein du secteur de l'immobilier d'entreprise
+          traditionnellement opaque.
           <br />
           <br />
-          Enfin Ubiq éprouve elle-même l'hybridation de l'organisation du
-          travail et vous conseille par exemple sur le télétravail et le flex
+          Enfin Petits Bureaux éprouve elle-même l'hybridation de l'organisation
+          du travail et vous conseille par exemple sur le télétravail et le flex
           office :{" "}
           <a href="#" className="underline hover:no-underline">
             en savoir plus avec notre guide complet sur le flex office
