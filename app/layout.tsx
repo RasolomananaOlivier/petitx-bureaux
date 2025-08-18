@@ -4,9 +4,7 @@ import { GoogleMapProvider } from "@/providers/google-map-provider";
 import { roslindaleBlack, robertSans } from "./font";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/providers/query-provider";
-import Script from "next/script";
-import { AnalyticsProvider } from "@/components/analytics-provider";
-import { Suspense } from "react";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -80,28 +78,11 @@ export default function RootLayout({
           <GoogleMapProvider
             apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY!}
           >
-            <Suspense>
-              <AnalyticsProvider />
-            </Suspense>
+            <GoogleAnalytics gaId="G-F1N46C6RRY" />
             {children}
             <Toaster />
           </GoogleMapProvider>
         </QueryProvider>
-
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=G-F1N46C6RRY`}
-          strategy="afterInteractive"
-        />
-        <Script id="ga4-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-F1N46C6RRY', {
-              page_path: window.location.pathname,
-            });
-          `}
-        </Script>
       </body>
     </html>
   );
