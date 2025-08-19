@@ -1,18 +1,67 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { AdvancedMarker, Map } from "@vis.gl/react-google-maps";
+import { AdvancedMarker, Map, useMap } from "@vis.gl/react-google-maps";
 import { useMapListSync } from "@/components/search/map-list-sync-provider";
 import { OfficeWithRelations } from "@/features/offices/types";
 import { MapPin, Euro, ExternalLink, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
-import { MAP_ID, PARIS_CENTER } from "@/lib/utils/constants";
+import {
+  MAP_ID,
+  PARIS_CENTER,
+  ARRONDISSEMENT_CENTERS,
+  ARRONDISSEMENT_ZOOM_LEVELS,
+  ARRONDISSEMENT_BOUNDARIES,
+} from "@/lib/utils/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AnimatePresence, motion } from "framer-motion";
 
-const GoogleMap = () => {
+interface GoogleMapProps {
+  arrondissementNumber?: number;
+}
+
+function ArrondissementBoundary({
+  arrondissementNumber,
+}: {
+  arrondissementNumber: number;
+}) {
+  const map = useMap();
+  const polygonRef = useRef<google.maps.Polygon | null>(null);
+
+  useEffect(() => {
+    if (!map) return;
+
+    const boundary = ARRONDISSEMENT_BOUNDARIES[arrondissementNumber];
+    if (!boundary || boundary.length === 0) {
+      console.warn(
+        `No boundary data available for arrondissement ${arrondissementNumber}`
+      );
+      return;
+    }
+
+    polygonRef.current = new google.maps.Polygon({
+      paths: boundary,
+      fillColor: "#3b82f6",
+      fillOpacity: 0.1,
+      strokeColor: "#3b82f6",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      map: map,
+    });
+
+    return () => {
+      if (polygonRef.current) {
+        polygonRef.current.setMap(null);
+      }
+    };
+  }, [map, arrondissementNumber]);
+
+  return null;
+}
+
+const GoogleMap = ({ arrondissementNumber }: GoogleMapProps) => {
   const { filteredOffices, expandedOfficeId } = useMapListSync();
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -22,19 +71,37 @@ const GoogleMap = () => {
     return 0;
   });
 
+  const center = arrondissementNumber
+    ? ARRONDISSEMENT_CENTERS[arrondissementNumber]
+    : PARIS_CENTER;
+
+  const zoom = arrondissementNumber
+    ? ARRONDISSEMENT_ZOOM_LEVELS[arrondissementNumber]
+    : 13;
+
   return (
     <div ref={mapContainerRef} className="w-full h-full relative">
       <Map
         mapId={MAP_ID}
-        defaultZoom={13}
-        defaultCenter={PARIS_CENTER}
+        defaultZoom={zoom}
+        defaultCenter={center}
         gestureHandling="cooperative"
         disableDefaultUI={true}
       >
+        {arrondissementNumber && (
+          <ArrondissementBoundary arrondissementNumber={arrondissementNumber} />
+        )}
         {sortedOffices.map((office) => (
           <AdvancedMarkerWithCustomPin key={office.id} office={office} />
         ))}
       </Map>
+      {arrondissementNumber && (
+        <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-2 rounded-lg shadow-lg z-10">
+          <span className="text-sm font-semibold">
+            Arrondissement {arrondissementNumber}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

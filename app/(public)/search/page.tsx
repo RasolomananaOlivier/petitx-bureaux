@@ -184,7 +184,7 @@ function SearchPageContent() {
           }
         >
           <div className="w-full h-full">
-            <GoogleMap />
+            <GoogleMap arrondissementNumber={searchParams.arr || undefined} />
           </div>
         </main>
       </div>

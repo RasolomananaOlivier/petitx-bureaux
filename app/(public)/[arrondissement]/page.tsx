@@ -46,6 +46,7 @@ export default async function ArrondissementPage({
         <Suspense fallback={<div>Loading...</div>}>
           <ArrondissementPageContent
             arrondissement={arrondissementNumber.toString()}
+            arrondissementNumber={arrondissementNumber}
           />
         </Suspense>
       </MapListSyncProvider>

@@ -14,17 +14,17 @@ import { useRouter } from "next/navigation";
 
 interface ArrondissementPageContentProps {
   arrondissement: string;
+  arrondissementNumber: number;
 }
 
 export default function ArrondissementPageContent({
   arrondissement,
+  arrondissementNumber,
 }: ArrondissementPageContentProps) {
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
   const [searchParams, setSearchParams] = useSearchParams();
   const { setFilteredOffices } = useMapListSync();
   const router = useRouter();
-
-  const arrondissementNumber = parseInt(arrondissement, 10);
 
   const officesParams = useMemo((): GetOfficesParams => {
     const params: GetOfficesParams = {
@@ -171,7 +171,7 @@ export default function ArrondissementPageContent({
           }
         >
           <div className="w-full h-full">
-            <GoogleMap />
+            <GoogleMap arrondissementNumber={arrondissementNumber} />
           </div>
         </main>
       </div>
